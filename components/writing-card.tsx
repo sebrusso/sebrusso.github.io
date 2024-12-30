@@ -1,20 +1,22 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import type { Writing } from '@/lib/types'
 import Link from 'next/link'
 
 interface WritingCardProps {
-  writing: Writing
+  id: string
+  title: string
+  description: string
+  date: string
 }
 
-export function WritingCard({ writing }: WritingCardProps) {
+export function WritingCard({ id, title, description }: WritingCardProps) {
   return (
-    <Link href={`/writing/${writing.id}`}>
-      <Card className="hover:bg-muted/50 transition-colors w-full md:w-2/3">
+    <Link href={`/writing/${id}`}>
+      <Card className="hover:bg-muted/50 transition-colors">
         <CardHeader>
-          <CardTitle>{writing.title}</CardTitle>
+          <CardTitle>{title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">{writing.description}</p>
+          <p className="text-muted-foreground">{description}</p>
         </CardContent>
       </Card>
     </Link>
