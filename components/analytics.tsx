@@ -1,14 +1,21 @@
 'use client'
 
 import Script from 'next/script'
+import { Suspense } from 'react'
 import { GA_MEASUREMENT_ID } from '../lib/gtag'
 import { usePageTracking } from '../hooks/usePageTracking'
 
-export function Analytics() {
+function PageTracker() {
   usePageTracking()
+  return null
+}
 
+export function Analytics() {
   return (
     <>
+      <Suspense fallback={null}>
+        <PageTracker />
+      </Suspense>
       <Script
         strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
