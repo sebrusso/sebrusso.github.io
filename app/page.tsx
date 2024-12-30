@@ -5,10 +5,10 @@ import { SiX } from 'react-icons/si'
 import { FaChevronDown } from 'react-icons/fa'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { Transition } from '@headlessui/react'
 
-export default function AboutPage() {
+function HomeContent() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -90,6 +90,14 @@ export default function AboutPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<HomeContent />}>
+      <HomeContent />
+    </Suspense>
   )
 }
 
