@@ -10,7 +10,7 @@ interface PageProps {
 }
 
 export default async function WritingPage({ params }: PageProps) {
-  const { id } = await params
+  const { id } = params
   const post = await getMarkdownContent(id)
 
   if (!post) {
