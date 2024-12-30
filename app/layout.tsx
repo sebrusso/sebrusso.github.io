@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { Navigation } from '../components/navigation'
 import { CONTENT_PADDING, MAX_CONTENT_WIDTH } from '../lib/constants'
+import { Analytics } from '../components/analytics'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,6 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <Analytics />
+      </head>
       <body className={inter.className}>
         <div className="min-h-screen bg-background">
           <Navigation />

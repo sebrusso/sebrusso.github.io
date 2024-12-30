@@ -13,7 +13,7 @@ const config: Config = {
   			'title': ['2.25rem', {
   				lineHeight: '1.1',
   				letterSpacing: '-0.02em',
-  				fontWeight: '700',
+  				fontWeight: '600',
   			}],
   		},
   		colors: {
