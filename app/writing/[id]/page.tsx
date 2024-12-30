@@ -4,13 +4,13 @@ import remarkGfm from 'remark-gfm'
 import { getMarkdownContent, getAllPosts } from '../../../lib/posts'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function WritingPage({ params }: PageProps) {
-  const { id } = params
+  const { id } = await params
   const post = await getMarkdownContent(id)
 
   if (!post) {
