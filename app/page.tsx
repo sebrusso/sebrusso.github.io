@@ -2,7 +2,6 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa'
 import { SiX } from 'react-icons/si'
 import Link from 'next/link'
 import Image from 'next/image'
-import { cn } from '../lib/utils'
 
 export default function AboutPage() {
   return (
@@ -24,7 +23,7 @@ export default function AboutPage() {
           <h1 className="text-title tracking-tight mb-6">Sebastian Russo</h1>
           
           <p className="text-base leading-relaxed mb-6">
-            My name is Seb and I'm a Stanford undergrad studying computer science, neuroscience and economics.
+            My name is Seb and I&apos;m a Stanford undergrad studying computer science, neuroscience and economics.
           </p>
 
           <p className="text-base leading-relaxed mb-6">

@@ -33,15 +33,15 @@ export default async function WritingPage({ params }: PageProps) {
             remarkPlugins={[remarkGfm]}
             className="prose prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-h4:text-base dark:prose-invert"
             components={{
-              h1: ({node, ...props}) => <h1 className="text-2xl font-bold mt-8 mb-4" {...props} />,
-              h2: ({node, ...props}) => <h2 className="text-xl font-bold mt-6 mb-3" {...props} />,
-              h3: ({node, ...props}) => <h3 className="text-lg font-semibold mt-4 mb-2" {...props} />,
-              h4: ({node, ...props}) => <h4 className="text-base font-semibold mt-3 mb-2" {...props} />,
-              p: ({node, ...props}) => <p className="mb-4" {...props} />,
-              ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4" {...props} />,
-              ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-4" {...props} />,
-              blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-gray-300 dark:border-gray-700 pl-4 italic my-4" {...props} />,
-              code: ({node, inline, ...props}) => 
+              h1: ({...props}) => <h1 className="text-2xl font-bold mt-8 mb-4" {...props} />,
+              h2: ({...props}) => <h2 className="text-xl font-bold mt-6 mb-3" {...props} />,
+              h3: ({...props}) => <h3 className="text-lg font-semibold mt-4 mb-2" {...props} />,
+              h4: ({...props}) => <h4 className="text-base font-semibold mt-3 mb-2" {...props} />,
+              p: ({...props}) => <p className="mb-4" {...props} />,
+              ul: ({...props}) => <ul className="list-disc pl-6 mb-4" {...props} />,
+              ol: ({...props}) => <ol className="list-decimal pl-6 mb-4" {...props} />,
+              blockquote: ({...props}) => <blockquote className="border-l-4 border-gray-300 dark:border-gray-700 pl-4 italic my-4" {...props} />,
+              code: ({inline, ...props}) => 
                 inline ? 
                   <code className="bg-gray-100 dark:bg-gray-800 rounded px-1 py-0.5" {...props} /> :
                   <code className="block bg-gray-100 dark:bg-gray-800 rounded p-4 my-4 overflow-x-auto" {...props} />

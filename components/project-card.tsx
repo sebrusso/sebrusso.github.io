@@ -7,10 +7,9 @@ interface ProjectCardProps {
   title: string
   description: string
   media: string
-  date: string
 }
 
-export function ProjectCard({ id, title, description, media, date }: ProjectCardProps) {
+export function ProjectCard({ id, title, description, media }: ProjectCardProps) {
   return (
     <Link href={`/projects/${id}`}>
       <Card className="hover:bg-muted/50 transition-colors">
