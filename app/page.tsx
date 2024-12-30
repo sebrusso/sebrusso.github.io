@@ -2,7 +2,7 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa'
 import { SiX } from 'react-icons/si'
 import Link from 'next/link'
 import Image from 'next/image'
-import { cn } from '@/lib/utils'
+import { cn } from '../lib/utils'
 
 export default function AboutPage() {
   return (

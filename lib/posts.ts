@@ -5,10 +5,10 @@ import type { Post, PostMetadata } from './types'
 
 const POSTS_DIRECTORY = path.join(process.cwd(), 'content/posts')
 
-export function getMarkdownContent(id: string) {
+export async function getMarkdownContent(id: string) {
   try {
     const fullPath = path.join(POSTS_DIRECTORY, `${id}.md`)
-    const fileContents = fs.readFileSync(fullPath, 'utf8')
+    const fileContents = await fs.promises.readFile(fullPath, 'utf8')
     const { data, content } = matter(fileContents)
     
     return {

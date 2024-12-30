@@ -1,17 +1,17 @@
 import { notFound } from 'next/navigation'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { getMarkdownContent } from '@/lib/posts'
+import { getMarkdownContent, getAllPosts } from '../../../lib/posts'
 
 interface PageProps {
-  params: Promise<{
+  params: {
     id: string
-  }>
+  }
 }
 
 export default async function WritingPage({ params }: PageProps) {
   const { id } = await params
-  const post = getMarkdownContent(id)
+  const post = await getMarkdownContent(id)
 
   if (!post) {
     notFound()
@@ -53,5 +53,12 @@ export default async function WritingPage({ params }: PageProps) {
       </div>
     </div>
   )
+}
+
+export async function generateStaticParams() {
+  const posts = getAllPosts()
+  return posts.map(post => ({
+    id: post.id,
+  }))
 }
 

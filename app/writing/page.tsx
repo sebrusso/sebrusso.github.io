@@ -1,5 +1,5 @@
-import { WritingCard } from '@/components/writing-card'
-import { getAllPosts } from '@/lib/posts'
+import { WritingCard } from '../../components/writing-card'
+import { getAllPosts } from '../../lib/posts'
 
 export default function WritingPage() {
   const posts = getAllPosts()

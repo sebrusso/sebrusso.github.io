@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
-import { navigationConfig } from '@/config/navigationConfig'
+import { cn } from '../lib/utils'
+import { navigationConfig } from '../config/navigationConfig'
 
 const links = [
   { href: '/', label: 'about' },
