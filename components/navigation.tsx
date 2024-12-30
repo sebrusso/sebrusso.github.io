@@ -16,7 +16,7 @@ export function Navigation() {
 
   return (
     <nav className="border-b my-2 bg-muted/20">
-      <div className="container mx-auto max-w-2xl flex h-10 items-center">
+      <div className="container mx-auto max-w-2xl flex h-10 items-center px-4 md:px-0">
         <div className="flex gap-6">
           {links.map(({ href, label }) => (
             <Link
