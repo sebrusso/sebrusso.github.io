@@ -41,6 +41,7 @@ export default async function WritingPage({ params }: PageProps) {
               ul: ({...props}) => <ul className="list-disc pl-6 mb-4" {...props} />,
               ol: ({...props}) => <ol className="list-decimal pl-6 mb-4" {...props} />,
               blockquote: ({...props}) => <blockquote className="border-l-4 border-gray-300 dark:border-gray-700 pl-4 italic my-4" {...props} />,
+              hr: ({...props}) => <hr className="my-8 border-border" {...props} />,
               code: ({inline, ...props}) => 
                 inline ? 
                   <code className="bg-gray-100 dark:bg-gray-800 rounded px-1 py-0.5" {...props} /> :

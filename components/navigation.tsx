@@ -8,6 +8,7 @@ import { navigationConfig } from '../config/navigationConfig'
 const links = [
   { href: '/', label: 'about' },
   ...(navigationConfig.showWritingTab ? [{ href: '/writing', label: 'writing' }] : []),
+  ...(navigationConfig.showResearchTab ? [{ href: '/research', label: 'research' }] : []),
   ...(navigationConfig.showProjectsTab ? [{ href: '/projects', label: 'projects' }] : [])
 ]
 
