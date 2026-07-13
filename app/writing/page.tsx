@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { WritingCard } from '../../components/writing-card'
 import { getAllPosts } from '../../lib/posts'
 
@@ -12,6 +13,19 @@ export default function WritingPage() {
             <WritingCard key={post.id} {...post} />
           ))}
         </div>
+
+        <p className="mt-6 text-sm text-muted-foreground">
+          More essays on my{' '}
+          <Link
+            href="https://sebrusso.substack.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-primary hover:text-primary/80 underline underline-offset-4"
+          >
+            Substack
+          </Link>
+          .
+        </p>
       </div>
     </div>
   )

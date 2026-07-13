@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { getCitationCount } from '../../lib/citations'
 
 const LITBENCH_ARXIV_ID = '2507.00769'
+const GEMINI_EMBEDDING_ARXIV_ID = '2605.27295'
 
 const litbenchLinks = [
   { label: 'arXiv', href: 'https://arxiv.org/abs/2507.00769' },
@@ -12,8 +13,18 @@ const litbenchLinks = [
   { label: 'GitHub', href: 'https://github.com/drfein/LitBench' },
 ]
 
+const geminiEmbeddingLinks = [
+  { label: 'arXiv', href: 'https://arxiv.org/abs/2605.27295' },
+  { label: 'Blog', href: 'https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-embedding-2/' },
+]
+
+const linkClass = 'font-medium text-primary hover:text-primary/80 underline underline-offset-4'
+
 export default async function ResearchPage() {
-  const citationCount = await getCitationCount(LITBENCH_ARXIV_ID)
+  const [litbenchCitations, geminiEmbeddingCitations] = await Promise.all([
+    getCitationCount(LITBENCH_ARXIV_ID),
+    getCitationCount(GEMINI_EMBEDDING_ARXIV_ID),
+  ])
 
   return (
     <div className="container mx-auto max-w-2xl">
@@ -26,7 +37,7 @@ export default async function ResearchPage() {
               </CardTitle>
               <p className="text-sm text-muted-foreground">
                 EACL 2026 · Stanford Autonomous Agents Lab
-                {citationCount ? ` · ${citationCount} citations` : ''}
+                {litbenchCitations ? ` · ${litbenchCitations} citations` : ''}
               </p>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -34,22 +45,16 @@ export default async function ResearchPage() {
                 Daniel Fein, Sebastian Russo, Violet Xiang, Kabir Jolly, Rafael Rafailov, Nick Haber
               </p>
               <p className="text-sm leading-relaxed">
-                How do you evaluate whether one story is better than another? LitBench is a benchmark
-                for exactly that: 2,480 human-labeled story comparisons plus a training corpus of
-                ~43,000 preference pairs. We benchmarked LLMs as zero-shot judges of creative writing
-                and trained dedicated reward models — the trained models reach 78% agreement with
-                human preferences, beating the best off-the-shelf judge (73%), and we validated the
-                results with human studies on newly generated stories.
+                Do machines have the same quality preferences for creative writing as humans? LitBench
+                is a benchmark for finding out: 2,480 human-labeled story comparisons plus a training
+                corpus of ~43,000 preference pairs. We benchmarked LLMs as zero-shot judges of creative
+                writing and trained dedicated reward models — the trained models reach 78% agreement
+                with human preferences, beating the best off-the-shelf judge (73%), and we validated
+                the results with human studies on newly generated stories.
               </p>
               <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
                 {litbenchLinks.map(({ label, href }) => (
-                  <Link
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-primary hover:text-primary/80 underline underline-offset-4"
-                  >
+                  <Link key={label} href={href} target="_blank" rel="noopener noreferrer" className={linkClass}>
                     {label}
                   </Link>
                 ))}
@@ -59,23 +64,28 @@ export default async function ResearchPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">lm-as-writing-judge</CardTitle>
+              <CardTitle className="text-lg">
+                Gemini Embedding 2: A Native Multimodal Embedding Model from Gemini
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Google DeepMind · May 2026
+                {geminiEmbeddingCitations ? ` · ${geminiEmbeddingCitations} citations` : ''}
+              </p>
             </CardHeader>
             <CardContent className="grid gap-4">
               <p className="text-sm leading-relaxed">
-                The precursor to LitBench: a framework for comparing creative writing with language
-                models as judges, supporting multiple LLM providers with a pipeline for judging pairs
-                of creative responses. Built with Violet Xiang, Daniel Fein, and Kabir Jolly.
+                Gemini Embedding 2 embeds video, audio, image, and text into a single shared
+                representation space, so arbitrary interleaved combinations of those modalities can be
+                compared directly. Trained with large-scale contrastive learning in a multi-task,
+                multi-stage setup, it reaches state-of-the-art results on unimodal, cross-modal, and
+                multimodal retrieval benchmarks.
               </p>
               <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
-                <Link
-                  href="https://github.com/sebrusso/lm-as-writing-judge"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium text-primary hover:text-primary/80 underline underline-offset-4"
-                >
-                  GitHub
-                </Link>
+                {geminiEmbeddingLinks.map(({ label, href }) => (
+                  <Link key={label} href={href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                    {label}
+                  </Link>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -88,6 +98,6 @@ export default async function ResearchPage() {
 export function generateMetadata() {
   return {
     title: 'Research',
-    description: 'My research on evaluating machine creativity.',
+    description: 'My research on evaluating machine creativity and multimodal embeddings.',
   }
 }
