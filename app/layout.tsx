@@ -8,7 +8,7 @@ import { Analytics } from '../components/analytics'
 const inter = Inter({ subsets: ['latin'] })
 
 const description =
-  'Product at Google DeepMind. Studied computer science at Stanford, where I researched how we evaluate machine creativity at the Autonomous Agents Lab.'
+  'Product at Google DeepMind, working on embedding models and evaluation for code and agentic post-training. Studied computer science at Stanford, where I researched how we evaluate machine creativity at the Autonomous Agents Lab.'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://sebrusso.github.io'),

@@ -78,7 +78,7 @@ function HomeContent() {
           <h1 className="text-title tracking-tight mb-6">Sebastian Russo</h1>
           
           <p className="text-base leading-relaxed mb-6">
-            I&apos;m Seb — I work on product at Google DeepMind. I studied computer science at Stanford, where I researched how we evaluate machine creativity at the Autonomous Agents Lab. I&apos;m originally from San Marcos, Texas.
+            I&apos;m Seb — I work on product at Google DeepMind, on embedding models and on evaluation for code and agentic post-training. I studied computer science at Stanford, where I researched how we evaluate machine creativity at the Autonomous Agents Lab. I&apos;m originally from San Marcos, Texas.
           </p>
 
           <p className="text-base leading-relaxed mb-6">
