@@ -78,11 +78,12 @@ function HomeContent() {
           <h1 className="text-title tracking-tight mb-6">Sebastian Russo</h1>
           
           <p className="text-base leading-relaxed mb-6">
-            I&apos;m Seb — I work on product at Google DeepMind, on embedding models and on evaluation for code and agentic post-training. I studied computer science at Stanford, where I researched how we evaluate machine creativity at the Autonomous Agents Lab. I&apos;m originally from San Marcos, Texas.
+            I&apos;m Seb, a product manager at Google DeepMind, where I supported embedding model pretraining, then post-training for code and agentic use cases. Now I lead our code eval work: task design and curation, behavior metrics, live experiments. At Stanford I studied computer science, TA&apos;d CS 106A/B, and researched machine creativity at the Autonomous Agents Lab — which became{' '}
+            <Link href="/research" className="font-medium text-primary hover:text-primary/80">LitBench</Link>. Originally from San Marcos, Texas.
           </p>
 
           <p className="text-base leading-relaxed mb-6">
-            I like to <Link href="/writing" className="font-medium text-primary hover:text-primary/80">write</Link>, so hopefully while you&apos;re here you feel like reading. You can get in contact via social media or email{' '}
+            I write <Link href="/writing" className="font-medium text-primary hover:text-primary/80">essays</Link>, and I&apos;d rather you read one than read this. I&apos;m reachable on social or at{' '}
             <span className="font-medium text-primary hover:text-primary/80 cursor-pointer">
               (sebrusso at cs dot stanford dot edu)
             </span>.
