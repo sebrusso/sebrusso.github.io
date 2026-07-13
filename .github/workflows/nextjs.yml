@@ -9,6 +9,11 @@ on:
   push:
     branches: ["main"]
 
+  # Weekly rebuild so the build-time citation count in lib/citations.ts picks up
+  # new numbers without needing a push. Mondays, 08:00 UTC.
+  schedule:
+    - cron: "0 8 * * 1"
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
