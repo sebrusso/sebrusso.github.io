@@ -7,6 +7,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, Suspense } from 'react'
 import { Transition } from '@headlessui/react'
+import { Water } from '../components/water'
 
 function HomeContent() {
   const [isOpen, setIsOpen] = useState(false)
@@ -97,6 +98,7 @@ function HomeContent() {
 export default function HomePage() {
   return (
     <Suspense fallback={<HomeContent />}>
+      <Water />
       <HomeContent />
     </Suspense>
   )
