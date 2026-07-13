@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
-import { CitationCount } from '../../components/citation-count'
+import { getCitationCount } from '../../lib/citations'
+
+const LITBENCH_ARXIV_ID = '2507.00769'
 
 const litbenchLinks = [
   { label: 'arXiv', href: 'https://arxiv.org/abs/2507.00769' },
@@ -10,7 +12,9 @@ const litbenchLinks = [
   { label: 'GitHub', href: 'https://github.com/drfein/LitBench' },
 ]
 
-export default function ResearchPage() {
+export default async function ResearchPage() {
+  const citationCount = await getCitationCount(LITBENCH_ARXIV_ID)
+
   return (
     <div className="container mx-auto max-w-2xl">
       <div className="pl-6">
@@ -22,7 +26,7 @@ export default function ResearchPage() {
               </CardTitle>
               <p className="text-sm text-muted-foreground">
                 EACL 2026 · Stanford Autonomous Agents Lab
-                <CitationCount arxivId="2507.00769" />
+                {citationCount ? ` · ${citationCount} citations` : ''}
               </p>
             </CardHeader>
             <CardContent className="grid gap-4">
