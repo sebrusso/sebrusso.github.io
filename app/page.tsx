@@ -78,14 +78,14 @@ function HomeContent() {
           <h1 className="text-title tracking-tight mb-6">Sebastian Russo</h1>
           
           <p className="text-base leading-relaxed mb-6">
-            My name is Seb and I&apos;m a senior at Stanford studying computer science. I&apos;m originally from San Marcos, Texas.
+            I&apos;m Seb — I work on product at Google DeepMind. I studied computer science at Stanford, where I researched how we evaluate machine creativity at the Autonomous Agents Lab. I&apos;m originally from San Marcos, Texas.
           </p>
 
           <p className="text-base leading-relaxed mb-6">
-            I like to write, so hopefully while you&apos;re here you feel like reading. You can get in contact via social media or email{' '}
+            I like to <Link href="/writing" className="font-medium text-primary hover:text-primary/80">write</Link>, so hopefully while you&apos;re here you feel like reading. You can get in contact via social media or email{' '}
             <span className="font-medium text-primary hover:text-primary/80 cursor-pointer">
-              (sebrusso at stanford dot edu)
-            </span>. 
+              (sebrusso at cs dot stanford dot edu)
+            </span>.
           </p>
         </div>
       </div>
