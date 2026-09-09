@@ -4,8 +4,11 @@ import { useEffect, useRef } from 'react'
 
 const SCALE = 8
 const FRAME_MS = 50
-const GRAY = 120
-const PEAK_ALPHA = 7
+
+// The caustics take the theme's highlight hue: pastel orange on light, neon
+// blue on dark. Dark needs a little more alpha to read against near-black.
+const LIGHT_TINT = { rgb: [246, 158, 79], alpha: 9 }
+const DARK_TINT = { rgb: [66, 180, 255], alpha: 7 }
 
 export function Water() {
   const ref = useRef<HTMLCanvasElement>(null)
@@ -21,6 +24,21 @@ export function Water() {
     let w = 0
     let h = 0
     let img: ImageData
+    let tint = LIGHT_TINT
+
+    const readTint = () =>
+      document.documentElement.classList.contains('dark') ? DARK_TINT : LIGHT_TINT
+
+    const paintTint = () => {
+      if (!img) return
+      const d = img.data
+      const [r, g, b] = tint.rgb
+      for (let i = 0; i < d.length; i += 4) {
+        d[i] = r
+        d[i + 1] = g
+        d[i + 2] = b
+      }
+    }
 
     const resize = () => {
       w = Math.max(1, Math.ceil(window.innerWidth / SCALE))
@@ -28,10 +46,7 @@ export function Water() {
       canvas.width = w
       canvas.height = h
       img = ctx.createImageData(w, h)
-      const d = img.data
-      for (let i = 0; i < d.length; i += 4) {
-        d[i] = d[i + 1] = d[i + 2] = GRAY
-      }
+      paintTint()
     }
 
     const render = (ms: number) => {
@@ -47,7 +62,7 @@ export function Water() {
           py += 0.5 * Math.cos(px * 0.9 + t * 3.7)
           const s = Math.sin(px) * Math.sin(py)
           const ridge = Math.pow(1 - Math.abs(s), 6)
-          d[(y * w + x) * 4 + 3] = ridge * PEAK_ALPHA
+          d[(y * w + x) * 4 + 3] = ridge * tint.alpha
         }
       }
       ctx.putImageData(img, 0, 0)
@@ -62,12 +77,26 @@ export function Water() {
 
     const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+    tint = readTint()
     resize()
     const onResize = () => {
       resize()
       if (still) render(performance.now())
     }
     window.addEventListener('resize', onResize)
+
+    // Repaint the tint when the theme toggle flips the class on <html>.
+    const observer = new MutationObserver(() => {
+      const next = readTint()
+      if (next === tint) return
+      tint = next
+      paintTint()
+      if (still) render(performance.now())
+    })
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
 
     if (still) {
       render(performance.now())
@@ -78,6 +107,7 @@ export function Water() {
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', onResize)
+      observer.disconnect()
     }
   }, [])
 
