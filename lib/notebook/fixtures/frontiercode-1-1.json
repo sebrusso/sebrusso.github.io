@@ -1,0 +1,1681 @@
+{
+  "slug": "frontiercode-1-1",
+  "name": "FrontierCode 1.1",
+  "researched_at": "2026-10-30",
+  "notes": "Model results: all 134 model × effort rows of the FrontierCode 1.1 board (45 models), from Cognition's leaderboard data file https://cognition.com/data/frontiercode-leaderboard/data.json (key v1_1, subset main, field new_score = 'Score', ×100). I cross-checked it against the 2026-10-22 Wayback snapshot, which also had Mistral Large 4 (Preview); that model has since been removed and is excluded here. Effort 'none' means the model has no effort setting; Inkling's '0.99' is the board's own label. cost_per_task_usd = the board's Main 'cost', defined as mean USD per rollout (one attempt at one task) at list API pricing, used without conversion. reported_on = the leaderboard changelog date the model or effort was added. The 8 blog-launch models use the 2026-07-07 post date. Grok 4.6 low/medium were added 2026-09-01. Since 2026-10-27 the live page shows FrontierCode 2.0. Single research pass; 134 rows, current SOTA (54.6, Opus 5.5 medium) and SOTA at release (53.5, Fable 5 xhigh) spot-checked against Cognition's data file (v1_1 key) and the 2026-07-08 Wayback snapshot.",
+  "cost_unit": "per task",
+  "fields": {
+    "version": {
+      "answer": "[FrontierCode 1.1](https://cognition.com/blog/frontier-code-1.1)",
+      "notes": "Lineage: **Introducing FrontierCode** (1.0, 2026-06-08) → **FrontierCode 1.1** (2026-07-07) → **FrontierCode 2.0** (2026-10-27, 132 rebuilt tasks). 1.1 kept the same 150 tasks as 1.0 but changed grading: unfair internet use is zeroed, 75 of 1,000+ blocker criteria were demoted, and Diamond was deprecated. Since 2026-10-27 the live leaderboard shows 2.0. Cognition says \"FrontierCode 1.1 and 1.0 rankings remain on their respective posts\", and the 1.1 rows are still in the leaderboard's data file.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code-1.1",
+        "https://cognition.com/frontiercode"
+      ],
+      "confidence": "Confirmed"
+    },
+    "publisher": {
+      "answer": "[Cognition](https://cognition.com)",
+      "notes": "Cognition (maker of Devin and Windsurf) built it and hosts the blog posts and leaderboard at cognition.com/frontiercode. The research team is Eric Lu, Ben Pan, Fermi Ma, Alex Lombardi, Silas Alberti and others. Tasks were built with 20+ open-source maintainers from 36 repos (for example Celery, Budibase, uppy and Mattermost). Since 2026-10-12, Artificial Analysis runs 1.1 Main independently, in partnership with Cognition.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code-1.1",
+        "https://cognition.com/blog/frontier-code",
+        "https://artificialanalysis.ai/articles/frontiercode"
+      ],
+      "confidence": "Confirmed"
+    },
+    "sells_models": {
+      "answer": "Yes",
+      "notes": "Cognition ranks its own models on the 1.1 board: SWE-1.6, SWE-1.7 (Devin CLI harness) and SWE-2 (Devin harness, 50.0% at max). It also sells Devin, which wraps third-party models. Cognition's Fusion harness has been promoted with FrontierCode numbers: a 66.2 with Haiku 5.5 as sidekick, quoted on Anthropic's Haiku 5.5 page, and the \"Making Fable Cheaper Than Opus\" post.",
+      "sources": [
+        "https://cognition.com/data/frontiercode-leaderboard/data.json",
+        "https://www.anthropic.com/claude-haiku-5-5"
+      ],
+      "confidence": "Confirmed"
+    },
+    "sells_data": {
+      "answer": "No",
+      "notes": "Cognition sells coding agents, not training data or annotation. Nothing I opened says Cognition sells task data. The maintainers were organised into \"eval pods\" with pod leads, but neither post says who paid them or whether a data vendor was involved.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Inferred"
+    },
+    "released": {
+      "answer": "2026-07-07",
+      "notes": "1.1 was announced in a blog post on 2026-07-07, and its data file was archived on 2026-07-08. The standalone leaderboard launched on 2026-07-17 \"with FrontierCode 1.0 and 1.1 results\". Original FrontierCode (1.0): 2026-06-08. There is no paper or repo.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code-1.1",
+        "https://cognition.com/frontiercode",
+        "https://web.archive.org/web/20260708150620/https://cognition.com/data/frontier-code-1.1/data.json"
+      ],
+      "confidence": "Confirmed"
+    },
+    "revised": {
+      "answer": "2026-10-13",
+      "notes": "The methodology did not change after 2026-07-07. The board kept adding models until DeepSeek V4.1 Flash (2026-10-13), with pricing corrections on 2026-07-30, 2026-08-06, 2026-08-14 and 2026-09-10. On 2026-10-27, 2.0 replaced 1.1 on the live page. Mistral Large 4 (Preview), added 2026-10-13 and present in the 2026-10-22 snapshot, is no longer in the current data file.",
+      "sources": [
+        "https://cognition.com/frontiercode",
+        "https://web.archive.org/web/20261022064046/https://cognition.com/data/frontiercode-leaderboard/data.json",
+        "https://cognition.com/data/frontiercode-leaderboard/data.json"
+      ],
+      "confidence": "Inferred"
+    },
+    "tasktype": {
+      "answer": "Feature implementation",
+      "notes": "Inferred from the published examples. They are maintainer-chosen changes from \"multi-PR chains and freeform requests\": encapsulating warning logging behind a new `LOG_WARNING()` helper (jsonschema, C++) and \"Ellipsis on long emails\". Bug fixes and refactors are also in scope. Grading is about mergeability (scope, style and tests), not just resolution.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/blog/frontier-code-1.1"
+      ],
+      "confidence": "Inferred"
+    },
+    "taskcount": {
+      "answer": "150",
+      "notes": "Extended = all 150 tasks. Main = the 100 hardest, and it is the headline subset (\"We present the results on FrontierCode 1.1 Main\"). Diamond (the 50 hardest) was deprecated in 1.1 because it \"no longer reflects the 50 hardest tasks\" and is noisy. All tasks are private. The data file lists `subsets: {main: 100, extended: 150}`.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code-1.1",
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/data/frontiercode-leaderboard/data.json"
+      ],
+      "confidence": "Confirmed"
+    },
+    "languages": {
+      "answer": "C++, Python, TypeScript, Go and others",
+      "notes": "The 1.0 post claims it \"triple[s] the number of represented languages from SWE-Bench Pro\" but gives no list. The named repos imply C++ (jsonschema), Python (Celery), TypeScript/JS (Budibase, uppy) and Go/TS (Mattermost). Prompts are deliberately concise, about a third of SWE-Bench Pro's length, and include AGENTS.md-style test, lint and style guidelines.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Inferred"
+    },
+    "repocount": {
+      "answer": "36",
+      "notes": "\"We collaborated directly with the maintainers of 36 flagship open-source repositories.\" 1.1 reuses the 1.0 task set. No per-repo task shares are published.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Confirmed"
+    },
+    "human_baseline": {
+      "answer": "No",
+      "notes": "No human score or time-to-solve is reported. Researchers solved \"a random subset\" of tasks only to check clarity and fairness.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/blog/frontier-code-1.1"
+      ],
+      "confidence": "Confirmed"
+    },
+    "reviewhours": {
+      "answer": "40",
+      "notes": "The claim is \"more than 40 hours per task\" of maintainer effort. That covers authoring, rubric design, hack reports, four calibration solutions and iteration with eval engineers and Cognition researchers, so it is not review time alone. It is not broken down by stage.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/frontiercode"
+      ],
+      "confidence": "Reported"
+    },
+    "internet": {
+      "answer": "Yes",
+      "notes": "The internet is deliberately allowed: some tasks need it to look up API contracts. 1.1 adds a \"fair internet use\" prompt and a programmatic verifier. The verifier flags visits to source PRs, upstream patches or files, solution-bearing mirrors and vendored copies (including `npm install` of a fixed release), and flagged runs score 0. A ~1,200-domain blocklist was tried and rejected. Each model runs in its own lab's CLI where one exists (Claude Code, Codex CLI, Grok Build); others use Cognition's Devin CLI (labelled `chisel` in earlier snapshots) or mini-swe-agent. No turn or time limits are published (Artificial Analysis caps its Stirrup runs at 250 turns).",
+      "sources": [
+        "https://cognition.com/blog/frontier-code-1.1",
+        "https://cognition.com/data/frontiercode-leaderboard/data.json",
+        "https://artificialanalysis.ai/articles/frontiercode"
+      ],
+      "confidence": "Confirmed"
+    },
+    "interaction": {
+      "answer": "Agent loop",
+      "notes": "An autonomous agent loop in a repo checkout. There is no simulated user, and the agent must \"infer the maintainer's intent, given the same context as a human contributor\".",
+      "sources": [
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Confirmed"
+    },
+    "underspec": {
+      "answer": "Yes",
+      "notes": "Task descriptions are \"humanlike and deliberately concise — a third the length of SWE-Bench Pro's\", and the agent must infer intent. There is no way to ask questions.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Confirmed"
+    },
+    "origin": {
+      "answer": "Mixed",
+      "notes": "\"FrontierCode tasks are sourced from real PRs in open-source codebases\" (1.1 post). Maintainers hand-selected and rewrote them \"from multi-PR chains and freeform requests\", and wrote the rubrics with Cognition researchers. So the tasks are expert-written briefs anchored on real upstream changes.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code-1.1",
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Confirmed"
+    },
+    "contam": {
+      "answer": "Medium",
+      "notes": "**Mitigating:** tasks, rubrics and solutions are private and \"will not be released publicly to avoid contamination\". Web lookups of the solution are now detected and zeroed. **Risks:** the reference changes are real upstream PRs, so solutions exist in public repos, mirrors and package registries that later models may have trained on. Cognition notes that agents can get fixes by installing the latest release. No source date window, canary string or training-cutoff comparison is published. Flag rates on the board reach 25% (DeepSeek V4 Flash 0731) and 11% (DeepSeek V4 Pro 0813), so solution leakage on the web is real.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/blog/frontier-code-1.1",
+        "https://cognition.com/data/frontiercode-leaderboard/data.json"
+      ],
+      "confidence": "Inferred"
+    },
+    "grader": {
+      "answer": "Mixed",
+      "notes": "An ensemble per task: `classical` injected unit tests; `command` (build, lint, regression); `reverse-classical` (the agent's tests must fail on the base commit); `adaptive classical grading` via **mutagent**, an LLM that adapts reference tests to the implementation; `scope` (file, size and semantic locality limits); and `prompt` (an LLM judge reviews the diff against a natural-language rubric). Criteria are blockers or non-blockers, written by maintainers with Cognition researchers. Cognition does not name its judge model. Artificial Analysis's run uses GPT-6 Luna (medium) as judge.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://artificialanalysis.ai/articles/frontiercode"
+      ],
+      "confidence": "Confirmed"
+    },
+    "tests_hidden": {
+      "answer": "Yes",
+      "notes": "Classical tests are \"inject[ed] … into the repository, run[], then clean[ed] up\" at grading time, and the rubrics are private. The prompt gives only generic test, lint and style guidelines.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Inferred"
+    },
+    "false_passes": {
+      "answer": "Not assessable",
+      "notes": "Tasks are private, so there is no outside audit. Cognition self-reports \"81% less misclassification errors\" than SWE-Bench Pro (called an \"81% lower false positive rate\" elsewhere in the same post) from trajectory analysis. The 1.1 audit found 75 overly strict blockers, which were false negatives, not false passes. Hack reports and Devin-driven rubric attacks were used to harden criteria.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/blog/frontier-code-1.1"
+      ],
+      "confidence": "Inferred"
+    },
+    "hacking": {
+      "answer": "No",
+      "notes": "Grading tests are injected only at grading time, and rubrics are never shown. The main known exploit was finding the upstream fix online: rare in 1.0 but rising with Fable 5. In 1.1 those runs are detected and zeroed. Nothing is said about git history in the workspace.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/blog/frontier-code-1.1"
+      ],
+      "confidence": "Inferred"
+    },
+    "quality": {
+      "answer": "Yes",
+      "notes": "This is the benchmark's core claim: it grades \"mergeability\". Criteria cover regression safety, lint and build cleanliness, test correctness (reverse-classical), scope discipline, and code quality, idiom and convention via the LLM rubric.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/frontiercode"
+      ],
+      "confidence": "Confirmed"
+    },
+    "partial": {
+      "answer": "Yes",
+      "notes": "If every blocker passes, the score is the weighted aggregate of all rubric items passed. If any blocker fails, the score is 0. The board also has a separate all-or-nothing **pass rate** (`correct`) toggle.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/data/frontiercode-leaderboard/data.json"
+      ],
+      "confidence": "Confirmed"
+    },
+    "evalset": {
+      "answer": "Private",
+      "notes": "All 150 tasks are private. Cognition runs the models (\"opening up our evaluation to all model creators\").",
+      "sources": [
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Confirmed"
+    },
+    "samples": {
+      "answer": "A few",
+      "notes": "Only illustrative examples: the jsonschema `LOG_WARNING()` task with its prompt and rubric walkthrough (1.0 post), and an \"Ellipsis on long emails\" replay showing a flagged and an allowed internet-use run (1.1 post).",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/blog/frontier-code-1.1"
+      ],
+      "confidence": "Confirmed"
+    },
+    "gold": {
+      "answer": "No",
+      "notes": "Reference solutions are not released (the tasks are private).",
+      "sources": [
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Confirmed"
+    },
+    "gradercode": {
+      "answer": "No",
+      "notes": "Neither the grading harness, mutagent nor the internet-use verifier is published. No repo is linked.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/blog/frontier-code-1.1"
+      ],
+      "confidence": "Inferred"
+    },
+    "trajectories": {
+      "answer": "No",
+      "notes": "Only scripted replays of single example runs are embedded in the blog posts. No transcript dumps are published.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code-1.1",
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Inferred"
+    },
+    "pertask": {
+      "answer": "No",
+      "notes": "The board's data file has only per-model aggregates per subset and effort (score, pass rate, tokens, cost, time, flag rate).",
+      "sources": [
+        "https://cognition.com/data/frontiercode-leaderboard/data.json"
+      ],
+      "confidence": "Confirmed"
+    },
+    "submission": {
+      "answer": "Publisher only",
+      "notes": "Cognition runs every evaluation itself. Model creators can request evaluation (\"we are opening up our evaluation to all model creators\"), but there is no public self-submission.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/frontiercode"
+      ],
+      "confidence": "Inferred"
+    },
+    "verified": {
+      "answer": "Some",
+      "notes": "Since 2026-10-12 Artificial Analysis independently runs 1.1 Main with its Stirrup harness (3 attempts per task, 250-turn cap, GPT-6 Luna judge). Its top result, Claude Opus 5.5 at 52% score and 58% pass rate, is close to Cognition's 54.6%. Other rows are Cognition-only, and some labs (Anthropic, Google) republish their own numbers.",
+      "sources": [
+        "https://artificialanalysis.ai/articles/frontiercode"
+      ],
+      "confidence": "Confirmed"
+    },
+    "run_cost": {
+      "answer": "500",
+      "notes": "My calculation for one configuration (current SOTA, Claude Opus 5.5 medium) on the full 150-task Extended set at 5 trials per task: $0.6666 per rollout × 150 × 5 ≈ $500. Main alone is $0.8016 × 100 × 5 ≈ $401. Costs range from about $0.02 per rollout (GPT-6 Luna low) to $20.78 (Sonnet 5.5 max). Cognition runs every effort level, so a full profile costs several times more. Task images are private, so the suite can't be run outside Cognition.",
+      "sources": [
+        "https://cognition.com/data/frontiercode-leaderboard/data.json",
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Inferred"
+    },
+    "metric": {
+      "answer": "Score (weighted rubric, Main)",
+      "notes": "**Score** = weighted aggregate of rubric items; any failed blocker gives 0. Each model is run 5 times per reasoning effort, scores are averaged per effort, and the model's best effort is reported. The headline subset is Main (100 tasks). There is also a **pass rate** (fraction of trials clearing all blockers).",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/blog/frontier-code-1.1",
+        "https://cognition.com/data/frontiercode-leaderboard/data.json"
+      ],
+      "confidence": "Confirmed"
+    },
+    "sota_score": {
+      "answer": "54.6",
+      "notes": "Claude Opus 5.5 (medium) scores 54.64 on Main (pass rate 59.6%) on Cognition's final 1.1 board. Runner-ups: Claude Fable 5 (xhigh) 53.48, Claude Opus 5 (medium) 53.38 and GPT-6 Astra (max) 53.26. The Extended top is Claude Opus 5.5 (medium) at 65.27. On Artificial Analysis's independent board, Claude Opus 5.5 (max with fallback) scores 52%.",
+      "sources": [
+        "https://cognition.com/data/frontiercode-leaderboard/data.json",
+        "https://artificialanalysis.ai/articles/frontiercode"
+      ],
+      "confidence": "Confirmed"
+    },
+    "sota_model": {
+      "answer": "Claude Opus 5.5 (medium), Claude Code",
+      "notes": "",
+      "sources": [
+        "https://cognition.com/data/frontiercode-leaderboard/data.json"
+      ],
+      "confidence": "Confirmed"
+    },
+    "sota_date": {
+      "answer": "2026-09-22",
+      "notes": "The changelog entry \"Added Claude Opus 5.5\" is dated 2026-09-22, and the 2026-09-22 archived data file is the first with it on top. The 2026-09-12 snapshot still had Fable 5 (xhigh) first.",
+      "sources": [
+        "https://cognition.com/frontiercode",
+        "https://web.archive.org/web/20260922185206/https://cognition.com/data/frontiercode-leaderboard/data.json"
+      ],
+      "confidence": "Confirmed"
+    },
+    "sota_at_release": {
+      "answer": "53.5",
+      "notes": "Claude Fable 5 (xhigh) scored 53.48 in the 2026-07-07 blog data (archived 2026-07-08), with 8 models. **Timeline of records on Main:** 2026-07-07 Fable 5 (xhigh) 53.48 (still the top when the leaderboard launched on 2026-07-17; Opus 5 medium came in at 53.38 on 2026-07-24) → 2026-09-22 Claude Opus 5.5 (medium) 54.64. 1.0's record was Opus 4.8 at 34.3 under the older grading, which isn't comparable.",
+      "sources": [
+        "https://web.archive.org/web/20260708150620/https://cognition.com/data/frontier-code-1.1/data.json",
+        "https://web.archive.org/web/20260724213504/https://cognition.com/data/frontiercode-leaderboard/data.json",
+        "https://cognition.com/data/frontiercode-leaderboard/data.json"
+      ],
+      "confidence": "Confirmed"
+    },
+    "monthly": {
+      "answer": "0.31",
+      "notes": "(54.64 − 53.48) ÷ (115 days from 2026-07-07 to 2026-10-30 ÷ 30.44 = 3.78 months) = 1.16 ÷ 3.78 ≈ **0.31 pp/month**. Measured to 2026-10-27, when 2.0 replaced 1.1, it is 1.16 ÷ 3.68 ≈ 0.32.",
+      "sources": [
+        "https://cognition.com/data/frontiercode-leaderboard/data.json",
+        "https://web.archive.org/web/20260708150620/https://cognition.com/data/frontier-code-1.1/data.json"
+      ],
+      "confidence": "Inferred"
+    },
+    "tiers": {
+      "answer": "1",
+      "notes": "Best rows of the top 5 models: 54.64, 53.48, 53.38, 53.26 and 52.09, a 2.6 pp spread. No CIs are published. With 100 tasks, task-sampling standard error near p = 0.5 is about 5 pp, so the top five are statistically indistinguishable.",
+      "sources": [
+        "https://cognition.com/data/frontiercode-leaderboard/data.json"
+      ],
+      "confidence": "Inferred"
+    },
+    "saturation": {
+      "answer": "No",
+      "notes": "The top score is 54.6 on Main and 65.3 on Extended, and the top pass rate is about 60% on Main. Artificial Analysis notes that 9 Main tasks were solved by no model on any attempt. Cognition replaced 1.1 with a harder 2.0 after about 3.5 months.",
+      "sources": [
+        "https://cognition.com/data/frontiercode-leaderboard/data.json",
+        "https://artificialanalysis.ai/articles/frontiercode"
+      ],
+      "confidence": "Confirmed"
+    },
+    "scaffold_spread": {
+      "answer": "2.6",
+      "notes": "There is only one harness per model on Cognition's board. Across boards, Claude Opus 5.5 scores 54.6 (Claude Code, Cognition) and 52 (Stirrup, Artificial Analysis), a 2.6 pp gap. Trial counts and judge also differ between the two. Cognition's Devin Fusion (with Haiku 5.5) is quoted at 66.2, subset unstated, versus Haiku 5.5 alone at 46.4.",
+      "sources": [
+        "https://cognition.com/data/frontiercode-leaderboard/data.json",
+        "https://artificialanalysis.ai/articles/frontiercode",
+        "https://www.anthropic.com/claude-haiku-5-5"
+      ],
+      "confidence": "Inferred"
+    },
+    "ci_reported": {
+      "answer": "No",
+      "notes": "The board gives point estimates only (the mean of 5 trials per effort). Neither the data file nor the posts include intervals or standard deviations.",
+      "sources": [
+        "https://cognition.com/data/frontiercode-leaderboard/data.json",
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Confirmed"
+    },
+    "cost_reported": {
+      "answer": "Yes",
+      "notes": "\"Cost is the mean USD spend per rollout at list API pricing, including public discounts.\" Also reported: mean output tokens, wall-clock minutes, tool calls, steps and a flag rate (share of runs zeroed for unfair internet use, added 2026-08-06). Pricing is re-based when providers change prices (changelog).",
+      "sources": [
+        "https://cognition.com/frontiercode",
+        "https://cognition.com/data/frontiercode-leaderboard/data.json"
+      ],
+      "confidence": "Confirmed"
+    },
+    "failures": {
+      "answer": "No",
+      "notes": "There is no failure taxonomy. The posts discuss misclassification types (false positives and negatives), one worked failure (Opus 4.8 mixing `LOG_WARNING()` and `std::cerr`) and unfair-internet-use rates.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code",
+        "https://cognition.com/blog/frontier-code-1.1"
+      ],
+      "confidence": "Confirmed"
+    },
+    "validity": {
+      "answer": "No",
+      "notes": "There is no correlation with real merge outcomes or productivity. The validity claims are maintainer authorship and the self-reported 81% fewer misclassifications than SWE-Bench Pro.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Inferred"
+    },
+    "scaffold_disclosed": {
+      "answer": "Yes",
+      "notes": "Every row lists its harness (Claude Code, Codex CLI, Grok Build, Devin, Devin CLI, mini-swe-agent, Cursor CLI) and reasoning effort. Each effort is the mean of 5 trials, and the headline is the best effort, a form of best-of-efforts selection.",
+      "sources": [
+        "https://cognition.com/data/frontiercode-leaderboard/data.json",
+        "https://cognition.com/blog/frontier-code"
+      ],
+      "confidence": "Confirmed"
+    },
+    "refresh": {
+      "answer": "Versioned",
+      "notes": "Releases so far: 1.0 (2026-06-08), 1.1 (2026-07-07) and 2.0 (2026-10-27). Within 1.1 the task set stayed fixed.",
+      "sources": [
+        "https://cognition.com/frontiercode"
+      ],
+      "confidence": "Confirmed"
+    },
+    "safety": {
+      "answer": "No",
+      "notes": "Only unfair internet use, which is a benchmark-integrity flag, is tracked and published as a flag rate. Destructive or unsafe agent actions are not tracked.",
+      "sources": [
+        "https://cognition.com/blog/frontier-code-1.1",
+        "https://cognition.com/data/frontiercode-leaderboard/data.json"
+      ],
+      "confidence": "Inferred"
+    },
+    "labs_reporting": {
+      "answer": "2",
+      "notes": "Labs whose own pages I opened report FrontierCode 1.1 Main: **Anthropic** (Haiku 5.5 page: 46.4, alongside Sonnet 5.5 at 52.1) and **Google** (Gemini 3.7 Flash model card: 43.6). llmreference also cites the Anthropic Claude Opus 5 system card (53.4); I did not open it. Cognition (the publisher) uses it for SWE-2 and Fusion. I found no OpenAI, xAI, Moonshot, Zhipu or DeepSeek first-party citations.",
+      "sources": [
+        "https://www.anthropic.com/claude-haiku-5-5",
+        "https://deepmind.google/models/model-cards/gemini-3-7-flash/",
+        "https://www.llmreference.com/benchmark/frontiercode-main"
+      ],
+      "confidence": "Confirmed"
+    },
+    "criticism": {
+      "answer": "Publisher ranks its own models on private tasks it alone grades",
+      "notes": "Other criticisms: (1) LLM-judged rubric criteria and mutagent add judge variance, and the judge model is not disclosed. (2) Harnesses differ by model, so rows are directional. Extended scores run well above Main with no explanation (SitePoint). (3) The 1.1 claim that unfair use is \"below 1% for every model\" held for launch models, but later rows flag up to 25% (DeepSeek V4 Flash 0731), so some scores are deflated by zeroing. (4) No CIs, and the top five sit within 2.6 pp.",
+      "sources": [
+        "https://cognition.com/data/frontiercode-leaderboard/data.json",
+        "https://cognition.com/blog/frontier-code-1.1",
+        "https://www.sitepoint.com/claude-opus-5-medium-effort-frontiercode-benchmark/"
+      ],
+      "confidence": "Inferred"
+    },
+    "status": {
+      "answer": "Deprecated",
+      "notes": "Superseded by FrontierCode 2.0 on 2026-10-27. The live leaderboard now shows 2.0, and 1.1 rankings live only on the 1.1 post and in the data file. Artificial Analysis still runs 1.1 Main as a standalone board (from 2026-10-12).",
+      "sources": [
+        "https://cognition.com/frontiercode",
+        "https://artificialanalysis.ai/articles/frontiercode"
+      ],
+      "confidence": "Confirmed"
+    }
+  },
+  "model_results": [
+    {
+      "model": "Claude Opus 5.5 (medium)",
+      "lab": "Anthropic",
+      "score": 54.64,
+      "cost_per_task_usd": 0.8016,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 5.5 (max)",
+      "lab": "Anthropic",
+      "score": 54.43,
+      "cost_per_task_usd": 6.191,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 5.5 (high)",
+      "lab": "Anthropic",
+      "score": 53.99,
+      "cost_per_task_usd": 1.0896,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Fable 5 (xhigh)",
+      "lab": "Anthropic",
+      "score": 53.48,
+      "cost_per_task_usd": 13.0938,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 5 (medium)",
+      "lab": "Anthropic",
+      "score": 53.38,
+      "cost_per_task_usd": 4.3127,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-24",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Astra (max)",
+      "lab": "OpenAI",
+      "score": 53.26,
+      "cost_per_task_usd": 4.586,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-03",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Fable 5 (high)",
+      "lab": "Anthropic",
+      "score": 52.73,
+      "cost_per_task_usd": 9.4805,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 5.5 (xhigh)",
+      "lab": "Anthropic",
+      "score": 52.09,
+      "cost_per_task_usd": 1.5881,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-28",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Fable 5 (max)",
+      "lab": "Anthropic",
+      "score": 51.57,
+      "cost_per_task_usd": 19.0696,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 5.5 (xhigh)",
+      "lab": "Anthropic",
+      "score": 51.42,
+      "cost_per_task_usd": 2.2545,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Astra (high)",
+      "lab": "OpenAI",
+      "score": 50.94,
+      "cost_per_task_usd": 3.0149,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-03",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Fable 5.1 (medium)",
+      "lab": "Anthropic",
+      "score": 50.91,
+      "cost_per_task_usd": 3.2845,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-01",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Astra (xhigh)",
+      "lab": "OpenAI",
+      "score": 50.62,
+      "cost_per_task_usd": 3.2755,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-03",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Fable 5.1 (high)",
+      "lab": "Anthropic",
+      "score": 50.34,
+      "cost_per_task_usd": 5.2741,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-01",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Fable 5.1 (max)",
+      "lab": "Anthropic",
+      "score": 50.28,
+      "cost_per_task_usd": 12.8257,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-01",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6.1 Sol (medium)",
+      "lab": "OpenAI",
+      "score": 50.23,
+      "cost_per_task_usd": 0.3607,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "SWE-2 (max)",
+      "lab": "Cognition",
+      "score": 50.0,
+      "cost_per_task_usd": 1.1761,
+      "scaffold": "Devin",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Fable 5 (medium)",
+      "lab": "Anthropic",
+      "score": 49.82,
+      "cost_per_task_usd": 7.1539,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Fable 5.1 (low)",
+      "lab": "Anthropic",
+      "score": 49.82,
+      "cost_per_task_usd": 2.3849,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-01",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 5.5 (high)",
+      "lab": "Anthropic",
+      "score": 49.38,
+      "cost_per_task_usd": 0.4175,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-28",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6.1 Sol (xhigh)",
+      "lab": "OpenAI",
+      "score": 49.29,
+      "cost_per_task_usd": 0.5599,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Sol (max)",
+      "lab": "OpenAI",
+      "score": 49.27,
+      "cost_per_task_usd": 2.0651,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Astra (medium)",
+      "lab": "OpenAI",
+      "score": 48.83,
+      "cost_per_task_usd": 2.4259,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-03",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Fable 5.1 (xhigh)",
+      "lab": "Anthropic",
+      "score": 48.73,
+      "cost_per_task_usd": 9.2738,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-01",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Sol (xhigh)",
+      "lab": "OpenAI",
+      "score": 48.45,
+      "cost_per_task_usd": 1.325,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 5 (max)",
+      "lab": "Anthropic",
+      "score": 48.04,
+      "cost_per_task_usd": 11.416,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-24",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Fable 5 (low)",
+      "lab": "Anthropic",
+      "score": 48.01,
+      "cost_per_task_usd": 4.9232,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Grok 4.6 (high)",
+      "lab": "xAI",
+      "score": 48.01,
+      "cost_per_task_usd": 2.8758,
+      "scaffold": "Grok Build",
+      "reported_on": "2026-08-12",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 5 (high)",
+      "lab": "Anthropic",
+      "score": 47.99,
+      "cost_per_task_usd": 7.2397,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-24",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6.1 Sol (high)",
+      "lab": "OpenAI",
+      "score": 47.98,
+      "cost_per_task_usd": 0.498,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Sol (high)",
+      "lab": "OpenAI",
+      "score": 47.7,
+      "cost_per_task_usd": 1.0393,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Grok 4.7 (high)",
+      "lab": "xAI",
+      "score": 47.59,
+      "cost_per_task_usd": 6.6472,
+      "scaffold": "Grok Build",
+      "reported_on": "2026-09-21",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6.1 Sol (max)",
+      "lab": "OpenAI",
+      "score": 47.57,
+      "cost_per_task_usd": 0.8481,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Gemini 4 Argon (medium)",
+      "lab": "Google",
+      "score": 47.55,
+      "cost_per_task_usd": 6.7425,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-10-09",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Sol (max)",
+      "lab": "OpenAI",
+      "score": 47.49,
+      "cost_per_task_usd": 5.1898,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 5.5 (low)",
+      "lab": "Anthropic",
+      "score": 47.3,
+      "cost_per_task_usd": 0.4036,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "SWE-2 (high)",
+      "lab": "Cognition",
+      "score": 47.2,
+      "cost_per_task_usd": 0.7813,
+      "scaffold": "Devin",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Gemini 4 Argon (low)",
+      "lab": "Google",
+      "score": 47.2,
+      "cost_per_task_usd": 7.3973,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-10-09",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Sol (xhigh)",
+      "lab": "OpenAI",
+      "score": 46.84,
+      "cost_per_task_usd": 4.1454,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 4.8 (max)",
+      "lab": "Anthropic",
+      "score": 46.5,
+      "cost_per_task_usd": 9.6225,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Haiku 5.5 (max)",
+      "lab": "Anthropic",
+      "score": 46.36,
+      "cost_per_task_usd": 1.3284,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-10-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 5.5 (max)",
+      "lab": "Anthropic",
+      "score": 46.21,
+      "cost_per_task_usd": 20.7818,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-28",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Grok 4.6 (medium)",
+      "lab": "xAI",
+      "score": 46.06,
+      "cost_per_task_usd": 1.9762,
+      "scaffold": "Grok Build",
+      "reported_on": "2026-09-01",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Sol (medium)",
+      "lab": "OpenAI",
+      "score": 45.92,
+      "cost_per_task_usd": 0.7659,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Gemini 4 Argon (high)",
+      "lab": "Google",
+      "score": 45.87,
+      "cost_per_task_usd": 11.1068,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-10-09",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Haiku 5.5 (xhigh)",
+      "lab": "Anthropic",
+      "score": 45.83,
+      "cost_per_task_usd": 0.6297,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-10-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Grok 4.7 (xhigh)",
+      "lab": "xAI",
+      "score": 45.59,
+      "cost_per_task_usd": 8.2891,
+      "scaffold": "Grok Build",
+      "reported_on": "2026-09-21",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 4.8 (xhigh)",
+      "lab": "Anthropic",
+      "score": 45.49,
+      "cost_per_task_usd": 6.7803,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6.1 Sol (low)",
+      "lab": "OpenAI",
+      "score": 45.46,
+      "cost_per_task_usd": 0.2457,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Astra (low)",
+      "lab": "OpenAI",
+      "score": 45.27,
+      "cost_per_task_usd": 1.7,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-03",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Sol (high)",
+      "lab": "OpenAI",
+      "score": 45.06,
+      "cost_per_task_usd": 3.4801,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Kimi K3",
+      "lab": "Moonshot AI",
+      "score": 44.17,
+      "cost_per_task_usd": 3.8167,
+      "scaffold": "mini-swe-agent",
+      "reported_on": "2026-07-27",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "DeepSeek V4.1 Flash (high)",
+      "lab": "DeepSeek",
+      "score": 43.87,
+      "cost_per_task_usd": 0.6202,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-10-13",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 5 (xhigh)",
+      "lab": "Anthropic",
+      "score": 43.65,
+      "cost_per_task_usd": 9.1423,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-24",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Gemini 3.7 Flash (medium)",
+      "lab": "Google",
+      "score": 43.59,
+      "cost_per_task_usd": 1.8227,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-08-13",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "SWE-2 (medium)",
+      "lab": "Cognition",
+      "score": 43.09,
+      "cost_per_task_usd": 0.3712,
+      "scaffold": "Devin",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.5 (xhigh)",
+      "lab": "OpenAI",
+      "score": 42.96,
+      "cost_per_task_usd": 4.0348,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 5 (xhigh)",
+      "lab": "Anthropic",
+      "score": 42.73,
+      "cost_per_task_usd": 10.0666,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Grok 4.5 (high)",
+      "lab": "xAI",
+      "score": 42.44,
+      "cost_per_task_usd": 1.3007,
+      "scaffold": "Grok Build",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Luna (max)",
+      "lab": "OpenAI",
+      "score": 42.42,
+      "cost_per_task_usd": 0.1027,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 5 (max)",
+      "lab": "Anthropic",
+      "score": 42.36,
+      "cost_per_task_usd": 17.1164,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Gemini 3.7 Flash (high)",
+      "lab": "Google",
+      "score": 42.23,
+      "cost_per_task_usd": 2.1184,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-08-13",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "SWE-1.7",
+      "lab": "Cognition",
+      "score": 41.99,
+      "cost_per_task_usd": 1.9734,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 5 (low)",
+      "lab": "Anthropic",
+      "score": 41.95,
+      "cost_per_task_usd": 2.678,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-24",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Grok 4.5 (medium)",
+      "lab": "xAI",
+      "score": 41.93,
+      "cost_per_task_usd": 1.2308,
+      "scaffold": "Grok Build",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Haiku 5.5 (high)",
+      "lab": "Anthropic",
+      "score": 41.89,
+      "cost_per_task_usd": 0.256,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-10-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Haiku 5.5 (medium)",
+      "lab": "Anthropic",
+      "score": 41.63,
+      "cost_per_task_usd": 0.13,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-10-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Terra (max)",
+      "lab": "OpenAI",
+      "score": 41.31,
+      "cost_per_task_usd": 1.8735,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Gemini 3.8 Flash (medium)",
+      "lab": "Google",
+      "score": 41.19,
+      "cost_per_task_usd": 2.5954,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-09-02",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 4.8 (high)",
+      "lab": "Anthropic",
+      "score": 41.02,
+      "cost_per_task_usd": 4.2799,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.5 (high)",
+      "lab": "OpenAI",
+      "score": 40.56,
+      "cost_per_task_usd": 3.1187,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 4.8 (medium)",
+      "lab": "Anthropic",
+      "score": 40.46,
+      "cost_per_task_usd": 3.7029,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GLM 5.3 (max)",
+      "lab": "Zhipu AI",
+      "score": 40.14,
+      "cost_per_task_usd": 16.9089,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-09-02",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Grok 4.6 (low)",
+      "lab": "xAI",
+      "score": 40.11,
+      "cost_per_task_usd": 0.9474,
+      "scaffold": "Grok Build",
+      "reported_on": "2026-09-01",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Sol (medium)",
+      "lab": "OpenAI",
+      "score": 39.93,
+      "cost_per_task_usd": 2.6897,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Luna (max)",
+      "lab": "OpenAI",
+      "score": 39.81,
+      "cost_per_task_usd": 0.3704,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 5 (high)",
+      "lab": "Anthropic",
+      "score": 39.35,
+      "cost_per_task_usd": 6.0977,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Luna (xhigh)",
+      "lab": "OpenAI",
+      "score": 38.91,
+      "cost_per_task_usd": 0.3093,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Terra (xhigh)",
+      "lab": "OpenAI",
+      "score": 38.75,
+      "cost_per_task_usd": 1.3832,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 4.7 (max)",
+      "lab": "Anthropic",
+      "score": 38.54,
+      "cost_per_task_usd": 9.0876,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Gemini 3.8 Flash (high)",
+      "lab": "Google",
+      "score": 37.96,
+      "cost_per_task_usd": 2.598,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-09-02",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Grok 4.5 (low)",
+      "lab": "xAI",
+      "score": 37.86,
+      "cost_per_task_usd": 0.8368,
+      "scaffold": "Grok Build",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Sol (low)",
+      "lab": "OpenAI",
+      "score": 37.28,
+      "cost_per_task_usd": 0.4324,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Luna (high)",
+      "lab": "OpenAI",
+      "score": 37.26,
+      "cost_per_task_usd": 0.0646,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Luna (xhigh)",
+      "lab": "OpenAI",
+      "score": 37.1,
+      "cost_per_task_usd": 0.07,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Gemini 3.7 Flash (low)",
+      "lab": "Google",
+      "score": 36.91,
+      "cost_per_task_usd": 1.7538,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-08-13",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Terra (high)",
+      "lab": "OpenAI",
+      "score": 36.89,
+      "cost_per_task_usd": 1.1875,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.5 (medium)",
+      "lab": "OpenAI",
+      "score": 36.6,
+      "cost_per_task_usd": 2.3513,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 5.5 (medium)",
+      "lab": "Anthropic",
+      "score": 36.48,
+      "cost_per_task_usd": 0.2365,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-28",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Luna (high)",
+      "lab": "OpenAI",
+      "score": 35.89,
+      "cost_per_task_usd": 0.2321,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Luna (medium)",
+      "lab": "OpenAI",
+      "score": 35.53,
+      "cost_per_task_usd": 0.0512,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Sol (low)",
+      "lab": "OpenAI",
+      "score": 35.44,
+      "cost_per_task_usd": 1.8904,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 5 (medium)",
+      "lab": "Anthropic",
+      "score": 35.2,
+      "cost_per_task_usd": 3.8149,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 4.7 (high)",
+      "lab": "Anthropic",
+      "score": 35.17,
+      "cost_per_task_usd": 5.0292,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 4.8 (low)",
+      "lab": "Anthropic",
+      "score": 35.14,
+      "cost_per_task_usd": 2.6827,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 4.7 (xhigh)",
+      "lab": "Anthropic",
+      "score": 34.91,
+      "cost_per_task_usd": 6.8688,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Haiku 5.5 (low)",
+      "lab": "Anthropic",
+      "score": 34.76,
+      "cost_per_task_usd": 0.0596,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-10-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Gemini 3.6 Flash (medium)",
+      "lab": "Google",
+      "score": 34.37,
+      "cost_per_task_usd": 4.037,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-08-06",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Terra (medium)",
+      "lab": "OpenAI",
+      "score": 33.88,
+      "cost_per_task_usd": 0.8189,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Gemini 3.6 Flash (high)",
+      "lab": "Google",
+      "score": 33.69,
+      "cost_per_task_usd": 4.2131,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-08-06",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GLM 5.3 Flash (max)",
+      "lab": "Zhipu AI",
+      "score": 31.83,
+      "cost_per_task_usd": 1.1466,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-09-02",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.5 (low)",
+      "lab": "OpenAI",
+      "score": 30.55,
+      "cost_per_task_usd": 1.6478,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Kimi K2.7",
+      "lab": "Moonshot AI",
+      "score": 30.06,
+      "cost_per_task_usd": 3.0057,
+      "scaffold": "mini-swe-agent",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 5.5 (low)",
+      "lab": "Anthropic",
+      "score": 29.33,
+      "cost_per_task_usd": 0.194,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-09-28",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 4.7 (medium)",
+      "lab": "Anthropic",
+      "score": 28.91,
+      "cost_per_task_usd": 3.2194,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 5 (low)",
+      "lab": "Anthropic",
+      "score": 28.71,
+      "cost_per_task_usd": 2.3897,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "DeepSeek V4 Pro 0813 (high)",
+      "lab": "DeepSeek",
+      "score": 28.55,
+      "cost_per_task_usd": 1.812,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-09-02",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 4.7 (low)",
+      "lab": "Anthropic",
+      "score": 27.61,
+      "cost_per_task_usd": 2.4668,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.4-mini (xhigh)",
+      "lab": "OpenAI",
+      "score": 27.04,
+      "cost_per_task_usd": 1.5201,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 4.6 (high)",
+      "lab": "Anthropic",
+      "score": 26.64,
+      "cost_per_task_usd": 3.9796,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Luna (medium)",
+      "lab": "OpenAI",
+      "score": 25.74,
+      "cost_per_task_usd": 0.1275,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-6 Luna (low)",
+      "lab": "OpenAI",
+      "score": 25.66,
+      "cost_per_task_usd": 0.0199,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Composer 2.5",
+      "lab": "Cursor",
+      "score": 25.64,
+      "cost_per_task_usd": 3.0875,
+      "scaffold": "Cursor CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GLM 5.2",
+      "lab": "Zhipu AI",
+      "score": 24.5,
+      "cost_per_task_usd": 2.4704,
+      "scaffold": "mini-swe-agent",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 4.6 (max)",
+      "lab": "Anthropic",
+      "score": 24.31,
+      "cost_per_task_usd": 2.8979,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Terra (low)",
+      "lab": "OpenAI",
+      "score": 24.11,
+      "cost_per_task_usd": 0.4961,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 4.6 (medium)",
+      "lab": "Anthropic",
+      "score": 23.67,
+      "cost_per_task_usd": 2.7941,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 4.6 (high)",
+      "lab": "Anthropic",
+      "score": 23.47,
+      "cost_per_task_usd": 2.6993,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.4-mini (high)",
+      "lab": "OpenAI",
+      "score": 23.08,
+      "cost_per_task_usd": 0.9537,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Gemini 3.6 Flash (low)",
+      "lab": "Google",
+      "score": 22.82,
+      "cost_per_task_usd": 2.2986,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-08-06",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 4.6 (medium)",
+      "lab": "Anthropic",
+      "score": 21.1,
+      "cost_per_task_usd": 2.3012,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.4-mini (medium)",
+      "lab": "OpenAI",
+      "score": 20.78,
+      "cost_per_task_usd": 0.7833,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "DeepSeek V4 Flash 0731 (high)",
+      "lab": "DeepSeek",
+      "score": 18.8,
+      "cost_per_task_usd": 1.5337,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-08-06",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Opus 4.6 (low)",
+      "lab": "Anthropic",
+      "score": 18.31,
+      "cost_per_task_usd": 2.101,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "DeepSeek V4 Pro",
+      "lab": "DeepSeek",
+      "score": 17.64,
+      "cost_per_task_usd": 1.5548,
+      "scaffold": "mini-swe-agent",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.6 Luna (low)",
+      "lab": "OpenAI",
+      "score": 15.38,
+      "cost_per_task_usd": 0.0594,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Claude Sonnet 4.6 (low)",
+      "lab": "Anthropic",
+      "score": 15.03,
+      "cost_per_task_usd": 1.6481,
+      "scaffold": "Claude Code",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "MiniMax M3",
+      "lab": "MiniMax",
+      "score": 14.7,
+      "cost_per_task_usd": 0.6756,
+      "scaffold": "mini-swe-agent",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Inkling (0.99)",
+      "lab": "Thinking Machines",
+      "score": 14.0,
+      "cost_per_task_usd": 3.6,
+      "scaffold": "mini-swe-agent",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Nemotron 3 Ultra",
+      "lab": "NVIDIA",
+      "score": 13.61,
+      "cost_per_task_usd": 1.4655,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-08-06",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Qwen 3.7 Plus",
+      "lab": "Alibaba",
+      "score": 10.2,
+      "cost_per_task_usd": 0.2415,
+      "scaffold": "mini-swe-agent",
+      "reported_on": "2026-07-17",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "SWE-1.6",
+      "lab": "Cognition",
+      "score": 9.39,
+      "cost_per_task_usd": 0.4891,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-07-24",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "GPT-5.4-mini (low)",
+      "lab": "OpenAI",
+      "score": 9.25,
+      "cost_per_task_usd": 0.3642,
+      "scaffold": "Codex CLI",
+      "reported_on": "2026-07-07",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    },
+    {
+      "model": "Mistral 3.5 Medium",
+      "lab": "Mistral AI",
+      "score": 8.0,
+      "cost_per_task_usd": 1.3475,
+      "scaffold": "Devin CLI",
+      "reported_on": "2026-08-06",
+      "source_url": "https://cognition.com/data/frontiercode-leaderboard/data.json"
+    }
+  ],
+  "summary": {
+    "released": "2026-07",
+    "tasks": 150,
+    "repos": 36,
+    "sota_model": "Claude Opus 5.5 (medium)",
+    "sota_score": 54.64,
+    "sota_date": "2026-09-22"
+  }
+}

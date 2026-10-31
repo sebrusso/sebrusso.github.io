@@ -1,0 +1,1170 @@
+{
+  "slug": "cursorbench-4",
+  "name": "CursorBench 4",
+  "researched_at": "2026-10-30",
+  "notes": "Model results: all 81 entries (model × effort setting) on Cursor's official CursorBench 4.0 board (cursor.com/cursorbench), read 2026-10-30. Score in %; cost = board \"Avg cost / task\" in USD (tokens × published per-million-token prices incl. cache read/write), as of 2026-10-30. Sonnet 5.5 costs were re-based on 2026-10-07. reported_on = 2026-09-10 for launch entries; for later entries, the date of the first Wayback snapshot showing them (an upper bound, accurate to a few days); Opus 5.5 rows use Anthropic's 2026-09-22 launch date and Grok 4.7 rows xAI's 2026-09-21 post. The chart only plots models; every number comes from the page's table text. Task count, repos and languages are not disclosed (private internal set). Single research pass; SOTA (57.8, Opus 5.5 Max), launch date and SOTA at release (51.8, Fable 5.1 Max) spot-checked against the live board and the 2026-09-10 Wayback snapshot.",
+  "cost_unit": "per task",
+  "fields": {
+    "version": {
+      "answer": "[CursorBench 4.0](https://cursor.com/cursorbench)",
+      "notes": "Lineage from the leaderboard changelog: **3.0** (2026-03-11, edit, refactor and bugfix tasks), **3.1** (2026-05-19, adds codebase understanding, bugfinding, planning and code review; improved grading for some edit tasks), **3.2** (2026-07-08, adds instruction following and advanced tool use), **4.0** (2026-09-10, adds long-horizon edit, refactor, investigation, intent understanding, managing jobs and design adherence problems). The March blog says CursorBench existed internally before 3 (\"problem scope ... has roughly doubled from the initial version\"). Scores are not comparable across versions: the 2026-09-09 snapshot showed Fable 5.1 Max at 73.4% on 3.2, versus 51.8% on 4.0 the next day. The blog's banner still calls 3.1 the current production version, which is stale.",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://cursor.com/blog/cursorbench",
+        "https://web.archive.org/web/20260909171121/https://cursor.com/cursorbench",
+        "https://web.archive.org/web/20260910222956/https://cursor.com/cursorbench"
+      ],
+      "confidence": "Confirmed"
+    },
+    "publisher": {
+      "answer": "[Cursor (Anysphere)](https://cursor.com/cursorbench)",
+      "notes": "Run and hosted by Cursor (Anysphere, Inc.) at cursor.com/cursorbench (also cursor.com/evals). The methodology post is by Naman Jain (Cursor research). SpaceX announced an all-stock $60B acquisition of Anysphere on 2026-06-16 (projected to close Q3 2026, per Built In); SpaceX had merged with xAI. Cursor's site navigation now carries Grok links and \"SpaceXSI Subscription Terms\". I did not confirm the close.",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://cursor.com/blog/cursorbench",
+        "https://builtin.com/articles/spacex-acquires-cursor-60b-20260616"
+      ],
+      "confidence": "Confirmed"
+    },
+    "sells_models": {
+      "answer": "Yes",
+      "notes": "Cursor's own **Composer 2.5** is ranked (27.7%). Cursor is also a Grok development and distribution partner (kingy.ai), and its announced acquirer SpaceX owns xAI, whose **Grok 4.6** and **Grok 4.7** are ranked. Cursor also resells every ranked third-party model inside its product.",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://builtin.com/articles/spacex-acquires-cursor-60b-20260616",
+        "https://kingy.ai/?p=931355"
+      ],
+      "confidence": "Confirmed"
+    },
+    "sells_data": {
+      "answer": "No",
+      "notes": "No source shows Cursor, Anysphere or SpaceX selling training data or annotation. Tasks are built in-house from Cursor's own engineering sessions via Cursor Blame, so no outside data vendor is involved as far as published.",
+      "sources": [
+        "https://cursor.com/blog/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "released": {
+      "answer": "2026-09-10",
+      "notes": "CursorBench 4.0 task set: 2026-09-10 (changelog; Wayback snapshot that evening shows the 4.0 board). The CursorBench family first went public on 2026-03-11 with the blog post and 3.0.",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://web.archive.org/web/20260910222956/https://cursor.com/cursorbench",
+        "https://cursor.com/blog/cursorbench"
+      ],
+      "confidence": "Confirmed"
+    },
+    "revised": {
+      "answer": "2026-10-07",
+      "notes": "Last changelog entry: 2026-10-07, *Reporting*: \"Updated Sonnet 5.5 results to account for adjusted pricing\" (costs only; Sonnet 5.5 Max fell from $9.67 to $7.05 per task, scores unchanged). The 4.0 task set itself has not changed since 2026-09-10. Models keep being added (43 entries on 2026-09-10, 81 on 2026-10-30).",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://web.archive.org/web/20261007140108/https://cursor.com/cursorbench"
+      ],
+      "confidence": "Confirmed"
+    },
+    "tasktype": {
+      "answer": "Feature implementation",
+      "notes": "Cursor doesn't use this taxonomy. Tasks are real requests developers sent Cursor's agent, paired with the code they committed. 4.0 adds long-horizon **edit, refactor, investigation, intent understanding, managing jobs and design adherence**. Earlier versions, which may still be included, cover bugfix, codebase understanding, bugfinding, planning, code review, instruction following and advanced tool use. The blog also mentions monorepo/multi-workspace work, investigating production logs and long-running experiments. \"Feature implementation\" is my mapping of the edit-heavy core; it is a broad mix.",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://cursor.com/blog/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "interaction": {
+      "answer": "Agent loop",
+      "notes": "Agents run multi-step: the board reports average steps per task, from 18 (GPT-5.6 Luna Low) to 324 (Gemini 3.8 Flash High). No simulated user is described. Turn and time limits are not published.",
+      "sources": [
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Confirmed"
+    },
+    "underspec": {
+      "answer": "Yes",
+      "notes": "\"Our task descriptions are intentionally short, in contrast with the detailed GitHub issues sourced in public benchmarks.\" The board calls them \"ambiguous, multi-file tasks\". Whether the agent can ask clarifying questions is not stated.",
+      "sources": [
+        "https://cursor.com/blog/cursorbench",
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Confirmed"
+    },
+    "internet": {
+      "answer": "Unknown",
+      "notes": "Not disclosed. The March blog says future long-running tasks need a way to \"solve reproducibility for tasks that interact with external services\", and some tasks involve investigating production logs. Cursor's reward-hacking post restricts internet only on its public-benchmark experiments.",
+      "sources": [
+        "https://cursor.com/blog/cursorbench",
+        "https://cursor.com/blog/reward-hacking-coding-benchmarks"
+      ],
+      "confidence": "Inferred"
+    },
+    "multimodal": {
+      "answer": "Unknown",
+      "notes": "Not disclosed. \"Design adherence\" problems in 4.0 might involve visual references, but no source says so.",
+      "sources": [
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "human_baseline": {
+      "answer": "No",
+      "notes": "No human baseline or time-to-solve estimate appears on any Cursor page.",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://cursor.com/blog/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "origin": {
+      "answer": "Real issues/PRs",
+      "notes": "Tasks come from real Cursor sessions by Cursor's own engineering team. **Cursor Blame** traces committed code back to the agent request that produced it, giving a developer query paired with the ground-truth solution. \"Many tasks come from our internal codebase and controlled sources.\" Mapped to *Real issues/PRs* because they are real requests plus committed code, though they are agent prompts, not GitHub issues.",
+      "sources": [
+        "https://cursor.com/blog/cursorbench",
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "contam": {
+      "answer": "Low",
+      "notes": "**Low for outside labs:** the set is private and drawn largely from Cursor's internal codebase, so it is not in public training data. Cursor refreshes the suite every few months. **Risks:** (1) Cursor trains its own **Composer** models, and SpaceX/xAI said it co-trains models with Cursor. Both could see Cursor-session data close to the eval distribution. No held-out policy or canary is published. (2) Tasks come from real sessions on agent-written code, which may already be logged by model providers serving those sessions. No source window is published.",
+      "sources": [
+        "https://cursor.com/blog/cursorbench",
+        "https://cursor.com/cursorbench",
+        "https://builtin.com/articles/spacex-acquires-cursor-60b-20260616"
+      ],
+      "confidence": "Inferred"
+    },
+    "grader": {
+      "answer": "LLM judge",
+      "notes": "\"We use agentic graders to reliably score them\", because underspecified requests admit many valid solutions. 3.1 \"improved grading criteria for some edit tasks\", which suggests per-task criteria. Judge model, rubric and any test execution are not disclosed.",
+      "sources": [
+        "https://cursor.com/blog/cursorbench",
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Confirmed"
+    },
+    "tests_hidden": {
+      "answer": "Unknown",
+      "notes": "Grading criteria and any tests are not described.",
+      "sources": [
+        "https://cursor.com/blog/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "false_passes": {
+      "answer": "Not assessable",
+      "notes": "No audit of CursorBench grading is published. Cursor's June 2026 reward-hacking post audits SWE-bench Pro/Multilingual, not CursorBench.",
+      "sources": [
+        "https://cursor.com/blog/reward-hacking-coding-benchmarks",
+        "https://cursor.com/blog/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "hacking": {
+      "answer": "Unknown",
+      "notes": "Sandbox, git history and test visibility are not described for CursorBench.",
+      "sources": [
+        "https://cursor.com/blog/cursorbench",
+        "https://cursor.com/blog/reward-hacking-coding-benchmarks"
+      ],
+      "confidence": "Inferred"
+    },
+    "flaky": {
+      "answer": "Unknown",
+      "notes": "No flaky-task reports. Cursor says \"Results are subject to variance; small differences in scores may not be statistically meaningful.\"",
+      "sources": [
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "quality": {
+      "answer": "Yes",
+      "notes": "Cursor says CursorBench measures \"solution correctness, code quality, efficiency, and interaction behavior\", and the agentic grader judges solutions rather than only running tests. The published headline score is not defined; the blog's charts and Anthropic's table (\"Accuracy\") point to correctness. Efficiency is shown separately as cost, tokens and steps.",
+      "sources": [
+        "https://cursor.com/blog/cursorbench",
+        "https://cursor.com/cursorbench",
+        "https://www.anthropic.com/news/claude-opus-5-5"
+      ],
+      "confidence": "Confirmed"
+    },
+    "partial": {
+      "answer": "Unknown",
+      "notes": "Scoring rules are not published.",
+      "sources": [
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "evalset": {
+      "answer": "Private",
+      "notes": "\"Our internal eval suite based on real Cursor sessions from our engineering team.\" No tasks are released.",
+      "sources": [
+        "https://cursor.com/blog/cursorbench"
+      ],
+      "confidence": "Confirmed"
+    },
+    "samples": {
+      "answer": "None",
+      "notes": "No example task is published on the board, blog or changelog.",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://cursor.com/blog/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "gold": {
+      "answer": "No",
+      "notes": "Not published; tasks are internal.",
+      "sources": [
+        "https://cursor.com/blog/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "gradercode": {
+      "answer": "No",
+      "notes": "Not published.",
+      "sources": [
+        "https://cursor.com/blog/cursorbench",
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "trajectories": {
+      "answer": "No",
+      "notes": "Not published.",
+      "sources": [
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "pertask": {
+      "answer": "No",
+      "notes": "Only aggregate score, cost, tokens and steps per model-effort entry.",
+      "sources": [
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Confirmed"
+    },
+    "submission": {
+      "answer": "Publisher only",
+      "notes": "Cursor runs every entry itself; there is no submission process. Labs (Anthropic, xAI) quote Cursor's numbers in launch posts.",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://www.anthropic.com/news/claude-opus-5-5",
+        "https://x.ai/news/grok-4-7"
+      ],
+      "confidence": "Inferred"
+    },
+    "verified": {
+      "answer": "No",
+      "notes": "All scores come from Cursor on its private set; nobody else can rerun them. llm-stats marks its CursorBench 4.0 rows \"Self-reported, unverified\".",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://llm-stats.com/benchmarks/cursorbench-4.0"
+      ],
+      "confidence": "Inferred"
+    },
+    "metric": {
+      "answer": "Score (%)",
+      "notes": "Cursor shows \"CursorBench 4.0 score\" in percent, higher is better, without a definition. Anthropic labels the same number \"Accuracy\". Each row is one model at one effort setting (Low, Medium, High, Extra High, Max, Minimal).",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://www.anthropic.com/news/claude-opus-5-5"
+      ],
+      "confidence": "Confirmed"
+    },
+    "sota_score": {
+      "answer": "57.8",
+      "notes": "Cursor board, 2026-10-30: **Opus 5.5 Max 57.8%** ($13.43 per task), then Opus 5.5 Extra High 56.0%, Opus 5.5 High 56.0%, Sonnet 5.5 Max 55.5%, Sonnet 5.5 Extra High 53.1%. Anthropic's Opus 5.5 post reports the same 57.8%. Some aggregators (BenchLM) list Fable 5.1 51.8% as top, apparently from stale data, and some list 73.4%, which is the CursorBench 3.2 score.",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://www.anthropic.com/news/claude-opus-5-5"
+      ],
+      "confidence": "Confirmed"
+    },
+    "sota_model": {
+      "answer": "Claude Opus 5.5 (Max effort)",
+      "notes": "Anthropic. Agent harness: Cursor's own; the page doesn't name it, and all entries appear to use the same harness.",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://www.anthropic.com/news/claude-opus-5-5"
+      ],
+      "confidence": "Confirmed"
+    },
+    "sota_date": {
+      "answer": "2026-09-22",
+      "notes": "Anthropic published Opus 5.5 with the 57.8% CursorBench 4.0 figure on 2026-09-22. The Cursor board shows it in the first Wayback snapshot after that date (2026-09-23).",
+      "sources": [
+        "https://www.anthropic.com/news/claude-opus-5-5",
+        "https://web.archive.org/web/20260923203000/https://cursor.com/evals"
+      ],
+      "confidence": "Confirmed"
+    },
+    "sota_at_release": {
+      "answer": "51.8",
+      "notes": "Timeline: **2026-09-10** release, Fable 5.1 Max 51.8% (43 entries; Wayback snapshot). **2026-09-22**, Opus 5.5 Max 57.8%, which still leads on 2026-10-30. Snapshots on 09-23, 09-26, 09-29, 10-01, 10-07, 10-11, 10-15, 10-20, 10-22 and 10-26 show no other record.",
+      "sources": [
+        "https://web.archive.org/web/20260910222956/https://cursor.com/cursorbench",
+        "https://web.archive.org/web/20260923203000/https://cursor.com/evals",
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Confirmed"
+    },
+    "monthly": {
+      "answer": "3.65",
+      "notes": "(57.8 − 51.8) ÷ 1.643 months (2026-09-10 to 2026-10-30, 50 days ÷ 30.44) = 3.65 pp/month. Short window and a single jump (Opus 5.5 launch), so this overstates the long-run trend.",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://web.archive.org/web/20260910222956/https://cursor.com/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "tiers": {
+      "answer": "3",
+      "notes": "Best entry per model in the top 5: Opus 5.5 57.8, Sonnet 5.5 55.5, Gemini 4 Argon 52.9, Fable 5.1 51.8, Muse Wonder 50.4. No CIs are published and Cursor warns small gaps may not be meaningful. Grouping on gaps of 2 pp or more gives {Opus 5.5}, {Sonnet 5.5}, {Argon, Fable 5.1, Muse Wonder}. This is a judgment call.",
+      "sources": [
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "saturation": {
+      "answer": "No",
+      "notes": "Top score 57.8%, 42 pp below the ceiling. No human baseline. Version 4.0 was introduced partly because 3.2 tops had reached about 73%.",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://web.archive.org/web/20260909171121/https://cursor.com/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "ci_reported": {
+      "answer": "No",
+      "notes": "No error bars or run counts. Cursor only says results are subject to variance.",
+      "sources": [
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Confirmed"
+    },
+    "cost_reported": {
+      "answer": "Yes",
+      "notes": "The board shows average **cost per task** (USD), **tokens per task** and **steps per task** for every entry. Cost = tokens used × each model's published per-million-token pricing (input, cache read, cache write, output). Costs are re-based when prices change (changelog: 2026-07-09, 07-30, 08-11, 10-07).",
+      "sources": [
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Confirmed"
+    },
+    "failures": {
+      "answer": "No",
+      "notes": "No failure taxonomy for CursorBench is published.",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://cursor.com/blog/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "validity": {
+      "answer": "Yes",
+      "notes": "Cursor says \"CursorBench rankings also more closely track how developers experience model quality in Cursor, as measured by our online evaluation metrics\", and that it separates frontier models better than public benchmarks. The evidence is internal and was shown for CursorBench 3, not 4.0, and it can't be checked from outside.",
+      "sources": [
+        "https://cursor.com/blog/cursorbench",
+        "https://cozypet.github.io/cursorbench-analysis/"
+      ],
+      "confidence": "Reported"
+    },
+    "scaffold_disclosed": {
+      "answer": "No",
+      "notes": "There are no submissions. Cursor doesn't name the harness, tool set or best-of-N policy. Effort level is disclosed per entry.",
+      "sources": [
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "refresh": {
+      "answer": "Versioned",
+      "notes": "Numbered task versions (3.0, 3.1, 3.2, 4.0). \"We refresh the suite every few months.\"",
+      "sources": [
+        "https://cursor.com/cursorbench",
+        "https://cursor.com/blog/cursorbench"
+      ],
+      "confidence": "Confirmed"
+    },
+    "safety": {
+      "answer": "No",
+      "notes": "No unsafe-action tracking is published.",
+      "sources": [
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Inferred"
+    },
+    "labs_reporting": {
+      "answer": "2",
+      "notes": "Lab pages I opened that cite CursorBench 4.0: **Anthropic** (Claude Opus 5.5 post, 2026-09-22: 57.8% and 52.5% at default effort) and **xAI** (Grok 4.7 post, 2026-09-21: 46.3% xHigh). Cursor itself reports Composer 2.5. Checked with no mention: Google's Gemini 4 Argon post and Meta's Muse Wonder page. OpenAI, DeepSeek and Zhipu were not checked.",
+      "sources": [
+        "https://www.anthropic.com/news/claude-opus-5-5",
+        "https://x.ai/news/grok-4-7",
+        "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/",
+        "https://dev.meta.ai/models/muse-wonder/"
+      ],
+      "confidence": "Confirmed"
+    },
+    "criticism": {
+      "answer": "Private and self-run by Cursor, a Grok partner whose own Composer is ranked",
+      "notes": "Others: (1) nothing can be reproduced or checked from outside; (2) launch posts compare mismatched effort levels (xAI compared Grok 4.7 xHigh with Grok 4.6 High; at matched settings the gain is 3.5–4.9 pp, not 5.9). Equal effort labels don't mean equal compute across model families; (3) no CIs; (4) scores are not comparable across versions; (5) validity evidence is Cursor-internal.",
+      "sources": [
+        "https://kingy.ai/?p=931355",
+        "https://cozypet.github.io/cursorbench-analysis/",
+        "https://x.ai/news/grok-4-7",
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Reported"
+    },
+    "status": {
+      "answer": "Rising",
+      "notes": "Frontier labs (Anthropic, xAI) now quote it in launch posts, and Cursor adds new models quickly (43 to 81 entries in seven weeks).",
+      "sources": [
+        "https://www.anthropic.com/news/claude-opus-5-5",
+        "https://x.ai/news/grok-4-7",
+        "https://cursor.com/cursorbench"
+      ],
+      "confidence": "Inferred"
+    }
+  },
+  "model_results": [
+    {
+      "model": "Opus 5.5 Max",
+      "lab": "Anthropic",
+      "score": 57.8,
+      "cost_per_task_usd": 13.43,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Opus 5.5 Extra High",
+      "lab": "Anthropic",
+      "score": 56.0,
+      "cost_per_task_usd": 6.98,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Opus 5.5 High",
+      "lab": "Anthropic",
+      "score": 56.0,
+      "cost_per_task_usd": 3.97,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Sonnet 5.5 Max",
+      "lab": "Anthropic",
+      "score": 55.5,
+      "cost_per_task_usd": 7.05,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Sonnet 5.5 Extra High",
+      "lab": "Anthropic",
+      "score": 53.1,
+      "cost_per_task_usd": 2.81,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Gemini 4 Argon High",
+      "lab": "Google",
+      "score": 52.9,
+      "cost_per_task_usd": 4.57,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-15",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Gemini 4 Argon Medium",
+      "lab": "Google",
+      "score": 52.8,
+      "cost_per_task_usd": 4.39,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-15",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Opus 5.5 Medium",
+      "lab": "Anthropic",
+      "score": 52.5,
+      "cost_per_task_usd": 2.91,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Fable 5.1 Max",
+      "lab": "Anthropic",
+      "score": 51.8,
+      "cost_per_task_usd": 17.28,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Fable 5.1 Extra High",
+      "lab": "Anthropic",
+      "score": 51.6,
+      "cost_per_task_usd": 13.01,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Gemini 4 Argon Low",
+      "lab": "Google",
+      "score": 50.6,
+      "cost_per_task_usd": 4.09,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-15",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Muse Wonder Max",
+      "lab": "Meta",
+      "score": 50.4,
+      "cost_per_task_usd": 5.25,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-20",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Fable 5.1 High",
+      "lab": "Anthropic",
+      "score": 49.2,
+      "cost_per_task_usd": 9.08,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Haiku 5.5 Max",
+      "lab": "Anthropic",
+      "score": 48.4,
+      "cost_per_task_usd": 1.12,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-11",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Muse Wonder Extra High",
+      "lab": "Meta",
+      "score": 48.2,
+      "cost_per_task_usd": 4.24,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-20",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Sonnet 5.5 High",
+      "lab": "Anthropic",
+      "score": 47.8,
+      "cost_per_task_usd": 1.2,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "DeepSeek V4.1 Flash 1017 Max",
+      "lab": "DeepSeek",
+      "score": 47.7,
+      "cost_per_task_usd": 0.98,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-26",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Fable 5.1 Medium",
+      "lab": "Anthropic",
+      "score": 46.8,
+      "cost_per_task_usd": 7.05,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Opus 5 Max",
+      "lab": "Anthropic",
+      "score": 46.6,
+      "cost_per_task_usd": 11.95,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Grok 4.7 Extra High",
+      "lab": "xAI",
+      "score": 46.3,
+      "cost_per_task_usd": 6.01,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-21",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "DeepSeek V4.1 Flash 1017 Medium",
+      "lab": "DeepSeek",
+      "score": 46.3,
+      "cost_per_task_usd": 0.8,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-26",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Opus 5 Extra High",
+      "lab": "Anthropic",
+      "score": 46.1,
+      "cost_per_task_usd": 11.43,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Muse Wonder High",
+      "lab": "Meta",
+      "score": 46.1,
+      "cost_per_task_usd": 3.51,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-20",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "DeepSeek V4.1 Flash 1017 High",
+      "lab": "DeepSeek",
+      "score": 45.6,
+      "cost_per_task_usd": 0.77,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-26",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Muse Wonder Medium",
+      "lab": "Meta",
+      "score": 45.2,
+      "cost_per_task_usd": 2.82,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-20",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Fable 5.1 Low",
+      "lab": "Anthropic",
+      "score": 45.1,
+      "cost_per_task_usd": 5.44,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "DeepSeek V4.1 Flash 1017 Low",
+      "lab": "DeepSeek",
+      "score": 44.9,
+      "cost_per_task_usd": 0.6,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-26",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Opus 5 High",
+      "lab": "Anthropic",
+      "score": 44.7,
+      "cost_per_task_usd": 9.0,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Haiku 5.5 Extra High",
+      "lab": "Anthropic",
+      "score": 44.3,
+      "cost_per_task_usd": 0.56,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-11",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Grok 4.7 High",
+      "lab": "xAI",
+      "score": 43.9,
+      "cost_per_task_usd": 4.69,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-21",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Opus 5.5 Low",
+      "lab": "Anthropic",
+      "score": 43.7,
+      "cost_per_task_usd": 1.17,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-22",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Opus 5 Medium",
+      "lab": "Anthropic",
+      "score": 43.3,
+      "cost_per_task_usd": 6.94,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GLM 5.3 Max",
+      "lab": "Zhipu AI",
+      "score": 42.6,
+      "cost_per_task_usd": 5.05,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Haiku 5.5 High",
+      "lab": "Anthropic",
+      "score": 42.3,
+      "cost_per_task_usd": 0.32,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-11",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Sol Max",
+      "lab": "OpenAI",
+      "score": 41.7,
+      "cost_per_task_usd": 8.23,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Muse Wonder Low",
+      "lab": "Meta",
+      "score": 41.7,
+      "cost_per_task_usd": 1.91,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-20",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Grok 4.7 Medium",
+      "lab": "xAI",
+      "score": 41.6,
+      "cost_per_task_usd": 3.49,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-21",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Muse Spark 1.3 Max",
+      "lab": "Meta",
+      "score": 41.6,
+      "cost_per_task_usd": 2.64,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Grok 4.6 Extra High",
+      "lab": "xAI",
+      "score": 41.4,
+      "cost_per_task_usd": 6.1,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Terra Max",
+      "lab": "OpenAI",
+      "score": 41.3,
+      "cost_per_task_usd": 5.14,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Opus 5 Low",
+      "lab": "Anthropic",
+      "score": 40.7,
+      "cost_per_task_usd": 4.87,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Grok 4.6 High",
+      "lab": "xAI",
+      "score": 40.4,
+      "cost_per_task_usd": 5.2,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Gemini 3.8 Flash High",
+      "lab": "Google",
+      "score": 39.6,
+      "cost_per_task_usd": 4.7,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Sonnet 5.5 Medium",
+      "lab": "Anthropic",
+      "score": 39.2,
+      "cost_per_task_usd": 0.52,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GLM 5.3 High",
+      "lab": "Zhipu AI",
+      "score": 38.0,
+      "cost_per_task_usd": 3.24,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Sol Extra High",
+      "lab": "OpenAI",
+      "score": 37.7,
+      "cost_per_task_usd": 4.4,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Muse Spark 1.3 Extra High",
+      "lab": "Meta",
+      "score": 37.5,
+      "cost_per_task_usd": 2.1,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Gemini 3.8 Flash Medium",
+      "lab": "Google",
+      "score": 37.3,
+      "cost_per_task_usd": 4.06,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Haiku 5.5 Medium",
+      "lab": "Anthropic",
+      "score": 36.9,
+      "cost_per_task_usd": 0.17,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-11",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GLM 5.3 Flash Max",
+      "lab": "Zhipu AI",
+      "score": 36.8,
+      "cost_per_task_usd": 0.39,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Grok 4.6 Medium",
+      "lab": "xAI",
+      "score": 36.1,
+      "cost_per_task_usd": 3.48,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Luna Max",
+      "lab": "OpenAI",
+      "score": 35.9,
+      "cost_per_task_usd": 1.03,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Sonnet 5.5 Low",
+      "lab": "Anthropic",
+      "score": 35.8,
+      "cost_per_task_usd": 0.37,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Sol High",
+      "lab": "OpenAI",
+      "score": 35.7,
+      "cost_per_task_usd": 2.85,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Muse Wonder Minimal",
+      "lab": "Meta",
+      "score": 34.2,
+      "cost_per_task_usd": 0.84,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-20",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Sonnet 5 Max",
+      "lab": "Anthropic",
+      "score": 34.1,
+      "cost_per_task_usd": 7.17,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Terra Extra High",
+      "lab": "OpenAI",
+      "score": 33.6,
+      "cost_per_task_usd": 1.81,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Grok 4.6 Low",
+      "lab": "xAI",
+      "score": 33.4,
+      "cost_per_task_usd": 2.25,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Muse Spark 1.3 High",
+      "lab": "Meta",
+      "score": 33.4,
+      "cost_per_task_usd": 1.66,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GLM 5.3 Low",
+      "lab": "Zhipu AI",
+      "score": 33.3,
+      "cost_per_task_usd": 2.04,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Grok 4.7 Low",
+      "lab": "xAI",
+      "score": 33.1,
+      "cost_per_task_usd": 1.58,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-21",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Luna Extra High",
+      "lab": "OpenAI",
+      "score": 33.0,
+      "cost_per_task_usd": 0.44,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Muse Spark 1.3 Medium",
+      "lab": "Meta",
+      "score": 32.6,
+      "cost_per_task_usd": 1.49,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Sonnet 5 Extra High",
+      "lab": "Anthropic",
+      "score": 32.0,
+      "cost_per_task_usd": 4.55,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Sol Medium",
+      "lab": "OpenAI",
+      "score": 31.1,
+      "cost_per_task_usd": 1.77,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GLM 5.3 Flash High",
+      "lab": "Zhipu AI",
+      "score": 31.1,
+      "cost_per_task_usd": 0.25,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Haiku 5.5 Low",
+      "lab": "Anthropic",
+      "score": 30.9,
+      "cost_per_task_usd": 0.08,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-10-11",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Sonnet 5 High",
+      "lab": "Anthropic",
+      "score": 30.8,
+      "cost_per_task_usd": 3.48,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Terra High",
+      "lab": "OpenAI",
+      "score": 30.7,
+      "cost_per_task_usd": 1.11,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Luna High",
+      "lab": "OpenAI",
+      "score": 29.4,
+      "cost_per_task_usd": 0.25,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Muse Spark 1.3 Low",
+      "lab": "Meta",
+      "score": 29.3,
+      "cost_per_task_usd": 0.93,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Sonnet 5 Medium",
+      "lab": "Anthropic",
+      "score": 28.0,
+      "cost_per_task_usd": 2.31,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Composer 2.5",
+      "lab": "Cursor",
+      "score": 27.7,
+      "cost_per_task_usd": 0.68,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Terra Medium",
+      "lab": "OpenAI",
+      "score": 27.6,
+      "cost_per_task_usd": 0.64,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GLM 5.3 Flash Low",
+      "lab": "Zhipu AI",
+      "score": 26.9,
+      "cost_per_task_usd": 0.15,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-29",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Terra Low",
+      "lab": "OpenAI",
+      "score": 25.2,
+      "cost_per_task_usd": 0.52,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Sol Low",
+      "lab": "OpenAI",
+      "score": 24.6,
+      "cost_per_task_usd": 0.87,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Muse Spark 1.3 Minimal",
+      "lab": "Meta",
+      "score": 24.3,
+      "cost_per_task_usd": 0.56,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "Sonnet 5 Low",
+      "lab": "Anthropic",
+      "score": 24.1,
+      "cost_per_task_usd": 1.39,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Luna Medium",
+      "lab": "OpenAI",
+      "score": 22.2,
+      "cost_per_task_usd": 0.08,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    },
+    {
+      "model": "GPT-5.6 Luna Low",
+      "lab": "OpenAI",
+      "score": 16.0,
+      "cost_per_task_usd": 0.03,
+      "scaffold": "Cursor agent (harness not named)",
+      "reported_on": "2026-09-10",
+      "source_url": "https://cursor.com/cursorbench"
+    }
+  ],
+  "summary": {
+    "released": "2026-09",
+    "tasks": null,
+    "repos": null,
+    "sota_model": "Claude Opus 5.5 (Max effort)",
+    "sota_score": 57.8,
+    "sota_date": "2026-09-22"
+  }
+}

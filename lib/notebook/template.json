@@ -1,0 +1,104 @@
+{
+  "version": 3,
+  "note": "Round-3 template: every field is a question with a short typed answer; detail goes in the row's collapsed notes. fill: ai = searchable, Claude may stage; human = judgment. from = the v2 field it replaces.",
+  "types": {
+    "bool": "Yes / No / Unknown",
+    "enum": "one of options",
+    "multi": "one or more of options",
+    "int": "whole number",
+    "number": "number, with unit",
+    "percent": "0-100",
+    "date": "YYYY-MM or YYYY-MM-DD",
+    "name": "a name or short phrase, up to ~6 words; may be a [link](url)",
+    "short": "one line, up to ~15 words"
+  },
+  "sections": [
+    { "id": "snapshot", "title": "Snapshot", "fields": [
+      { "key": "verdict", "from": "verdict", "label": "Verdict in one line", "type": "short", "notes": "Why.", "fill": "human" },
+      { "key": "signal", "from": "signal", "label": "Signal quality", "type": "enum", "options": ["High", "Medium", "Low"], "notes": "The one-sentence reason.", "fill": "human" },
+      { "key": "predicts", "from": "bestfor", "label": "SOTA here predicts best-in-class at", "type": "short", "notes": "What it doesn't predict.", "fill": "human" }
+    ]},
+    { "id": "identity", "title": "Identity", "fields": [
+      { "key": "version", "from": "version", "label": "Current version", "type": "name", "format": "Link required", "notes": "Lineage and earlier versions.", "fill": "ai" },
+      { "key": "publisher", "from": "publisher", "label": "Publisher", "type": "name", "format": "Link required", "notes": "Affiliations, who hosts it.", "fill": "ai" },
+      { "key": "sells_models", "from": "coi", "label": "Publisher or funder sells a ranked model?", "type": "bool", "notes": "Which ones.", "fill": "ai" },
+      { "key": "sells_data", "from": "coi", "label": "Publisher or funder sells training data or annotation?", "type": "bool", "notes": "Which ones; who paid for building and grading tasks.", "fill": "ai" },
+      { "key": "released", "from": "date", "label": "First released", "type": "date", "notes": "Paper, repo and leaderboard dates if they differ.", "fill": "ai" },
+      { "key": "revised", "from": "date", "label": "Last revised", "type": "date", "notes": "What changed.", "fill": "ai" }
+    ]},
+    { "id": "task", "title": "Task design", "fields": [
+      { "key": "tasktype", "from": "tasktype", "label": "Primary task type", "type": "enum", "options": ["Issue resolution", "Feature implementation", "Greenfield build", "Function-level synthesis", "Terminal and systems", "ML and research engineering", "Code maintenance", "Web, frontend and UI", "Security", "End-to-end paid work"], "notes": "Secondary types.", "fill": "ai" },
+      { "key": "taskcount", "from": "taskcount", "label": "Tasks in the eval set", "type": "int", "notes": "Public/private split, subsets.", "fill": "ai" },
+      { "key": "languages", "from": "promptdist", "label": "Main languages", "type": "name", "notes": "Domains, difficulty tiers, statement length.", "fill": "ai" },
+      { "key": "repocount", "from": "repocount", "label": "Distinct source repos", "type": "int", "notes": "Top repos by task share; 0 if tasks aren't drawn from repos.", "fill": "ai" },
+      { "key": "human_baseline", "from": "difficulty", "label": "Human baseline measured?", "type": "bool", "notes": "Baseline score, time-to-solve estimates.", "fill": "ai" },
+      { "key": "reviewhours", "from": "reviewhours", "label": "Claimed review hours per task", "type": "number", "unit": "h", "notes": "By stage, and the source of the claim.", "fill": "ai" },
+      { "key": "internet", "from": "surface", "label": "Agent has internet access?", "type": "bool", "notes": "Tools, environment, turn and time limits.", "fill": "ai" },
+      { "key": "interaction", "from": "multiturn", "label": "Interaction", "type": "enum", "options": ["Single-shot", "Agent loop", "Agent loop + simulated user", "Human in the loop"], "notes": "Max turns, how the user is simulated.", "fill": "ai" },
+      { "key": "underspec", "from": "underspec", "label": "Deliberately underspecified?", "type": "bool", "notes": "Can or must the agent ask questions?", "fill": "ai" },
+      { "key": "patch_lines", "from": "scale", "label": "Avg lines changed in the reference solution", "type": "int", "notes": "Repo size, files touched, context needed.", "fill": "ai" },
+      { "key": "multimodal", "from": "multimodal", "label": "Multimodal inputs?", "type": "bool", "format": "Details required if yes", "notes": "Which modalities, share of tasks, how given.", "fill": "ai" }
+    ]},
+    { "id": "provenance", "title": "Code provenance and data origin", "fields": [
+      { "key": "origin", "from": "origin", "label": "Task source", "type": "enum", "options": ["Real issues/PRs", "Expert-written", "Contractor-commissioned", "Synthetic", "Mixed"], "notes": "Who wrote them, how they were sourced.", "fill": "ai" },
+      { "key": "window", "from": "window", "label": "Source data window", "type": "short", "notes": "How the window was determined.", "fill": "ai" },
+      { "key": "contam", "from": "contam", "label": "Contamination risk", "type": "enum", "options": ["Low", "Medium", "High"], "format": "Written response", "notes": "Required: window vs. training cutoffs, canaries, held-out sets, training splits.", "fill": "ai" }
+    ]},
+    { "id": "verify", "title": "Verification strategy", "fields": [
+      { "key": "grader", "from": "grading", "label": "Grader", "type": "enum", "options": ["Unit tests", "Fail-to-pass tests", "Output match", "LLM judge", "Human grading", "Rubric", "Mixed"], "notes": "Who wrote the tests; judge model and rubric if any.", "fill": "ai" },
+      { "key": "tests_per_task", "from": "grading", "label": "Avg tests per task", "type": "number", "notes": "How it was counted.", "fill": "ai" },
+      { "key": "tests_hidden", "from": "grading", "label": "Tests hidden from the agent?", "type": "bool", "notes": "", "fill": "ai" },
+      { "key": "false_passes", "from": "teststrength", "label": "Known false passes?", "type": "enum", "options": ["Yes", "None known", "Not assessable"], "notes": "Audits of weak or wrong tests.", "fill": "ai" },
+      { "key": "hacking", "from": "hacking", "label": "Agent can see or edit tests?", "type": "bool", "notes": "Git history, harness exploits.", "fill": "ai" },
+      { "key": "flaky", "from": "determinism", "label": "Flaky tests reported?", "type": "bool", "notes": "Nondeterministic environments.", "fill": "ai" },
+      { "key": "quality", "from": "quality", "label": "Grades beyond tests passing?", "type": "bool", "notes": "Code quality, mergeability.", "fill": "ai" },
+      { "key": "partial", "from": "partial", "label": "Partial credit?", "type": "bool", "notes": "How partial solutions score.", "fill": "ai" }
+    ]},
+    { "id": "review", "title": "Review and QA process", "fields": [
+      { "key": "validators", "from": "validation", "label": "Human validators per task", "type": "int", "notes": "Expertise, agreement rate, filtering criteria.", "fill": "ai" },
+      { "key": "dropped", "from": "removed", "label": "Tasks dropped in QA", "type": "percent", "notes": "Why they were dropped.", "fill": "ai" }
+    ]},
+    { "id": "access", "title": "Access and artifacts", "fields": [
+      { "key": "evalset", "from": "publicprivate", "label": "Eval set", "type": "enum", "options": ["Public", "Private", "Hybrid"], "notes": "", "fill": "ai" },
+      { "key": "samples", "from": "samples", "label": "Example tasks available", "type": "enum", "options": ["None", "A few", "Dev split", "Full set"], "notes": "", "fill": "ai" },
+      { "key": "gold", "from": "gold", "label": "Reference solutions public?", "type": "bool", "notes": "", "fill": "ai" },
+      { "key": "gradercode", "from": "gradercode", "label": "Grader code public?", "type": "bool", "notes": "", "fill": "ai" },
+      { "key": "trajectories", "from": "trajectories", "label": "Model transcripts public?", "type": "bool", "notes": "Where.", "fill": "ai" },
+      { "key": "pertask", "from": "pertask", "label": "Per-task results public?", "type": "bool", "notes": "", "fill": "ai" },
+      { "key": "submission", "from": "submission", "label": "Who can submit", "type": "enum", "options": ["Anyone", "Publisher only", "By invitation"], "notes": "Submission rules.", "fill": "ai" },
+      { "key": "verified", "from": "selfreport", "label": "Scores independently verified?", "type": "enum", "options": ["Yes", "Some", "No"], "notes": "", "fill": "ai" },
+      { "key": "run_cost", "from": "repro", "label": "Cost to run the full suite", "type": "number", "unit": "USD", "notes": "Harness, images, wall-clock time.", "fill": "ai" }
+    ]},
+    { "id": "results", "title": "Results", "fields": [
+      { "key": "metric", "from": "metric", "label": "Headline metric", "type": "name", "notes": "Definition.", "fill": "ai" },
+      { "key": "sota_score", "from": "sota", "label": "SOTA score", "type": "percent", "notes": "Which leaderboard; other boards' tops.", "fill": "ai" },
+      { "key": "sota_model", "from": "sota", "label": "SOTA model and agent", "type": "name", "notes": "", "fill": "ai" },
+      { "key": "sota_date", "from": "sota", "label": "SOTA set on", "type": "date", "notes": "", "fill": "ai" },
+      { "key": "sota_at_release", "from": "progression", "label": "SOTA at release", "type": "percent", "notes": "Dated timeline of every record.", "fill": "ai" },
+      { "key": "monthly", "from": "monthly", "label": "Avg monthly SOTA gain", "type": "number", "unit": "pp", "format": "Computed", "notes": "The arithmetic.", "fill": "ai" },
+      { "key": "tiers", "from": "separability", "label": "Distinct tiers in the top 5", "type": "int", "notes": "Spread vs. confidence intervals.", "fill": "ai" },
+      { "key": "saturation", "from": "saturation", "label": "Saturated?", "type": "enum", "options": ["No", "Nearly", "Yes"], "notes": "Headroom to ceiling and human baseline.", "fill": "ai" },
+      { "key": "scaffold_spread", "from": "scaffold", "label": "Score spread across scaffolds", "type": "number", "unit": "pp", "notes": "Same model, different harnesses.", "fill": "ai" },
+      { "key": "ci_reported", "from": "variance", "label": "Confidence intervals reported?", "type": "bool", "notes": "Run-to-run spread.", "fill": "ai" },
+      { "key": "cost_reported", "from": "cost", "label": "Leaderboard reports cost?", "type": "bool", "notes": "Tokens, dollars, time; normalization.", "fill": "ai" },
+      { "key": "failures", "from": "failures", "label": "Failure taxonomy published?", "type": "bool", "notes": "", "fill": "ai" },
+      { "key": "validity", "from": "validity", "label": "Validated against real-world outcomes?", "type": "bool", "notes": "Correlations with productivity or other benchmarks.", "fill": "ai" }
+    ]},
+    { "id": "governance", "title": "Governance and maintenance", "fields": [
+      { "key": "scaffold_disclosed", "from": "leaderboard", "label": "Scaffold disclosure required?", "type": "bool", "notes": "Submission rules, best-of-N, anti-gaming.", "fill": "ai" },
+      { "key": "refresh", "from": "refresh", "label": "Refresh cadence", "type": "enum", "options": ["Static", "Versioned", "Rolling"], "notes": "", "fill": "ai" },
+      { "key": "safety", "from": "safety", "label": "Tracks unsafe agent actions?", "type": "bool", "notes": "", "fill": "ai" }
+    ]},
+    { "id": "community", "title": "Community sentiment", "fields": [
+      { "key": "labs_reporting", "from": "adoption", "label": "Frontier labs reporting it (last 12 months)", "type": "int", "format": "Automated", "notes": "Which labs; citations; submissions; stars.", "fill": "ai" },
+      { "key": "criticism", "from": "criticisms", "label": "Top criticism", "type": "short", "notes": "Others, with links.", "fill": "ai" },
+      { "key": "status", "from": "status", "label": "Status", "type": "enum", "options": ["Rising", "Standard", "Contested", "Saturated", "Deprecated"], "notes": "", "fill": "ai" }
+    ]},
+    { "id": "assessment", "title": "Our assessment", "fields": [
+      { "key": "strength", "from": "strengths", "label": "Biggest strength", "type": "short", "notes": "", "fill": "human" },
+      { "key": "weakness", "from": "strengths", "label": "Biggest weakness", "type": "short", "notes": "", "fill": "human" },
+      { "key": "high_score_means", "from": "interpretation", "label": "A high score means", "type": "short", "notes": "What it doesn't mean.", "fill": "human" },
+      { "key": "openq", "from": "openq", "label": "Biggest open question", "type": "short", "notes": "Others.", "fill": "human" }
+    ]}
+  ]
+}
