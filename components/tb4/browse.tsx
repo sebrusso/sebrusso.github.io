@@ -1,14 +1,16 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { ArrowDown, ArrowUp, MessageSquare, Search } from 'lucide-react'
+import { AlertTriangle, ArrowDown, ArrowUp, MessageSquare, Search } from 'lucide-react'
 import {
   BUCKETS,
   CATEGORIES,
   catVar,
   formatHours,
+  formatUsd,
   solveRate,
   taskSlug,
+  type Analysis,
   type Index,
   type PerTask,
   type TaskSummary,
@@ -25,18 +27,25 @@ export interface Filters {
   categories: string[]
   buckets: string[]
   gpuOnly: boolean
+  flags: ('suspect' | 'unsolved')[]
 }
 
-export const NO_FILTERS: Filters = { q: '', categories: [], buckets: [], gpuOnly: false }
+export const NO_FILTERS: Filters = { q: '', categories: [], buckets: [], gpuOnly: false, flags: [] }
 
-export function applyFilters(tasks: TaskSummary[], f: Filters): TaskSummary[] {
+const FLAGS = [
+  { id: 'suspect' as const, label: 'Suspect', test: (a?: Analysis['tasks'][string]) => !!a?.suspect },
+  { id: 'unsolved' as const, label: 'Never solved', test: (a?: Analysis['tasks'][string]) => a?.passed === 0 },
+]
+
+export function applyFilters(tasks: TaskSummary[], f: Filters, analysis: Analysis | null): TaskSummary[] {
   const q = f.q.trim().toLowerCase()
   return tasks.filter(
     (t) =>
       (!q || [t.name, t.category, t.subcategory, ...t.tags, ...t.authors].some((s) => s?.toLowerCase().includes(q))) &&
       (f.categories.length === 0 || f.categories.includes(t.category)) &&
       (f.buckets.length === 0 || BUCKETS.some((b) => f.buckets.includes(b.id) && b.test(t.expertHours))) &&
-      (!f.gpuOnly || t.gpus > 0)
+      (!f.gpuOnly || t.gpus > 0) &&
+      (f.flags.length === 0 || FLAGS.some((fl) => f.flags.includes(fl.id) && fl.test(analysis?.tasks[t.name])))
   )
 }
 
@@ -46,11 +55,12 @@ const HEADINGS: Record<View, string> = {
   info: 'How to read this',
 }
 
-type SortKey = 'name' | 'category' | 'expertHours' | 'instructionWords' | 'tests' | 'solve'
+type SortKey = 'name' | 'category' | 'expertHours' | 'instructionWords' | 'tests' | 'solve' | 'discrimination' | 'cost'
 
 export function Browse({
   index,
   per,
+  analysis,
   view,
   filters,
   setFilters,
@@ -59,6 +69,7 @@ export function Browse({
 }: {
   index: Index
   per: PerTask | null
+  analysis: Analysis | null
   view: View
   filters: Filters
   setFilters: (f: Filters) => void
@@ -66,7 +77,7 @@ export function Browse({
   onOpen: (name: string) => void
 }) {
   const tasks = index.tasks
-  const shown = useMemo(() => applyFilters(tasks, filters), [tasks, filters])
+  const shown = useMemo(() => applyFilters(tasks, filters, analysis), [tasks, filters, analysis])
   const median = useMemo(() => {
     const hs = [...tasks.map((t) => t.expertHours)].sort((a, b) => a - b)
     const m = Math.floor(hs.length / 2)
@@ -120,10 +131,10 @@ export function Browse({
       </section>
 
       {view === 'info' ? (
-        <Info index={index} per={per} />
+        <Info index={index} per={per} analysis={analysis} />
       ) : (
       <div className="flex flex-wrap items-start gap-7">
-        <FilterRail tasks={tasks} filters={filters} setFilters={setFilters} />
+        <FilterRail tasks={tasks} analysis={analysis} filters={filters} setFilters={setFilters} />
         <section aria-label="Tasks" className="flex min-w-0 flex-[999_1_560px] flex-col gap-2.5">
           <div className="flex items-center justify-between gap-3 text-[0.8125rem] text-muted-foreground">
             <span>
@@ -136,7 +147,7 @@ export function Browse({
             )}
           </div>
           {view === 'table' ? (
-            <TaskTable tasks={shown} per={per} onOpen={onOpen} />
+            <TaskTable tasks={shown} per={per} analysis={analysis} onOpen={onOpen} />
           ) : (
             <Landscape tasks={tasks} shown={shown} onOpen={onOpen} />
           )}
@@ -147,7 +158,7 @@ export function Browse({
   )
 }
 
-function FilterRail({ tasks, filters, setFilters }: { tasks: TaskSummary[]; filters: Filters; setFilters: (f: Filters) => void }) {
+function FilterRail({ tasks, analysis, filters, setFilters }: { tasks: TaskSummary[]; analysis: Analysis | null; filters: Filters; setFilters: (f: Filters) => void }) {
   const toggle = (list: string[], v: string) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v])
   const count = (pred: (t: TaskSummary) => boolean) => tasks.filter(pred).length
   const legend = 'mb-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground'
@@ -210,22 +221,45 @@ function FilterRail({ tasks, filters, setFilters }: { tasks: TaskSummary[]; filt
         <span className="flex-1">Needs a GPU</span>
         <span className="tb4-mono text-xs text-muted-foreground">{count((t) => t.gpus > 0)}</span>
       </label>
+      {analysis && (
+        <fieldset className="flex flex-col">
+          <legend className={legend}>Flags</legend>
+          {FLAGS.map((fl) => (
+            <label key={fl.id} className={row}>
+              <input
+                type="checkbox"
+                checked={filters.flags.includes(fl.id)}
+                onChange={() => setFilters({ ...filters, flags: filters.flags.includes(fl.id) ? filters.flags.filter((x) => x !== fl.id) : [...filters.flags, fl.id] })}
+                className="h-4 w-4 accent-[hsl(var(--primary))]"
+              />
+              <span className="flex-1">{fl.label}</span>
+              <span className="tb4-mono text-xs text-muted-foreground">{count((t) => fl.test(analysis.tasks[t.name]))}</span>
+            </label>
+          ))}
+        </fieldset>
+      )}
     </aside>
   )
 }
 
-function TaskTable({ tasks, per, onOpen }: { tasks: TaskSummary[]; per: PerTask | null; onOpen: (n: string) => void }) {
+function TaskTable({ tasks, per, analysis, onOpen }: { tasks: TaskSummary[]; per: PerTask | null; analysis: Analysis | null; onOpen: (n: string) => void }) {
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({ key: 'name', dir: 1 })
   const { comments } = useComments()
   const rows = useMemo(() => {
-    const val = (t: TaskSummary): string | number =>
-      sort.key === 'solve' ? solveRate(per, t.name) ?? -1 : sort.key === 'category' ? `${t.category}/${t.subcategory}` : t[sort.key]
+    const val = (t: TaskSummary): string | number => {
+      const a = analysis?.tasks[t.name]
+      if (sort.key === 'solve') return solveRate(per, t.name) ?? -1
+      if (sort.key === 'discrimination') return a?.discrimination ?? -1
+      if (sort.key === 'cost') return a?.medianCostUsd ?? -1
+      if (sort.key === 'category') return `${t.category}/${t.subcategory}`
+      return t[sort.key]
+    }
     return [...tasks].sort((a, b) => {
       const x = val(a)
       const y = val(b)
       return (x < y ? -1 : x > y ? 1 : 0) * sort.dir
     })
-  }, [tasks, sort, per])
+  }, [tasks, sort, per, analysis])
 
   const maxLog = Math.log10(60 / 0.5)
   const cols: { key: SortKey; label: string; align?: 'right' }[] = [
@@ -235,6 +269,12 @@ function TaskTable({ tasks, per, onOpen }: { tasks: TaskSummary[]; per: PerTask 
     { key: 'instructionWords', label: 'Instruction', align: 'right' },
     { key: 'tests', label: 'Tests', align: 'right' },
     ...(per ? [{ key: 'solve' as SortKey, label: 'Solve rate', align: 'right' as const }] : []),
+    ...(analysis
+      ? [
+          { key: 'discrimination' as SortKey, label: 'Discrimination', align: 'right' as const },
+          { key: 'cost' as SortKey, label: 'Cost / try', align: 'right' as const },
+        ]
+      : []),
   ]
 
   if (tasks.length === 0)
@@ -242,7 +282,7 @@ function TaskTable({ tasks, per, onOpen }: { tasks: TaskSummary[]; per: PerTask 
 
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
-      <table className="w-full min-w-[900px] border-collapse text-sm">
+      <table className="w-full min-w-[1080px] border-collapse text-sm">
         <thead>
           <tr className="bg-muted/40 text-left text-xs text-muted-foreground">
             {cols.map((c) => (
@@ -265,6 +305,7 @@ function TaskTable({ tasks, per, onOpen }: { tasks: TaskSummary[]; per: PerTask 
           {rows.map((t) => {
             const rate = solveRate(per, t.name)
             const threads = openThreadCount(comments, taskSlug(t.name))
+            const a = analysis?.tasks[t.name]
             return (
               <tr key={t.name} className="border-t border-border/70 hover:bg-muted/30">
                 <td className="px-4 py-2.5">
@@ -272,6 +313,11 @@ function TaskTable({ tasks, per, onOpen }: { tasks: TaskSummary[]; per: PerTask 
                     <button onClick={() => onOpen(t.name)} className="tb4-mono whitespace-nowrap text-left text-[0.84rem] font-medium hover:text-primary">
                       {t.name}
                     </button>
+                    {a?.suspect && (
+                      <span title="Suspect: passing barely tracks model strength" aria-label="Suspect task" className="text-[color:var(--tb4-out-timeout)]">
+                        <AlertTriangle size={13} aria-hidden="true" />
+                      </span>
+                    )}
                     {threads > 0 && (
                       <span className="inline-flex items-center gap-0.5 text-xs text-muted-foreground" aria-label={`${threads} open comment threads`}>
                         <MessageSquare size={12} aria-hidden="true" />
@@ -298,6 +344,12 @@ function TaskTable({ tasks, per, onOpen }: { tasks: TaskSummary[]; per: PerTask 
                 <td className="tb4-mono px-4 py-2.5 text-right text-[0.8125rem] text-muted-foreground">{t.instructionWords}</td>
                 <td className="tb4-mono px-4 py-2.5 text-right text-[0.8125rem] text-muted-foreground">{t.tests || '—'}</td>
                 {per && <td className="tb4-mono px-4 py-2.5 text-right text-[0.8125rem]">{rate == null ? '—' : `${Math.round(rate * 100)}%`}</td>}
+                {analysis && (
+                  <>
+                    <td className="tb4-mono px-4 py-2.5 text-right text-[0.8125rem] text-muted-foreground">{a ? a.discrimination.toFixed(1) : '—'}</td>
+                    <td className="tb4-mono px-4 py-2.5 text-right text-[0.8125rem] text-muted-foreground">{formatUsd(a?.medianCostUsd)}</td>
+                  </>
+                )}
                 <td className="max-w-[12rem] truncate px-4 py-2.5 text-muted-foreground" title={t.authors.join(', ')}>
                   {t.authors.length > 1 ? `${t.authors[0]} +${t.authors.length - 1}` : t.authors[0]}
                 </td>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowLeft, File, Folder, MessageSquare } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, File, Folder, MessageSquare } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import {
@@ -14,11 +14,17 @@ import {
   taskSlug,
   useTask,
   type Index,
+  formatSeconds,
+  formatTokens,
+  formatUsd,
+  type Analysis,
   type PerTask,
   type TaskDetail,
+  type TrialsMeta,
   type TaskFile,
 } from '../../lib/tb4/data'
 import { CodeViewer } from './code-viewer'
+import { TrialsPanel } from './trials-panel'
 import { CommentButton, fieldAttr, useComments } from '../comments/comments'
 import { WhoBadge, relativeTime } from '../notebook/bits'
 import { openThreadCount } from '../../lib/comments/store'
@@ -32,8 +38,6 @@ const TABS: [Tab, string][] = [
   ['files', 'All files'],
 ]
 // The file each tab opens on, in order of preference.
-const HUB_ROWS = 'https://hub.harborframework.com/datasets/terminal-bench/terminal-bench/4/leaderboards/4-0-0/rows'
-
 const PREFERRED: Record<Exclude<Tab, 'instruction'>, RegExp[]> = {
   tests: [/test_outputs\.py$/, /\.py$/, /test\.sh$/],
   solution: [/solve\.sh$/, /\.py$/],
@@ -45,6 +49,8 @@ export function TaskView({
   name,
   index,
   per,
+  analysis,
+  trialsMeta,
   tab,
   filePath,
   onTab,
@@ -55,6 +61,8 @@ export function TaskView({
   name: string
   index: Index
   per: PerTask | null
+  analysis: Analysis | null
+  trialsMeta: TrialsMeta | null
   tab: Tab
   filePath: string | null
   onTab: (tab: Tab, file?: string | null) => void
@@ -82,9 +90,7 @@ export function TaskView({
   }
 
   const related = index.tasks.filter((t) => t.category === summary.category && t.name !== name)
-  const results = per?.results[name]
-  const configs = per && results ? per.configs.filter((c) => results[c.id]).map((c) => ({ c, r: results[c.id] })) : []
-  configs.sort((a, b) => b.r.passed / b.r.trials - a.r.passed / a.r.trials || a.c.model.localeCompare(b.c.model))
+  const stats = analysis?.tasks[name] ?? null
 
   return (
     <div className="flex flex-col gap-6 py-8">
@@ -115,7 +121,26 @@ export function TaskView({
             value={[summary.cpus && `${summary.cpus} CPU`, summary.memoryMb && `${summary.memoryMb / 1024} GB`, summary.gpus ? `${summary.gpus} GPU` : null].filter(Boolean).join(' · ') || '—'}
             mono
           />
+          {stats?.medianCostUsd != null && (
+            <Meta
+              label="Typical attempt"
+              value={`${formatUsd(stats.medianCostUsd)} · ${formatSeconds(stats.medianSeconds)} · ${formatTokens(stats.medianOutputTokens)} output tokens`}
+              mono
+            />
+          )}
         </dl>
+        {stats?.suspect && (
+          <div className="flex max-w-[760px] items-start gap-3 rounded-lg border border-[color:var(--tb4-out-timeout)] bg-[color:var(--tb4-out-timeout)]/10 px-4 py-3 text-sm">
+            <AlertTriangle size={16} className="mt-0.5 shrink-0 text-[color:var(--tb4-out-timeout)]" aria-hidden="true" />
+            <p className="leading-relaxed">
+              <span className="font-medium">Suspect task.</span> Passing here barely tracks how strong a model is overall
+              {stats.abilityCorr != null && ` (correlation ${stats.abilityCorr.toFixed(2)} with model ability)`}
+              {stats.mixedShare > 0.4 && `, and ${Math.round(stats.mixedShare * 100)}% of models pass some trials but not others`}. That
+              can mean flaky tests, an ambiguous instruction, or a skill the leaderboard doesn&apos;t otherwise measure. Worth reading
+              transcripts before trusting it.
+            </p>
+          </div>
+        )}
       </header>
 
       <div className="flex flex-wrap items-start gap-7">
@@ -162,51 +187,7 @@ export function TaskView({
         </div>
 
         <aside aria-label="Task details" className="flex w-full flex-col gap-4 lg:w-[320px] lg:flex-none">
-          {configs.length > 0 && (
-            <section aria-labelledby="tb4-results" className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
-              <div className="flex items-baseline justify-between gap-2">
-                <h2 id="tb4-results" className="text-[0.95rem] font-semibold">
-                  Results by model
-                </h2>
-                <span className="tb4-mono text-xs text-muted-foreground">passes / trials</span>
-              </div>
-              <ul className="flex max-h-[26rem] flex-col gap-2.5 overflow-y-auto pr-1">
-                {configs.map(({ c, r }) => (
-                  <li key={c.id} className="flex flex-col gap-1">
-                    <div className="flex justify-between gap-3 text-[0.8125rem]">
-                      <a
-                        href={c.hub_row_id ? `${HUB_ROWS}/${c.hub_row_id}?tab=results` : per!.source_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="truncate hover:text-primary"
-                        title={[c.model, c.agent, c.effort].filter(Boolean).join(' · ')}
-                      >
-                        {c.model}
-                        <span className="text-muted-foreground">
-                          {' '}
-                          · {c.agent}
-                          {c.effort && `, ${c.effort}`}
-                        </span>
-                      </a>
-                      <span className="tb4-mono text-muted-foreground">
-                        {r.passed}/{r.trials}
-                      </span>
-                    </div>
-                    <div className="h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden="true">
-                      <div className="h-full rounded-full" style={{ width: `${(r.passed / r.trials) * 100}%`, background: 'hsl(var(--tb4-bar))' }} />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                Per-trial results from the{' '}
-                <a href={per!.source_url} target="_blank" rel="noreferrer" className="underline underline-offset-2">
-                  Harbor Hub leaderboard
-                </a>
-                , retrieved {per!.retrieved_at}. Each model ran every task 5 times.
-              </p>
-            </section>
-          )}
+          {per && <TrialsPanel name={name} per={per} meta={trialsMeta} stats={stats} />}
 
           <TaskComments slug={slug} files={task?.files ?? []} onGo={(t, p) => onTab(t, p)} />
 

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { stripCanary, useIndex, usePerTask, type TaskDetail } from '../../lib/tb4/data'
+import { stripCanary, useAnalysis, useIndex, usePerTask, useTrialsMeta, type TaskDetail } from '../../lib/tb4/data'
 import { useCommentStore, useIdentity, type CommentTarget } from '../../lib/comments/store'
 import { CommentDrawer, CommentHighlighter, CommentsContext, SelectionCommenter, type CommentsApi } from '../comments/comments'
 import { Browse, NO_FILTERS, type Filters, type View } from './browse'
@@ -18,6 +18,8 @@ const TABS: Tab[] = ['instruction', 'tests', 'solution', 'environment', 'files']
 export function TB4App() {
   const { data: index, error } = useIndex()
   const { data: per } = usePerTask()
+  const { data: analysis } = useAnalysis()
+  const { data: trialsMeta } = useTrialsMeta()
   const params = useSearchParams()
   const router = useRouter()
   const [filters, setFilters] = useState<Filters>(NO_FILTERS)
@@ -70,6 +72,8 @@ export function TB4App() {
           name={task}
           index={index}
           per={per}
+          analysis={analysis}
+          trialsMeta={trialsMeta}
           tab={tab}
           filePath={params.get('file')}
           onTab={(t, file) => go({ task, tab: t === 'instruction' ? null : t, file }, false)}
@@ -81,6 +85,7 @@ export function TB4App() {
         <Browse
           index={index}
           per={per}
+          analysis={analysis}
           view={view}
           filters={filters}
           setFilters={setFilters}

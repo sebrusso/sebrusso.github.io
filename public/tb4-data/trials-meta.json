@@ -1,0 +1,193 @@
+{
+ "source": "https://ofhuhcpkvzjlejydnvyd.supabase.co/rest/v1/rpc/get_job_trials (Harbor Hub, public read)",
+ "retrieved_at": "2026-11-01",
+ "columns": [
+  "config",
+  "trial",
+  "reward",
+  "error",
+  "costUsd",
+  "inputTokens",
+  "outputTokens",
+  "cacheTokens",
+  "seconds",
+  "attempts"
+ ],
+ "configs": [
+  {
+   "id": "opus-5.5-claude-code-max",
+   "job": "96ad98a5-70e6-5e7b-bd1e-67eecfbc644c",
+   "trials": 330
+  },
+  {
+   "id": "sonnet-5.5-claude-code-max",
+   "job": "0e520a82-ad44-56be-b1bd-ff351c5bd923",
+   "trials": 330
+  },
+  {
+   "id": "gpt-6-astra-codex-max",
+   "job": "0f01715e-2f98-40e3-836f-1ac4fdce39a4",
+   "trials": 330
+  },
+  {
+   "id": "gpt-6.1-sol-codex-max",
+   "job": "299f37fe-9a7f-51f4-9619-af26e8312fd7",
+   "trials": 330
+  },
+  {
+   "id": "fable-5.1-claude-code-max",
+   "job": "a6319b9c-7dbc-42b1-8483-6c022e292ae2",
+   "trials": 330
+  },
+  {
+   "id": "gpt-6-astra-codex-xhigh",
+   "job": "caf6e433-9fff-4475-b0bc-977f14ac7052",
+   "trials": 330
+  },
+  {
+   "id": "gpt-6-astra-codex-high",
+   "job": "86e3ac63-37c4-4003-8248-483fdb9b43ce",
+   "trials": 330
+  },
+  {
+   "id": "fable-5.1-claude-code-xhigh",
+   "job": "46b9c704-4b5b-4a44-ba22-03e74fefc257",
+   "trials": 330
+  },
+  {
+   "id": "fable-5.1-claude-code-high",
+   "job": "da64e1b8-5de1-4246-814d-234f9a6ec09a",
+   "trials": 330
+  },
+  {
+   "id": "gpt-6-astra-codex-medium",
+   "job": "2350fd05-ea3b-407e-94ad-07b67c1ed847",
+   "trials": 330
+  },
+  {
+   "id": "fable-5.1-claude-code-medium",
+   "job": "b6211f84-8a65-44fd-85ed-d509db5d1861",
+   "trials": 330
+  },
+  {
+   "id": "opus-5-claude-code-xhigh",
+   "job": "153e8318-9b14-4488-973c-345f4fa4b1ba",
+   "trials": 330
+  },
+  {
+   "id": "opus-5-claude-code-max",
+   "job": "a1ac63a1-8a9b-4bc7-9906-2b63657ee1c2",
+   "trials": 330
+  },
+  {
+   "id": "gpt-6-astra-codex-low",
+   "job": "a538f69d-7756-444a-9dfe-43a0ab10b3a8",
+   "trials": 330
+  },
+  {
+   "id": "opus-5-claude-code-high",
+   "job": "cf440c37-307c-4a9a-9baf-71d52572fab4",
+   "trials": 330
+  },
+  {
+   "id": "gpt-6-sol-codex-max",
+   "job": "df187382-66a6-5084-b1e9-41702d0e26a4",
+   "trials": 330
+  },
+  {
+   "id": "opus-5-claude-code-medium",
+   "job": "3c35174a-3a05-4705-bf8e-c09a3d09f013",
+   "trials": 330
+  },
+  {
+   "id": "fable-5-claude-code-max",
+   "job": "991af5e0-8c5f-4511-9619-a2a46939ebd4",
+   "trials": 330
+  },
+  {
+   "id": "fable-5.1-claude-code-low",
+   "job": "b57a324c-8076-4954-b452-1121c68b3495",
+   "trials": 330
+  },
+  {
+   "id": "glm-5.3-claude-code-max",
+   "job": "18e4ee29-d8b4-516b-b79d-b8bad5bcd5be",
+   "trials": 330
+  },
+  {
+   "id": "grok-4.7-grok-build-xhigh",
+   "job": "30225ce2-25f4-44c4-9fc5-67bf80dd4d17",
+   "trials": 330
+  },
+  {
+   "id": "gpt-5.6-sol-codex-max",
+   "job": "5aebbab5-1f8f-4cdb-8073-c6ce785a930d",
+   "trials": 330
+  },
+  {
+   "id": "glm-5.3-flash-claude-code-none",
+   "job": "e498ef42-3647-58ea-8790-b18f53c18d89",
+   "trials": 330
+  },
+  {
+   "id": "opus-5-claude-code-low",
+   "job": "7595dfd2-22f0-4b03-81a9-c3c22b6ae047",
+   "trials": 330
+  },
+  {
+   "id": "qwen3.8-max-0902-claude-code-max",
+   "job": "e630e811-bfab-5823-8acc-0224c6e2dba9",
+   "trials": 330
+  },
+  {
+   "id": "opus-4.8-claude-code-max",
+   "job": "10722b22-0bbd-4c93-8d27-611fb8dd02a6",
+   "trials": 330
+  },
+  {
+   "id": "gpt-5.6-terra-codex-max",
+   "job": "3de0aee9-6de7-4d94-83c4-ac5e789fe757",
+   "trials": 330
+  },
+  {
+   "id": "grok-4.6-grok-build-high",
+   "job": "2c89a14f-d14a-4ea8-ad8a-d08d90c67a5d",
+   "trials": 330
+  },
+  {
+   "id": "gemini-3.8-flash-mini-swe-agent-high",
+   "job": "0e1a4181-26a9-42de-9d5a-6a36515f13e2",
+   "trials": 330
+  },
+  {
+   "id": "gpt-5.6-luna-codex-max",
+   "job": "b7444ba2-78b7-46a0-a3c1-2196d40a337d",
+   "trials": 330
+  },
+  {
+   "id": "gpt-6-luna-codex-max",
+   "job": "ddf13529-2897-5989-a666-54f10698907f",
+   "trials": 330
+  },
+  {
+   "id": "muse-spark-1.3-muse-code-xhigh",
+   "job": "91784e40-2fb3-5fcf-afc0-74746868c015",
+   "trials": 330
+  },
+  {
+   "id": "grok-4.5-grok-build-high",
+   "job": "51a17348-a8b8-4c5e-b8d2-73a9a724c3b6",
+   "trials": 330
+  },
+  {
+   "id": "sonnet-5-claude-code-max",
+   "job": "a5758f1a-9ef2-4100-9893-34a99c99bd9c",
+   "trials": 330
+  },
+  {
+   "id": "gemini-3.7-flash-mini-swe-agent-high",
+   "job": "2d418f81-17d6-4f9c-8d16-d104f4ed6caa",
+   "trials": 330
+  }
+ ]
+}

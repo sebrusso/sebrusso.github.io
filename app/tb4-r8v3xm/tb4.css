@@ -12,6 +12,15 @@
   --tb4-cat-other: #8a8f99;
   --tb4-grid: 28 14% 92%;
   --tb4-bar: 26 90% 66%;
+  /* Trial outcomes: passed reads as good, plain test failures stay quiet, the
+     error kinds get distinct hues of similar weight. */
+  --tb4-out-passed: #1d8a52;
+  --tb4-out-tests_failed: #c9c1b8;
+  --tb4-out-timeout: #d18b00;
+  --tb4-out-token_limit: #7653d9;
+  --tb4-out-refusal: #c23f86;
+  --tb4-out-crash: #c43c2e;
+  --tb4-out-infra: #5b6b84;
 }
 
 .dark .tb4-root {
@@ -25,6 +34,13 @@
   --tb4-cat-other: #8e95a3;
   --tb4-grid: 220 14% 15%;
   --tb4-bar: 202 90% 62%;
+  --tb4-out-passed: #3fc47f;
+  --tb4-out-tests_failed: #3a404d;
+  --tb4-out-timeout: #e6b43c;
+  --tb4-out-token_limit: #a58bff;
+  --tb4-out-refusal: #f07ab6;
+  --tb4-out-crash: #ff7a6b;
+  --tb4-out-infra: #8fa0bd;
 }
 
 .tb4-mono {
@@ -63,3 +79,7 @@
 .tb4-plot circle:focus-visible { outline: none; stroke: hsl(var(--ring)); stroke-width: 3; }
 .tb4-plot .label { fill: hsl(var(--foreground) / 0.8); font-family: var(--font-tb4-mono), ui-monospace, monospace; font-size: 11.5px; paint-order: stroke; stroke: hsl(var(--background)); stroke-width: 3px; }
 @media (prefers-reduced-motion: reduce) { .tb4-plot circle { transition: none; } }
+
+/* Trial grid: one square per trial */
+.tb4-trial { width: 0.95rem; height: 0.95rem; border-radius: 0.2rem; display: block; flex: none; }
+.tb4-trial:hover, .tb4-trial:focus-visible { outline: 2px solid hsl(var(--foreground)); outline-offset: 1px; }
