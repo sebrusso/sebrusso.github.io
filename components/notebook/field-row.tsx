@@ -8,7 +8,7 @@ import type { FieldRow as Field } from '../../lib/notebook/types'
 import { Markdown, WhoBadge, hostOf, relativeTime, shortDate } from './bits'
 import { PEOPLE } from '../../lib/notebook/people'
 import { AnswerInput, AnswerView } from './answer'
-import { CommentButton, fieldAttr } from './comments'
+import { CommentButton, fieldAttr } from '../comments/comments'
 
 export function FieldRow({ slug, field }: { slug: string; field: Field }) {
   const { updateField, checkField, deleteField, restoreVersion } = useNotebook()

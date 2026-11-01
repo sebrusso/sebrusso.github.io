@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import localFont from 'next/font/local'
 import type { Metadata } from 'next'
 import { TB4App } from '../../components/tb4/tb4-app'
+import '../comments.css'
 import './tb4.css'
 
 /**

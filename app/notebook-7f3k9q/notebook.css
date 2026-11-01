@@ -15,12 +15,8 @@
   --lab-mistral: #d0491f;
   --lab-other: #8a8f99;
 
-  --who-ai: 215 14% 46%;
-  --who-seb: 243 55% 56%;
-  --who-daniel: 158 62% 32%;
 
   --nb-grid: 28 14% 91%;
-  --nb-comment: 48 96% 80%;
 }
 
 .dark .nb-root {
@@ -36,17 +32,8 @@
   --lab-mistral: #ff8a5c;
   --lab-other: #8e95a3;
 
-  --who-ai: 215 16% 66%;
-  --who-seb: 243 90% 76%;
-  --who-daniel: 156 55% 58%;
 
   --nb-grid: 220 14% 15%;
-  --nb-comment: 48 70% 28%;
-}
-
-.nb-mono {
-  font-family: var(--font-nb-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-variant-numeric: tabular-nums;
 }
 
 /* ── Pareto plot ─────────────────────────────────────────────── */
@@ -98,23 +85,6 @@
 }
 
 /* ── Provenance ──────────────────────────────────────────────── */
-.nb-who {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0 0.4rem;
-  height: 1.25rem;
-  border-radius: 0.3rem;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: hsl(var(--who));
-  background: hsl(var(--who) / 0.12);
-  white-space: nowrap;
-}
-.nb-who[data-who='ai'] { --who: var(--who-ai); }
-.nb-who[data-who='seb'] { --who: var(--who-seb); }
-.nb-who[data-who='daniel'] { --who: var(--who-daniel); }
 
 .nb-field { border-left: 2px solid transparent; }
 .nb-field[data-unchecked='true'] { border-left: 2px dotted hsl(var(--who-ai) / 0.7); }
@@ -214,7 +184,3 @@
 .nb-col-handle:active::after { top: 0; bottom: 0; width: 2px; left: 3.5px; background: hsl(var(--primary)); }
 
 /* ── Comments ────────────────────────────────────────────────── */
-.nb-root { --nb-comment-strong: 45 95% 52%; }
-.dark .nb-root { --nb-comment-strong: 45 90% 50%; }
-::highlight(nb-comment) { background-color: hsl(var(--nb-comment) / 0.75); }
-::highlight(nb-comment-active) { background-color: hsl(var(--nb-comment-strong) / 0.55); }

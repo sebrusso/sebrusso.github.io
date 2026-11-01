@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import localFont from 'next/font/local'
 import type { Metadata } from 'next'
 import { NotebookApp } from '../../components/notebook/notebook-app'
+import '../comments.css'
 import './notebook.css'
 
 /**

@@ -1,12 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useIndex, usePerTask } from '../../lib/tb4/data'
+import { stripCanary, useIndex, usePerTask, type TaskDetail } from '../../lib/tb4/data'
+import { useCommentStore, useIdentity, type CommentTarget } from '../../lib/comments/store'
+import { CommentDrawer, CommentHighlighter, CommentsContext, SelectionCommenter, type CommentsApi } from '../comments/comments'
 import { Browse, NO_FILTERS, type Filters } from './browse'
 import { TaskView } from './task-view'
 
 export const TB4_BASE = '/tb4-r8v3xm'
+
 type Tab = 'instruction' | 'tests' | 'solution' | 'environment' | 'files'
 const TABS: Tab[] = ['instruction', 'tests', 'solution', 'environment', 'files']
 
@@ -18,6 +21,30 @@ export function TB4App() {
   const params = useSearchParams()
   const router = useRouter()
   const [filters, setFilters] = useState<Filters>(NO_FILTERS)
+  const { user, login } = useIdentity()
+  const { comments, addComment, setResolved } = useCommentStore(user)
+  const [target, setTarget] = useState<CommentTarget | null>(null)
+  const [loaded, setLoaded] = useState<TaskDetail | null>(null)
+
+  const commentsApi = useMemo<CommentsApi>(
+    () => ({
+      user,
+      login,
+      comments,
+      addComment,
+      setResolved,
+      target,
+      open: setTarget,
+      describe: (slug, fieldId) => {
+        const name = slug.replace(/^tb4:/, '')
+        const detail = loaded?.name === name ? loaded : null
+        if (fieldId === 'instruction') return { title: name, label: 'Instruction', text: detail ? stripCanary(detail.instruction) : undefined }
+        const path = fieldId.replace(/^file:/, '')
+        return { title: name, label: path, text: detail?.files.find((f) => f.path === path)?.content }
+      },
+    }),
+    [user, login, comments, addComment, setResolved, target, loaded]
+  )
 
   const task = params.get('task')
   const view = params.get('view') === 'landscape' ? 'landscape' : 'table'
@@ -35,26 +62,34 @@ export function TB4App() {
   if (error) return <p className="py-16 text-center text-muted-foreground">Couldn’t load the task list. Reload to try again.</p>
   if (!index) return <div className="min-h-[60vh]" aria-busy="true" />
 
-  return task ? (
-    <TaskView
-      name={task}
-      index={index}
-      per={per}
-      tab={tab}
-      filePath={params.get('file')}
-      onTab={(t, file) => go({ task, tab: t === 'instruction' ? null : t, file }, false)}
-      onBack={() => go({ view: view === 'landscape' ? 'landscape' : null })}
-      onOpen={(name) => go({ task: name })}
-    />
-  ) : (
-    <Browse
-      tasks={index.tasks}
-      per={per}
-      view={view}
-      filters={filters}
-      setFilters={setFilters}
-      onView={(v) => go({ view: v === 'landscape' ? 'landscape' : null }, false)}
-      onOpen={(name) => go({ task: name })}
-    />
+  return (
+    <CommentsContext.Provider value={commentsApi}>
+      {task ? (
+        <TaskView
+          name={task}
+          index={index}
+          per={per}
+          tab={tab}
+          filePath={params.get('file')}
+          onTab={(t, file) => go({ task, tab: t === 'instruction' ? null : t, file }, false)}
+          onBack={() => go({ view: view === 'landscape' ? 'landscape' : null })}
+          onOpen={(name) => go({ task: name })}
+          onLoaded={setLoaded}
+        />
+      ) : (
+        <Browse
+          tasks={index.tasks}
+          per={per}
+          view={view}
+          filters={filters}
+          setFilters={setFilters}
+          onView={(v) => go({ view: v === 'landscape' ? 'landscape' : null }, false)}
+          onOpen={(name) => go({ task: name })}
+        />
+      )}
+      <SelectionCommenter />
+      <CommentHighlighter />
+      <CommentDrawer />
+    </CommentsContext.Provider>
   )
 }

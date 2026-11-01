@@ -7,7 +7,7 @@ import { load, save, useNotebook } from '../../lib/notebook/store'
 import type { EvalEntry } from '../../lib/notebook/types'
 import { AnswerView } from './answer'
 import { Markdown } from './bits'
-import { CommentButton, fieldAttr } from './comments'
+import { CommentButton, fieldAttr } from '../comments/comments'
 import { ResizableTable, type Column, type TableRow } from './resizable-table'
 
 const PREFS_KEY = 'evalnb-compare'

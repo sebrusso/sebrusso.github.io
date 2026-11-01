@@ -1,44 +1,21 @@
 'use client'
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { FIXTURES } from './fixtures'
 import { evalFromFixture, evalFromTemplate, newId } from './build'
 import type { Author, Comment, EvalEntry, FieldRow, Person } from './types'
+import { load, save, useCommentStore, useIdentity, type CommentTarget } from '../comments/store'
 
-// Mock store: evals and comments live in this browser's localStorage, seeded
-// from the research fixtures. The Supabase store replaces this module in
-// milestone 2 behind the same hook, so the views don't change.
+export { load, save, openThreadCount, type CommentTarget } from '../comments/store'
+
+// Mock store: evals live in this browser's localStorage, seeded from the
+// research fixtures; comments and the signed-in name come from the shared
+// comment store. The Supabase store replaces this module in milestone 2
+// behind the same hook, so the views don't change.
 
 const DATA_KEY = 'evalnb-mock-v3'
-const COMMENTS_KEY = 'evalnb-comments-v1'
-const USER_KEY = 'evalnb-user'
 // Evals taken out of the notebook; removed from browsers that saved them.
 const RETIRED_SLUGS = ['terminal-bench-2']
-
-export function load<T>(key: string): T | null {
-  try {
-    const raw = localStorage.getItem(key)
-    return raw ? (JSON.parse(raw) as T) : null
-  } catch {
-    return null
-  }
-}
-
-export function save(key: string, value: unknown) {
-  try {
-    if (value === null) localStorage.removeItem(key)
-    else localStorage.setItem(key, JSON.stringify(value))
-  } catch {
-    // Storage blocked: edits still work for this page view.
-  }
-}
-
-/** Which field the comment drawer is open on, and the words to quote. */
-export interface CommentTarget {
-  slug: string
-  fieldId: string
-  quote: string | null
-}
 
 interface NotebookApi {
   ready: boolean
@@ -64,32 +41,29 @@ const Ctx = createContext<NotebookApi | null>(null)
 
 export function NotebookProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false)
-  const [user, setUser] = useState<Person | null>(null)
+  const { ready: userReady, user, login, logout } = useIdentity()
   const [evals, setEvals] = useState<EvalEntry[]>([])
-  const [comments, setComments] = useState<Comment[]>([])
   const [commentTarget, setCommentTarget] = useState<CommentTarget | null>(null)
+  const gone = useRef<Set<string>>(new Set())
 
+  // Declared before useCommentStore so `gone` is set when it first reads.
   useEffect(() => {
-    setUser(load<Person>(USER_KEY))
     const stored = load<EvalEntry[]>(DATA_KEY)
     // Seed from fixtures; pick up fixtures added since this browser last saved,
     // and drop evals that were removed from the notebook.
     const seeded = FIXTURES.map(evalFromFixture)
     const retired = (e: EvalEntry) => RETIRED_SLUGS.includes(e.slug) && e.createdBy === 'ai'
-    const gone = new Set((stored ?? []).filter(retired).map((e) => e.slug))
+    gone.current = new Set((stored ?? []).filter(retired).map((e) => e.slug))
     const base = (stored ?? []).filter((e) => !retired(e))
     setEvals([...base, ...seeded.filter((s) => !base.some((e) => e.slug === s.slug))])
-    setComments((load<Comment[]>(COMMENTS_KEY) ?? []).filter((c) => !gone.has(c.slug)))
     setReady(true)
   }, [])
+
+  const { comments, addComment, setResolved } = useCommentStore(user, (c: Comment) => gone.current.has(c.slug))
 
   useEffect(() => {
     if (ready) save(DATA_KEY, evals)
   }, [evals, ready])
-
-  useEffect(() => {
-    if (ready) save(COMMENTS_KEY, comments)
-  }, [comments, ready])
 
   const mutateField = useCallback(
     (slug: string, fieldId: string, fn: (f: FieldRow) => FieldRow) =>
@@ -118,16 +92,10 @@ export function NotebookProvider({ children }: { children: React.ReactNode }) {
       }
     }
     return {
-      ready,
+      ready: ready && userReady,
       user,
-      login: (p) => {
-        setUser(p)
-        save(USER_KEY, p)
-      },
-      logout: () => {
-        setUser(null)
-        save(USER_KEY, null)
-      },
+      login,
+      logout,
       evals,
       addEval: (name) => {
         const entry = evalFromTemplate(name, me)
@@ -172,27 +140,12 @@ export function NotebookProvider({ children }: { children: React.ReactNode }) {
           })
         ),
       comments,
-      addComment: (target, body, parentId = null) =>
-        setComments((all) => [
-          ...all,
-          {
-            id: newId(),
-            slug: target.slug,
-            fieldId: target.fieldId,
-            parentId,
-            quote: parentId ? null : target.quote,
-            body,
-            author: me,
-            createdAt: now(),
-            resolvedAt: null,
-          },
-        ]),
-      setResolved: (threadId, resolved) =>
-        setComments((all) => all.map((c) => (c.id === threadId ? { ...c, resolvedAt: resolved ? now() : null } : c))),
+      addComment,
+      setResolved,
       commentTarget,
       openComments: setCommentTarget,
     }
-  }, [ready, user, evals, comments, commentTarget, mutateField])
+  }, [ready, userReady, user, login, logout, evals, comments, addComment, setResolved, commentTarget, mutateField])
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>
 }
@@ -201,9 +154,4 @@ export function useNotebook(): NotebookApi {
   const ctx = useContext(Ctx)
   if (!ctx) throw new Error('useNotebook must be used inside NotebookProvider')
   return ctx
-}
-
-/** Open (unresolved) threads on one field. */
-export function openThreadCount(comments: Comment[], slug: string, fieldId: string): number {
-  return comments.filter((c) => c.slug === slug && c.fieldId === fieldId && !c.parentId && !c.resolvedAt).length
 }

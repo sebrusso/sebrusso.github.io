@@ -1,20 +1,27 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowLeft, File, Folder } from 'lucide-react'
+import { ArrowLeft, File, Folder, MessageSquare } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import {
   catVar,
   formatBytes,
   formatDuration,
+  fileField,
   formatHours,
+  stripCanary,
+  taskSlug,
   useTask,
   type Index,
   type PerTask,
+  type TaskDetail,
   type TaskFile,
 } from '../../lib/tb4/data'
 import { CodeViewer } from './code-viewer'
+import { CommentButton, fieldAttr, useComments } from '../comments/comments'
+import { WhoBadge, relativeTime } from '../notebook/bits'
+import { openThreadCount } from '../../lib/comments/store'
 
 type Tab = 'instruction' | 'tests' | 'solution' | 'environment' | 'files'
 const TABS: [Tab, string][] = [
@@ -43,6 +50,7 @@ export function TaskView({
   onTab,
   onBack,
   onOpen,
+  onLoaded,
 }: {
   name: string
   index: Index
@@ -52,8 +60,13 @@ export function TaskView({
   onTab: (tab: Tab, file?: string | null) => void
   onBack: () => void
   onOpen: (name: string) => void
+  onLoaded: (task: TaskDetail) => void
 }) {
   const { data: task, error } = useTask(name)
+  const slug = taskSlug(name)
+  useEffect(() => {
+    if (task) onLoaded(task)
+  }, [task, onLoaded])
   const summary = index.tasks.find((t) => t.name === name)
   const ghBase = `${index.repo}/blob/${index.tag}/tasks/${name}`
 
@@ -126,12 +139,18 @@ export function TaskView({
               {error ? 'Couldn’t load this task’s files. Reload to try again.' : 'Loading task files…'}
             </div>
           ) : tab === 'instruction' ? (
-            <article className="tb4-prose rounded-xl border border-border bg-card px-6 py-5">
+            <article className="rounded-xl border border-border bg-card">
+              <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-1.5">
+                <span className="text-xs text-muted-foreground">Highlight any text to comment on it</span>
+                <CommentButton slug={slug} fieldId="instruction" label="the instruction" />
+              </div>
               {/* The canary comment stays in the raw file (All files tab); the rendered view drops it. */}
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{task.instruction.replace(/<!--[\s\S]*?-->/g, '')}</ReactMarkdown>
+              <div className="tb4-prose px-6 py-5" {...fieldAttr(slug, 'instruction')}>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{stripCanary(task.instruction)}</ReactMarkdown>
+              </div>
             </article>
           ) : (
-            <FilesPanel files={task.files} tab={tab} filePath={filePath} ghBase={ghBase} onPick={(p) => onTab(tab, p)} />
+            <FilesPanel slug={slug} files={task.files} tab={tab} filePath={filePath} ghBase={ghBase} onPick={(p) => onTab(tab, p)} />
           )}
           <p className="text-xs leading-relaxed text-muted-foreground">
             Files are reproduced verbatim from{' '}
@@ -189,6 +208,8 @@ export function TaskView({
             </section>
           )}
 
+          <TaskComments slug={slug} files={task?.files ?? []} onGo={(t, p) => onTab(t, p)} />
+
           {task && <FileSummary files={task.files} onPick={(t, p) => onTab(t, p)} />}
 
           {related.length > 0 && (
@@ -224,12 +245,14 @@ function inTab(f: TaskFile, tab: Exclude<Tab, 'instruction'>): boolean {
 }
 
 function FilesPanel({
+  slug,
   files,
   tab,
   filePath,
   ghBase,
   onPick,
 }: {
+  slug: string
   files: TaskFile[]
   tab: Exclude<Tab, 'instruction'>
   filePath: string | null
@@ -257,23 +280,25 @@ function FilesPanel({
     <div className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-[13rem_minmax(0,1fr)]">
       <nav aria-label="Files" className="flex max-h-[70vh] flex-col overflow-y-auto rounded-xl border border-border bg-card p-1.5">
         {code.map((f) => (
-          <FileButton key={f.path} f={f} tab={tab} active={f.path === current.path} onPick={onPick} />
+          <FileButton key={f.path} slug={slug} f={f} tab={tab} active={f.path === current.path} onPick={onPick} />
         ))}
         {other.length > 0 && (
           <>
             <button onClick={() => setShowData((s) => !s)} className="mt-1 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground hover:bg-muted">
               {showData ? 'Hide' : 'Show'} {other.length} data and binary file{other.length > 1 ? 's' : ''}
             </button>
-            {showData && other.map((f) => <FileButton key={f.path} f={f} tab={tab} active={f.path === current.path} onPick={onPick} />)}
+            {showData && other.map((f) => <FileButton key={f.path} slug={slug} f={f} tab={tab} active={f.path === current.path} onPick={onPick} />)}
           </>
         )}
       </nav>
-      <CodeViewer key={current.path} file={current} githubUrl={`${ghBase}/${current.path}`} />
+      <CodeViewer key={current.path} slug={slug} file={current} githubUrl={`${ghBase}/${current.path}`} />
     </div>
   )
 }
 
-function FileButton({ f, tab, active, onPick }: { f: TaskFile; tab: Tab; active: boolean; onPick: (p: string) => void }) {
+function FileButton({ slug, f, tab, active, onPick }: { slug: string; f: TaskFile; tab: Tab; active: boolean; onPick: (p: string) => void }) {
+  const { comments } = useComments()
+  const threads = openThreadCount(comments, slug, fileField(f.path))
   // Inside a section tab the folder name is implied; show the rest.
   const label = tab === 'files' || !f.path.startsWith(`${f.section}/`) ? f.path : f.path.slice(f.section.length + 1)
   return (
@@ -285,6 +310,12 @@ function FileButton({ f, tab, active, onPick }: { f: TaskFile; tab: Tab; active:
     >
       <File size={12} className="shrink-0 opacity-60" aria-hidden="true" />
       <span className="min-w-0 flex-1 truncate">{label}</span>
+      {threads > 0 && (
+        <span className="inline-flex shrink-0 items-center gap-0.5 text-[0.7rem]" aria-label={`${threads} open comment threads`}>
+          <MessageSquare size={11} aria-hidden="true" />
+          {threads}
+        </span>
+      )}
       {f.kind !== 'text' && <span className="shrink-0 text-[0.7rem] text-muted-foreground">{formatBytes(f.size)}</span>}
     </button>
   )
@@ -319,6 +350,55 @@ function FileSummary({ files, onPick }: { files: TaskFile[]; onPick: (tab: Tab, 
         <File size={13} className="text-muted-foreground" aria-hidden="true" />
         <span className="tb4-mono flex-1 text-[0.8125rem] hover:text-primary">task.toml</span>
       </button>
+    </section>
+  )
+}
+
+/** Every open thread on this task, newest first; clicking one jumps to it. */
+function TaskComments({ slug, files, onGo }: { slug: string; files: TaskFile[]; onGo: (tab: Tab, path: string | null) => void }) {
+  const { comments, open } = useComments()
+  const roots = comments.filter((c) => c.slug === slug && !c.parentId && !c.resolvedAt).sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+  const replies = (id: string) => comments.filter((c) => c.parentId === id).length
+  const jump = (fieldId: string) => {
+    if (fieldId === 'instruction') onGo('instruction', null)
+    else {
+      const path = fieldId.replace(/^file:/, '')
+      const section = files.find((f) => f.path === path)?.section
+      const tab: Tab = section === 'tests' || section === 'solution' || section === 'environment' ? section : 'files'
+      onGo(tab, path)
+    }
+    open({ slug, fieldId, quote: null })
+  }
+  return (
+    <section aria-labelledby="tb4-comments" className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4">
+      <div className="flex items-baseline justify-between gap-2">
+        <h2 id="tb4-comments" className="text-[0.95rem] font-semibold">
+          Comments
+        </h2>
+        <span className="tb4-mono text-xs text-muted-foreground">{roots.length} open</span>
+      </div>
+      {roots.length === 0 ? (
+        <p className="text-[0.8125rem] leading-relaxed text-muted-foreground">
+          None yet. Highlight text in the instruction or any file, or use the comment button, to start a thread.
+        </p>
+      ) : (
+        <ul className="flex max-h-[22rem] flex-col gap-1 overflow-y-auto">
+          {roots.map((c) => (
+            <li key={c.id}>
+              <button onClick={() => jump(c.fieldId)} className="flex w-full flex-col gap-1 rounded-md p-2 text-left hover:bg-muted">
+                <span className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <WhoBadge who={c.author} />
+                  <span className="tb4-mono truncate">{c.fieldId === 'instruction' ? 'instruction' : c.fieldId.replace(/^file:/, '')}</span>
+                  <span className="ml-auto shrink-0">{relativeTime(c.createdAt)}</span>
+                </span>
+                {c.quote && <span className="line-clamp-1 border-l-2 border-[hsl(var(--nb-comment-strong))] pl-2 text-xs text-muted-foreground">“{c.quote}”</span>}
+                <span className="line-clamp-2 text-[0.8125rem]">{c.body}</span>
+                {replies(c.id) > 0 && <span className="text-xs text-muted-foreground">{replies(c.id)} repl{replies(c.id) > 1 ? 'ies' : 'y'}</span>}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   )
 }

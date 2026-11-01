@@ -53,6 +53,12 @@ export interface PerTask {
 
 const BASE = '/tb4-data'
 
+// Comment anchors: one item per task instruction and per task file.
+export const taskSlug = (name: string) => `tb4:${name}`
+export const fileField = (path: string) => `file:${path}`
+/** Instruction Markdown without the canary comment, as rendered. */
+export const stripCanary = (md: string) => md.replace(/<!--[\s\S]*?-->/g, '')
+
 function useJson<T>(url: string | null): { data: T | null; error: boolean } {
   const [state, setState] = useState<{ data: T | null; error: boolean }>({ data: null, error: false })
   useEffect(() => {

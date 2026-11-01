@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { NotebookProvider, useNotebook } from '../../lib/notebook/store'
 import { PEOPLE } from '../../lib/notebook/people'
@@ -7,7 +8,7 @@ import { Gate } from './gate'
 import { SummaryView } from './summary-view'
 import { EvalView } from './eval-view'
 import { CompareView } from './compare-view'
-import { CommentDrawer, CommentHighlighter, SelectionCommenter } from './comments'
+import { CommentDrawer, CommentHighlighter, CommentsContext, SelectionCommenter, type CommentsApi } from '../comments/comments'
 
 export const NOTEBOOK_BASE = '/notebook-7f3k9q'
 
@@ -15,10 +16,35 @@ export function NotebookApp() {
   return (
     <NotebookProvider>
       <div className="nb-root">
-        <Screens />
+        <NotebookComments>
+          <Screens />
+        </NotebookComments>
       </div>
     </NotebookProvider>
   )
+}
+
+// Feeds the shared comment components from the notebook's store.
+function NotebookComments({ children }: { children: React.ReactNode }) {
+  const nb = useNotebook()
+  const api = useMemo<CommentsApi>(
+    () => ({
+      user: nb.user,
+      login: nb.login,
+      comments: nb.comments,
+      addComment: nb.addComment,
+      setResolved: nb.setResolved,
+      target: nb.commentTarget,
+      open: nb.openComments,
+      describe: (slug, fieldId) => {
+        const entry = nb.evals.find((e) => e.slug === slug)
+        const field = entry?.fields.find((f) => f.id === fieldId)
+        return entry && field ? { title: entry.name, label: field.label, text: `${field.value}\n${field.notes}` } : null
+      },
+    }),
+    [nb]
+  )
+  return <CommentsContext.Provider value={api}>{children}</CommentsContext.Provider>
 }
 
 function Screens() {

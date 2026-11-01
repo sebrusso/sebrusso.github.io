@@ -1,17 +1,20 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { ArrowDown, ArrowUp, Search } from 'lucide-react'
+import { ArrowDown, ArrowUp, MessageSquare, Search } from 'lucide-react'
 import {
   BUCKETS,
   CATEGORIES,
   catVar,
   formatHours,
   solveRate,
+  taskSlug,
   type PerTask,
   type TaskSummary,
 } from '../../lib/tb4/data'
 import { Landscape } from './landscape'
+import { useComments } from '../comments/comments'
+import { openThreadCount } from '../../lib/comments/store'
 
 export interface Filters {
   q: string
@@ -196,6 +199,7 @@ function FilterRail({ tasks, filters, setFilters }: { tasks: TaskSummary[]; filt
 
 function TaskTable({ tasks, per, onOpen }: { tasks: TaskSummary[]; per: PerTask | null; onOpen: (n: string) => void }) {
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({ key: 'name', dir: 1 })
+  const { comments } = useComments()
   const rows = useMemo(() => {
     const val = (t: TaskSummary): string | number =>
       sort.key === 'solve' ? solveRate(per, t.name) ?? -1 : sort.key === 'category' ? `${t.category}/${t.subcategory}` : t[sort.key]
@@ -243,12 +247,21 @@ function TaskTable({ tasks, per, onOpen }: { tasks: TaskSummary[]; per: PerTask 
         <tbody>
           {rows.map((t) => {
             const rate = solveRate(per, t.name)
+            const threads = openThreadCount(comments, taskSlug(t.name))
             return (
               <tr key={t.name} className="border-t border-border/70 hover:bg-muted/30">
                 <td className="px-4 py-2.5">
-                  <button onClick={() => onOpen(t.name)} className="tb4-mono whitespace-nowrap text-left text-[0.84rem] font-medium hover:text-primary">
-                    {t.name}
-                  </button>
+                  <span className="flex items-center gap-2">
+                    <button onClick={() => onOpen(t.name)} className="tb4-mono whitespace-nowrap text-left text-[0.84rem] font-medium hover:text-primary">
+                      {t.name}
+                    </button>
+                    {threads > 0 && (
+                      <span className="inline-flex items-center gap-0.5 text-xs text-muted-foreground" aria-label={`${threads} open comment threads`}>
+                        <MessageSquare size={12} aria-hidden="true" />
+                        {threads}
+                      </span>
+                    )}
+                  </span>
                 </td>
                 <td className="px-4 py-2.5">
                   <span className="inline-flex items-center gap-2 whitespace-nowrap">

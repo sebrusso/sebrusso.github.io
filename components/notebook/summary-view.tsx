@@ -10,7 +10,7 @@ import { PEOPLE } from '../../lib/notebook/people'
 import { ParetoPlot } from './pareto'
 import { WhoBadge, relativeTime } from './bits'
 import { AnswerView } from './answer'
-import { fieldAttr } from './comments'
+import { fieldAttr } from '../comments/comments'
 import { ResizableTable, type Column } from './resizable-table'
 
 const field = (e: EvalEntry, key: string) => e.fields.find((f) => f.key === key && !f.deletedAt)

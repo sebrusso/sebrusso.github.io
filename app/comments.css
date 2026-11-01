@@ -1,0 +1,45 @@
+/* Shared by every page that comments (eval notebook, TB4 task browser):
+   author badges, the mono face, and the comment highlight tints. Author hues
+   stay clear of the brand hue so "who wrote this" never reads as emphasis. */
+
+:root {
+  --who-ai: 215 14% 46%;
+  --who-seb: 243 55% 56%;
+  --who-daniel: 158 62% 32%;
+  --nb-comment: 48 96% 80%;
+  --nb-comment-strong: 45 95% 52%;
+}
+
+.dark {
+  --who-ai: 215 16% 66%;
+  --who-seb: 243 90% 76%;
+  --who-daniel: 156 55% 58%;
+  --nb-comment: 48 70% 28%;
+  --nb-comment-strong: 45 90% 50%;
+}
+
+.nb-mono {
+  font-family: var(--font-nb-mono, var(--font-tb4-mono)), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.nb-who {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.4rem;
+  height: 1.25rem;
+  border-radius: 0.3rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: hsl(var(--who));
+  background: hsl(var(--who) / 0.12);
+  white-space: nowrap;
+}
+.nb-who[data-who='ai'] { --who: var(--who-ai); }
+.nb-who[data-who='seb'] { --who: var(--who-seb); }
+.nb-who[data-who='daniel'] { --who: var(--who-daniel); }
+
+::highlight(nb-comment) { background-color: hsl(var(--nb-comment) / 0.75); }
+::highlight(nb-comment-active) { background-color: hsl(var(--nb-comment-strong) / 0.55); }
