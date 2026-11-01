@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { stripCanary, useIndex, usePerTask, type TaskDetail } from '../../lib/tb4/data'
 import { useCommentStore, useIdentity, type CommentTarget } from '../../lib/comments/store'
 import { CommentDrawer, CommentHighlighter, CommentsContext, SelectionCommenter, type CommentsApi } from '../comments/comments'
-import { Browse, NO_FILTERS, type Filters } from './browse'
+import { Browse, NO_FILTERS, type Filters, type View } from './browse'
 import { TaskView } from './task-view'
 
 export const TB4_BASE = '/tb4-r8v3xm'
@@ -47,7 +47,8 @@ export function TB4App() {
   )
 
   const task = params.get('task')
-  const view = params.get('view') === 'landscape' ? 'landscape' : 'table'
+  const viewParam = params.get('view')
+  const view: View = viewParam === 'landscape' || viewParam === 'info' ? viewParam : 'table'
   const tabParam = params.get('tab') as Tab | null
   const tab: Tab = tabParam && TABS.includes(tabParam) ? tabParam : 'instruction'
 
@@ -72,18 +73,18 @@ export function TB4App() {
           tab={tab}
           filePath={params.get('file')}
           onTab={(t, file) => go({ task, tab: t === 'instruction' ? null : t, file }, false)}
-          onBack={() => go({ view: view === 'landscape' ? 'landscape' : null })}
+          onBack={() => go({ view: view === 'table' ? null : view })}
           onOpen={(name) => go({ task: name })}
           onLoaded={setLoaded}
         />
       ) : (
         <Browse
-          tasks={index.tasks}
+          index={index}
           per={per}
           view={view}
           filters={filters}
           setFilters={setFilters}
-          onView={(v) => go({ view: v === 'landscape' ? 'landscape' : null }, false)}
+          onView={(v) => go({ view: v === 'table' ? null : v }, false)}
           onOpen={(name) => go({ task: name })}
         />
       )}

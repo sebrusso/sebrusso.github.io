@@ -9,10 +9,14 @@ import {
   formatHours,
   solveRate,
   taskSlug,
+  type Index,
   type PerTask,
   type TaskSummary,
 } from '../../lib/tb4/data'
 import { Landscape } from './landscape'
+import { Info } from './info'
+
+export type View = 'table' | 'landscape' | 'info'
 import { useComments } from '../comments/comments'
 import { openThreadCount } from '../../lib/comments/store'
 
@@ -36,10 +40,16 @@ export function applyFilters(tasks: TaskSummary[], f: Filters): TaskSummary[] {
   )
 }
 
+const HEADINGS: Record<View, string> = {
+  table: 'Every task, browsable',
+  landscape: 'Where the effort is',
+  info: 'How to read this',
+}
+
 type SortKey = 'name' | 'category' | 'expertHours' | 'instructionWords' | 'tests' | 'solve'
 
 export function Browse({
-  tasks,
+  index,
   per,
   view,
   filters,
@@ -47,14 +57,15 @@ export function Browse({
   onView,
   onOpen,
 }: {
-  tasks: TaskSummary[]
+  index: Index
   per: PerTask | null
-  view: 'table' | 'landscape'
+  view: View
   filters: Filters
   setFilters: (f: Filters) => void
-  onView: (v: 'table' | 'landscape') => void
+  onView: (v: View) => void
   onOpen: (name: string) => void
 }) {
+  const tasks = index.tasks
   const shown = useMemo(() => applyFilters(tasks, filters), [tasks, filters])
   const median = useMemo(() => {
     const hs = [...tasks.map((t) => t.expertHours)].sort((a, b) => a - b)
@@ -75,15 +86,17 @@ export function Browse({
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex max-w-[680px] flex-col gap-2.5">
           <div className="tb4-mono text-xs uppercase tracking-[0.12em] text-muted-foreground">Terminal-Bench 4.0 · v4.0.0</div>
-          <h1 className="text-title text-balance">{view === 'table' ? 'Every task, browsable' : 'Where the effort is'}</h1>
+          <h1 className="text-title text-balance">{HEADINGS[view]}</h1>
           <p className="text-muted-foreground">
             {view === 'table'
               ? `${tasks.length} hand-written terminal tasks, from Coq proofs to UEFI bootkit forensics. Filter by field, effort and hardware; open any task to read its instruction, tests and reference solution.`
-              : 'Each dot is a task: how long an expert would take, against how much the instruction says. Click a dot to open the task.'}
+              : view === 'landscape'
+                ? 'Each dot is a task: how long an expert would take, against how much the instruction says. Click a dot to open the task.'
+                : 'Definitions for the numbers in the table, and where each one comes from.'}
           </p>
         </div>
         <div role="tablist" aria-label="View" className="flex rounded-lg border border-border bg-card p-[3px]">
-          {(['table', 'landscape'] as const).map((v) => (
+          {(['table', 'landscape', 'info'] as const).map((v) => (
             <button
               key={v}
               role="tab"
@@ -106,6 +119,9 @@ export function Browse({
         ))}
       </section>
 
+      {view === 'info' ? (
+        <Info index={index} per={per} />
+      ) : (
       <div className="flex flex-wrap items-start gap-7">
         <FilterRail tasks={tasks} filters={filters} setFilters={setFilters} />
         <section aria-label="Tasks" className="flex min-w-0 flex-[999_1_560px] flex-col gap-2.5">
@@ -126,6 +142,7 @@ export function Browse({
           )}
         </section>
       </div>
+      )}
     </div>
   )
 }
