@@ -152,8 +152,15 @@ export default function TQSLearningsPage() {
 
         <P>
           The model is Qwen3-8B, frozen in bf16, with LoRA (r=16, α=32) on all attention and MLP projections: 43.7M
-          trainable parameters, about 0.5%. Three CORAL ordinal heads predict the ratings and a scalar price head is
-          trained with an in-batch Bradley–Terry loss on severity; the loss is their sum.
+          trainable parameters, about 0.5%. Three CORAL ordinal heads predict the ratings, and a fourth head outputs the
+          task&apos;s <b>quality score</b>, which I call its <b>price</b>.
+        </P>
+        <P>
+          The price is one number per task, where higher means a better task to train on. It has no fixed scale: it is
+          learned only from comparisons. For every pair of tasks in a batch, the one with lower severity
+          (underspecified + false_negative ratings) should get the higher price, and a Bradley–Terry loss penalizes the
+          model when it doesn&apos;t. A pipeline can then rank, filter or weight tasks by price. The total loss is the
+          sum of the three rating losses and the pairwise loss.
         </P>
 
         <Collapsible title="How the model is built" meta="Qwen3-8B + LoRA, final-token pooling, three CORAL heads and a price head" open wide>
@@ -232,26 +239,50 @@ export default function TQSLearningsPage() {
         </Collapsible>
 
         <H3 id="discussion">Discussion</H3>
-        <P>
-          <b>What the model learned.</b> Two signals that shallow features cannot see. First, whether an issue pins down
-          the intended behavior: on underspecification it reaches ρ 0.36, close to the 0.41 at which reviewers agree with
-          each other (70% of single-reviewer agreement), and 0.33 of it survives removing everything input length
-          predicts, against 0.11 for shallow features. Second, whether the tests would reject valid fixes: ρ 0.48 against
-          a 0.50 ceiling (77% of single-reviewer agreement), with 0.32 surviving the length control against 0.04. It
-          learned nothing new about difficulty: its 0.62 ties the length baseline, and after the length control it keeps
-          less than shallow features do (0.22 vs 0.31). It also picked up one shortcut, reading shorter issues as more
-          underspecified, the same −0.14 correlation between issue length and label that exists in the training data.
-        </P>
-        <P>
-          <b>What this means for training scorers like this.</b> Model scale and context matter on the axes that need
-          reading: going from Qwen3-0.6B at 8k tokens to Qwen3-8B at 32k added 0.125 on underspecification and 0.058 on
-          false negatives. On false negatives the model is already within 0.02 of reviewer agreement, so the labels, not
-          the model, are now the limit: further gains need cleaner targets, such as more reviewers per task or training
-          on per-reviewer labels instead of their maximum. Shortcuts have to be designed out rather than hoped away: length
-          explains difficulty and brevity leaks into underspecification, so future runs should control for length (for
-          example with reworded or length-matched issues) and report partial correlations next to raw ones. Difficulty
-          needs a different label altogether, such as measured agent solve rates.
-        </P>
+        <p className="mb-2">
+          <b>What the model learned.</b> Two signals shallow features can&apos;t see, nothing new on difficulty, and one
+          shortcut:
+        </p>
+        <ul className="mb-4 list-disc space-y-2 pl-6">
+          <li>
+            <b>Underspecified issues: learned, close to human level.</b> ρ 0.36 against the 0.41 at which reviewers agree
+            with each other (70% of single-reviewer agreement), and 0.33 survives removing what input length predicts,
+            against 0.11 for shallow features.
+          </li>
+          <li>
+            <b>Tests that reject valid fixes: learned, nearly at human level.</b> ρ 0.48 against a 0.50 ceiling (77% of
+            single-reviewer agreement), with 0.32 surviving the length control against 0.04 for shallow features.
+          </li>
+          <li>
+            <b>Difficulty: nothing beyond length.</b> Its 0.62 ties the length baseline, and after the length control it
+            keeps less than shallow features do (0.22 vs 0.31).
+          </li>
+          <li>
+            <b>A shortcut: short issues read as underspecified.</b> Its predictions carry the same −0.14 correlation
+            between issue length and label that exists in the training data.
+          </li>
+        </ul>
+        <p className="mb-2">
+          <b>What this means for training scorers like this:</b>
+        </p>
+        <ul className="mb-4 list-disc space-y-2 pl-6">
+          <li>
+            <b>Scale and context help on the axes that need reading.</b> Going from Qwen3-0.6B at 8k tokens to Qwen3-8B
+            at 32k added 0.125 on underspecification and 0.058 on false negatives.
+          </li>
+          <li>
+            <b>The labels are becoming the limit.</b> On false negatives the model is within 0.02 of reviewer agreement,
+            so further gains need cleaner targets, such as more reviewers per task or training on per-reviewer labels
+            instead of their maximum.
+          </li>
+          <li>
+            <b>Shortcuts have to be designed out.</b> Control for length (for example with reworded or length-matched
+            issues) and report partial correlations next to raw ones.
+          </li>
+          <li>
+            <b>Difficulty needs a different label,</b> such as measured agent solve rates.
+          </li>
+        </ul>
 
         <div className="mb-4 overflow-x-auto rounded-lg border">
           <table className="tqs-table w-full min-w-[640px] text-sm">
