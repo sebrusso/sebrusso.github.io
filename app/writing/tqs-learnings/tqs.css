@@ -2,6 +2,20 @@
    categorical set (adjacent-pair CVD ΔE ≥ 8.4 in both modes); dark mode uses
    its own steps rather than a flip. The model marker uses the site brand. */
 :root {
+  /* figure tokens (A/B/C in components/tqs-learnings/figures.tsx) */
+  --tqs-ink: hsl(var(--foreground));
+  --tqs-ink2: hsl(var(--muted-foreground));
+  --tqs-line: hsl(var(--border));
+  --tqs-card: hsl(var(--card));
+  --tqs-muted: hsl(var(--muted));
+  --tqs-brand: hsl(var(--brand));
+  --tqs-brand-soft: hsl(var(--brand-soft));
+  --tqs-brand-ink: hsl(var(--primary));      /* readable text in the brand hue */
+  --tqs-on-brand: hsl(24 10% 10%);           /* text set on a brand fill, both themes */
+  --tqs-frozen: hsl(220 10% 84%);
+  --tqs-frozen-ink: hsl(220 8% 38%);
+  --tqs-good: #1a8f5a;
+  --tqs-bad: #c2453f;
   --tqs-issue: #2a78d6;
   --tqs-patch: #eb6834;
   --tqs-tests: #1baf7a;
@@ -10,6 +24,10 @@
   --tqs-track: hsl(var(--muted));
 }
 .dark {
+  --tqs-frozen: hsl(220 12% 24%);
+  --tqs-frozen-ink: hsl(215 12% 66%);
+  --tqs-good: #3fbf7f;
+  --tqs-bad: #e66767;
   --tqs-issue: #3987e5;
   --tqs-patch: #d95926;
   --tqs-tests: #199e70;
@@ -76,23 +94,9 @@
 .tqs-details > summary:focus-visible { border-radius: 0.5rem; }
 .tqs-table td, .tqs-table th { font-variant-numeric: tabular-nums; }
 
-/* Objective diagram: flow arrows (down on narrow screens, right on wide). */
-.tqs-flow { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; }
-.tqs-flow::after { content: "↓"; font-size: 16px; line-height: 1; }
-@media (min-width: 1024px) {
-  .tqs-flow::after { content: "→"; }
-}
-
-/* Price scores on a shared axis from −2 to 6. */
-.tqs-pricebar { position: relative; height: 30px; margin: 4px 10px 0; }
-.tqs-pricebar::before {
-  content: ""; position: absolute; left: 0; right: 0; top: 14px; height: 1px; background: hsl(var(--border));
-}
-.tqs-price-zero { position: absolute; top: 8px; width: 1px; height: 13px; background: hsl(var(--muted-foreground)); }
-.tqs-price-dot {
-  position: absolute; top: 4px; transform: translateX(-50%);
-  width: 22px; height: 22px; border-radius: 50%;
-  background: hsl(var(--brand)); color: hsl(var(--card));
-  border: 2px solid hsl(var(--card));
-  display: inline-flex; align-items: center; justify-content: center; font-size: 11px;
-}
+/* Figures A/B/C: SVGs scale to the column; below 640px they scroll sideways. */
+/* Default text color is inherited from the <svg>; a `fill` attribute on an element still wins over
+   inheritance. (A `.tqs-svg text { fill }` rule would override every fill attribute instead.) */
+.tqs-svg { display: block; width: 100%; min-width: 640px; height: auto; fill: var(--tqs-ink); font-family: inherit; }
+.tqs-svg .tqs-sub { fill: var(--tqs-ink2); font-size: 11px; }
+.tqs-svg .tqs-mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }

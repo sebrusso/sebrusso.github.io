@@ -8,10 +8,10 @@ import {
   Collapsible,
   ExampleCollapsibles,
   InputBudgetDiagram,
-  ObjectiveDiagram,
   TaskDiagram,
 } from '../../../components/tqs-learnings/diagrams'
 import { EXAMPLES, RESULTS } from '../../../lib/tqs-learnings'
+import { ArchitectureFigure, PairFigure, ScoreSwarmFigure } from '../../../components/tqs-learnings/figures'
 import './tqs.css'
 
 /**
@@ -83,14 +83,17 @@ export default function TQSLearningsPage() {
         </Collapsible>
 
         <P>
-          The model is trained on two things at once. For each task it predicts the three ratings. And for every pair
-          of tasks in a batch, it gives each one a single quality score and is penalized when the worse task scores
-          higher. The ratings make it explain itself; the single score is what a training pipeline would actually use
-          to filter or rank tasks.
+          The model is a large language model with small trainable adapters and four new output heads. It learns two
+          things at once: the three ratings for each task, and a single quality score that ranks tasks against each
+          other.
         </P>
 
-        <Collapsible title="What the model is trained to do" meta="Inputs, encoder, heads and losses, with a real pair of tasks" open wide>
-          <ObjectiveDiagram />
+        <Collapsible title="How the model is built" meta="Tokens in, one vector out, four heads, two losses" open wide>
+          <ArchitectureFigure />
+        </Collapsible>
+
+        <Collapsible title="What it is trained to do" meta="One real pair of tasks and the scores the model gives them" open wide>
+          <PairFigure />
         </Collapsible>
 
         <P>Here are four tasks from the held-out set, with what annotators said and what the trained model predicted.</P>
@@ -164,6 +167,9 @@ export default function TQSLearningsPage() {
             </tbody>
           </table>
         </div>
+        <Collapsible title="Every held-out task, by the score the model gives it" meta="298 sympy tasks, grouped by how flawed human reviewers rated them" open wide>
+          <ScoreSwarmFigure />
+        </Collapsible>
         <P>
           On underspecification it doubles the shallow baseline, 0.36 against 0.17, and the gain clears the ±0.10 bar.
           Scored against single annotators, it reaches 70% of human agreement on that axis; the baseline reaches 29%.
