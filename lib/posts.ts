@@ -47,3 +47,26 @@ export function getAllPosts(): Post[] {
     return []
   }
 } 
+/**
+ * Essays written as TSX pages (app/writing/<id>/page.tsx) instead of markdown,
+ * because they need components react-markdown can't render. Listed in the
+ * writing index and sitemap, but kept out of getAllPosts() so /writing/[id]'s
+ * generateStaticParams never emits a path a static route already owns.
+ */
+export const PAGE_POSTS: Post[] = [
+  {
+    id: 'tqs-learnings',
+    title: 'Teaching a model to grade coding tasks',
+    description:
+      'What I learned training an 8B model to predict how human reviewers rate SWE-bench tasks, on a $26 GPU budget.',
+    date: '2026-11-02',
+    content: '',
+  },
+]
+
+/** Markdown posts plus TSX essays, newest first. For index pages and the sitemap. */
+export function getWritingIndex(): Post[] {
+  return [...getAllPosts(), ...PAGE_POSTS].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  )
+}

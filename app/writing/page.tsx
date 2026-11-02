@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { WritingCard } from '../../components/writing-card'
-import { getAllPosts } from '../../lib/posts'
+import { getWritingIndex } from '../../lib/posts'
 
 export default function WritingPage() {
-  const posts = getAllPosts()
+  const posts = getWritingIndex()
 
   return (
     <div className="py-6">

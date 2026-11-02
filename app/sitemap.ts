@@ -1,11 +1,11 @@
 import type { MetadataRoute } from 'next'
-import { getAllPosts } from '../lib/posts'
+import { getWritingIndex } from '../lib/posts'
 import { SITE_URL } from '../lib/constants'
 
 export const dynamic = 'force-static'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const posts = getAllPosts().map((post) => ({
+  const posts = getWritingIndex().map((post) => ({
     url: `${SITE_URL}/writing/${post.id}`,
     lastModified: new Date(post.date),
   }))

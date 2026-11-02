@@ -1,0 +1,77 @@
+/* /writing/tqs-learnings — diagram styles. Part colors are a validated
+   categorical set (adjacent-pair CVD ΔE ≥ 8.4 in both modes); dark mode uses
+   its own steps rather than a flip. The model marker uses the site brand. */
+:root {
+  --tqs-issue: #2a78d6;
+  --tqs-patch: #eb6834;
+  --tqs-tests: #1baf7a;
+  --tqs-context: #eda100;
+  --tqs-gap: hsl(var(--card));
+  --tqs-track: hsl(var(--muted));
+}
+.dark {
+  --tqs-issue: #3987e5;
+  --tqs-patch: #d95926;
+  --tqs-tests: #199e70;
+  --tqs-context: #c98500;
+}
+
+.tqs-part-issue { background: var(--tqs-issue); }
+.tqs-part-patch { background: var(--tqs-patch); }
+.tqs-part-tests { background: var(--tqs-tests); }
+.tqs-part-context { background: var(--tqs-context); }
+
+.tqs-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; flex: none; }
+
+/* Stacked budget bar: 2px surface gap between segments, rounded data end. */
+.tqs-track {
+  display: flex; gap: 2px; height: 14px; width: 100%;
+  background: var(--tqs-track); border-radius: 4px; overflow: hidden;
+}
+.tqs-seg { display: block; height: 100%; min-width: 2px; }
+.tqs-seg:last-child { border-radius: 0 4px 4px 0; }
+
+.tqs-minibar { height: 6px; background: var(--tqs-track); border-radius: 3px; overflow: hidden; }
+.tqs-minibar > span { display: block; height: 100%; border-radius: 0 3px 3px 0; }
+
+.tqs-pre {
+  margin: 0; max-height: 11rem; overflow: auto;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11.5px; line-height: 1.5;
+  background: hsl(var(--muted)); border-radius: 6px; padding: 8px 10px;
+}
+
+/* 0–3 scale with annotator dots, label ring, and model diamond. */
+.tqs-scale { position: relative; height: 40px; margin: 0 6px; }
+.tqs-scale-line { position: absolute; left: 0; right: 0; top: 30px; height: 1px; background: hsl(var(--border)); }
+.tqs-scale-tick { position: absolute; top: 26px; width: 1px; height: 9px; background: hsl(var(--border)); transform: translateX(-0.5px); }
+.tqs-ann {
+  position: absolute; width: 7px; height: 7px; border-radius: 50%;
+  background: hsl(var(--muted-foreground)); transform: translateX(-50%);
+}
+.tqs-label {
+  position: absolute; top: 24px; width: 13px; height: 13px; border-radius: 50%;
+  border: 2px solid hsl(var(--foreground)); background: transparent; transform: translateX(-50%);
+}
+.tqs-model {
+  position: absolute; top: 25px; width: 11px; height: 11px;
+  background: hsl(var(--brand)); border: 2px solid hsl(var(--card));
+  transform: translateX(-50%) rotate(45deg); box-sizing: content-box;
+}
+/* Legend keys reuse the marker shapes inline. */
+.tqs-ann-key, .tqs-label-key, .tqs-model-key { position: static; display: inline-block; transform: none; }
+.tqs-model-key { transform: rotate(45deg); width: 9px; height: 9px; margin: 0 2px; }
+.tqs-label-key { width: 11px; height: 11px; }
+
+.tqs-arrow { display: inline-flex; align-items: center; gap: 6px; color: hsl(var(--muted-foreground)); }
+.tqs-arrow::before, .tqs-arrow::after { content: ""; display: block; background: hsl(var(--border)); }
+@media (min-width: 768px) {
+  .tqs-arrow { flex-direction: column; height: 100%; }
+  .tqs-arrow::before, .tqs-arrow::after { width: 1px; flex: 1; min-height: 24px; }
+}
+@media (max-width: 767px) {
+  .tqs-arrow::before, .tqs-arrow::after { height: 1px; width: 32px; }
+}
+
+.tqs-details > summary:focus-visible { border-radius: 0.5rem; }
+.tqs-table td, .tqs-table th { font-variant-numeric: tabular-nums; }
