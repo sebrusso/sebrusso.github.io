@@ -64,8 +64,8 @@ export const PAGE_POSTS: Post[] = [
     image: {
       src: '/images/tqs-learnings-card.webp',
       alt: 'Architecture diagram: a task\'s tokens pass through Qwen3-8B with LoRA adapters into three rating heads and a quality-score head.',
-      width: 1600,
-      height: 840,
+      width: 1836,
+      height: 734,
     },
   },
 ]
