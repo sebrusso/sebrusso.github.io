@@ -159,9 +159,10 @@ function Scale({ axis, ex }: { axis: Axis; ex: TaskExample }) {
   const ticks = axis === 'difficulty' ? DIFFICULTY_TICKS : ['0', '1', '2', '3']
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-xs">
+      {/* Name and values on separate lines so the three scales line up side by side. */}
+      <div className="flex flex-col gap-0.5 text-xs">
         <span className="whitespace-nowrap font-semibold">{AXIS_LABEL[axis]}</span>
-        <span className="ml-auto whitespace-nowrap font-mono text-[11px] text-muted-foreground">
+        <span className="whitespace-nowrap font-mono text-[11px] text-muted-foreground">
           label {ex.label[axis]} · model {ex.predicted[axis].toFixed(1)}
         </span>
       </div>
@@ -213,25 +214,47 @@ function ColumnHeading({ children }: { children: ReactNode }) {
   )
 }
 
+/** A nested disclosure inside a task panel. Uses a named group so its chevron ignores the outer panel's state. */
+function SubSection({ heading, children }: { heading: ReactNode; children: ReactNode }) {
+  return (
+    <details className="tqs-sub group/sub rounded-md border" open>
+      <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2.5 [&::-webkit-details-marker]:hidden">
+        <span aria-hidden className="text-muted-foreground transition-transform duration-200 group-open/sub:rotate-90">
+          ▸
+        </span>
+        <ColumnHeading>{heading}</ColumnHeading>
+      </summary>
+      <div className="border-t px-3 pb-4 pt-4">{children}</div>
+    </details>
+  )
+}
+
 export function TaskDiagram({ ex }: { ex: TaskExample }) {
   const max = Math.max(...ex.inputs.map((p) => p.keptTokens))
   const total = ex.inputs.reduce((s, p) => s + p.keptTokens, 0)
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <p className="text-sm">{ex.takeaway}</p>
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)] lg:gap-0">
-        <div className="flex min-w-0 flex-col gap-4 lg:pr-6">
-          <ColumnHeading>
+
+      <SubSection
+        heading={
+          <>
             What the model reads
             <span className="font-mono normal-case tracking-normal">· {fmt(total)} tokens</span>
-          </ColumnHeading>
+          </>
+        }
+      >
+        <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
           {PART_ORDER.map((k) => {
             const p = ex.inputs.find((x) => x.key === k)!
             return <InputBlock key={k} part={p} max={max} />
           })}
         </div>
-        <div className="flex min-w-0 flex-col gap-4 border-t pt-5 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
-          <ColumnHeading>
+      </SubSection>
+
+      <SubSection
+        heading={
+          <>
             <span
               className="inline-block rounded-full border bg-background px-2 py-0.5 font-mono text-[10.5px] normal-case tracking-normal"
               title="The model: Qwen3-8B with LoRA adapters"
@@ -240,24 +263,31 @@ export function TaskDiagram({ ex }: { ex: TaskExample }) {
             </span>
             <span aria-hidden>→</span>
             Ratings, 0 to 3
-          </ColumnHeading>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-5">
           <ScaleLegend />
-          {(['underspecified', 'false_negative', 'difficulty'] as Axis[]).map((a) => (
-            <Scale key={a} axis={a} ex={ex} />
-          ))}
-          <div className="flex flex-col gap-1 border-t pt-3 text-xs">
-            <span className="font-semibold">Keep or drop from SWE-bench Verified</span>
-            <span className="text-muted-foreground">
-              Humans: <b className="font-medium text-foreground">{ex.keptInVerified ? 'kept' : 'dropped'}</b> · model drop score{' '}
-              <b className="font-mono font-medium text-foreground">{ex.filterScore.toFixed(2)}</b>
-            </span>
+          <div className="grid grid-cols-1 gap-x-8 gap-y-5 md:grid-cols-3">
+            {(['underspecified', 'false_negative', 'difficulty'] as Axis[]).map((a) => (
+              <Scale key={a} axis={a} ex={ex} />
+            ))}
           </div>
-          <blockquote className="border-l-2 border-brand pl-3 text-xs italic text-muted-foreground">
-            “{ex.note.text}”
-            <span className="mt-1 block not-italic">Annotator note on {AXIS_LABEL[ex.note.axis].toLowerCase()}</span>
-          </blockquote>
+          <div className="grid grid-cols-1 gap-x-8 gap-y-4 border-t pt-4 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+            <div className="flex flex-col gap-1 text-xs">
+              <span className="font-semibold">Keep or drop from SWE-bench Verified</span>
+              <span className="text-muted-foreground">
+                Humans: <b className="font-medium text-foreground">{ex.keptInVerified ? 'kept' : 'dropped'}</b> · model
+                drop score <b className="font-mono font-medium text-foreground">{ex.filterScore.toFixed(2)}</b>
+              </span>
+            </div>
+            <blockquote className="border-l-2 border-brand pl-3 text-xs italic text-muted-foreground">
+              “{ex.note.text}”
+              <span className="mt-1 block not-italic">Annotator note on {AXIS_LABEL[ex.note.axis].toLowerCase()}</span>
+            </blockquote>
+          </div>
         </div>
-      </div>
+      </SubSection>
     </div>
   )
 }
