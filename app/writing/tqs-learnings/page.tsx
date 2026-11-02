@@ -81,6 +81,8 @@ const OUTLINE: TocSection[] = [
     title: 'Results',
     children: [
       { id: 'the-model-against-the-baselines', title: 'The model against the baselines' },
+      { id: 'discussion', title: 'Discussion' },
+      { id: 'significance-and-the-length-check', title: 'Significance and the length check' },
       { id: 'where-it-fails', title: 'Where it fails' },
     ],
   },
@@ -228,19 +230,27 @@ export default function TQSLearningsPage() {
         <Collapsible title="Which gains are real" meta="Gain over the surface baseline with 95% paired-bootstrap intervals" open wide>
           <GainFigure />
         </Collapsible>
+
+        <H3 id="discussion">Discussion</H3>
         <P>
-          On underspecified the 8B model reaches ρ = 0.36 against 0.17 for surface. The paired-bootstrap difference is
-          +0.185 [+0.071, +0.298]: the interval excludes zero and the estimate is larger than the ±0.10 noise floor.
-          Against single held-out annotators it reaches 70% of the
-          human ceiling on that axis, where surface reaches 29%. It also beats surface on false_negative (+0.139), filter
-          AUROC (+0.073) and price Kendall τ (+0.129), all with intervals that exclude zero. Difficulty is a tie (−0.032
-          [−0.078, +0.010]).
+          <b>What the model learned.</b> Two signals that shallow features cannot see. First, whether an issue pins down
+          the intended behavior: on underspecification it reaches ρ 0.36, close to the 0.41 at which reviewers agree with
+          each other (70% of single-reviewer agreement), and 0.33 of it survives removing everything input length
+          predicts, against 0.11 for shallow features. Second, whether the tests would reject valid fixes: ρ 0.48 against
+          a 0.50 ceiling (77% of single-reviewer agreement), with 0.32 surviving the length control against 0.04. It
+          learned nothing new about difficulty: its 0.62 ties the length baseline, and after the length control it keeps
+          less than shallow features do (0.22 vs 0.31). It also picked up one shortcut, reading shorter issues as more
+          underspecified, the same −0.14 correlation between issue length and label that exists in the training data.
         </P>
         <P>
-          To check it wasn&apos;t reading length, I computed partial Spearman correlations controlling for the length
-          baseline&apos;s out-of-fold prediction. On underspecified the 8B model keeps 0.33 and surface 0.11. On
-          false_negative it keeps 0.32 and surface 0.04. On difficulty surface keeps more (0.31 against 0.22), which fits
-          the baseline result above.
+          <b>What this means for training scorers like this.</b> Model scale and context matter on the axes that need
+          reading: going from Qwen3-0.6B at 8k tokens to Qwen3-8B at 32k added 0.125 on underspecification and 0.058 on
+          false negatives. On false negatives the model is already within 0.02 of reviewer agreement, so the labels, not
+          the model, are now the limit: further gains need cleaner targets, such as more reviewers per task or training
+          on per-reviewer labels instead of their maximum. Shortcuts have to be designed out rather than hoped away: length
+          explains difficulty and brevity leaks into underspecification, so future runs should control for length (for
+          example with reworded or length-matched issues) and report partial correlations next to raw ones. Difficulty
+          needs a different label altogether, such as measured agent solve rates.
         </P>
 
         <div className="mb-4 overflow-x-auto rounded-lg border">
@@ -269,6 +279,23 @@ export default function TQSLearningsPage() {
             </tbody>
           </table>
         </div>
+        <H3 id="significance-and-the-length-check">Significance and the length check</H3>
+        <P>
+          On underspecified the 8B model reaches ρ = 0.36 against 0.17 for surface. The paired-bootstrap difference is
+          +0.185 [+0.071, +0.298]: the interval excludes zero and the estimate is larger than the ±0.10 noise floor.
+          Against single held-out annotators it reaches 70% of the
+          human ceiling on that axis, where surface reaches 29%. It also beats surface on false_negative (+0.139), filter
+          AUROC (+0.073) and price Kendall τ (+0.129), all with intervals that exclude zero. Difficulty is a tie (−0.032
+          [−0.078, +0.010]).
+        </P>
+        <P>
+          To check it wasn&apos;t reading length, I computed partial Spearman correlations controlling for the length
+          baseline&apos;s out-of-fold prediction. On underspecified the 8B model keeps 0.33 and surface 0.11. On
+          false_negative it keeps 0.32 and surface 0.04. On difficulty surface keeps more (0.31 against 0.22), which fits
+          the baseline result above.
+        </P>
+
+
         <Collapsible title="Every held-out task, by price score" meta="298 sympy tasks, grouped by annotated severity (underspecified + false_negative)" open wide>
           <ScoreSwarmFigure />
         </Collapsible>
