@@ -125,16 +125,23 @@ export default function TQSLearningsPage() {
 
         <H2>1. Humans disagree, so measure the ceiling first</H2>
         <P>
-          On the underspecified task above, the three annotators gave 1, 3 and 1, and the max-ensemble makes the label 3.
-          That spread is typical. I define the human ceiling as the Spearman ρ between one held-out annotator and the mean
-          of the other two: 0.41 for underspecified, 0.50 for false_negative and 0.56 for difficulty.
+          The labels are noisy: on the underspecified task above, the three reviewers gave 1, 3 and 1. So before
+          training anything I measured how well reviewers agree with each other, by holding one out and correlating
+          their ratings with the mean of the other two. That human ceiling is Spearman ρ 0.41 for underspecification,
+          0.50 for tests that reject valid fixes and 0.56 for difficulty. It changes how to read every result below:
         </P>
-        <P>
-          A model at ρ = 0.35 on underspecified sounds weak until you see that one annotator reaches 0.41 against the
-          other two. The comparison also has to be like for like. Scored against the three-annotator ensemble, a model
-          faces cleaner labels than any single human does and can appear to beat the ceiling when it doesn&apos;t, so I
-          also score it against single held-out annotators, using the same draws as the ceiling.
-        </P>
+        <ul className="mb-4 list-disc space-y-2 pl-6">
+          <li>
+            <b>It sets the scale.</b> A model can&apos;t be expected to match the labels much better than the reviewers
+            match each other, so the 8B model&apos;s 0.36 on underspecification is close to the limit, not weak.
+          </li>
+          <li>
+            <b>It sets a fair comparison.</b> The released labels combine three reviewers, so they are cleaner than any
+            one reviewer&apos;s view, and a model scored against them can look better than humans when it isn&apos;t.
+            I also score the model against a single held-out reviewer, the same way the ceiling is measured. That is
+            where the &quot;70% of human agreement&quot; figure comes from.
+          </li>
+        </ul>
 
         <H2>2. Run the dumb baselines before the smart model</H2>
         <P>
