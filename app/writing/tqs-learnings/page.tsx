@@ -8,6 +8,7 @@ import {
   Collapsible,
   ExampleCollapsibles,
   InputBudgetDiagram,
+  ObjectiveDiagram,
   TaskDiagram,
 } from '../../../components/tqs-learnings/diagrams'
 import { EXAMPLES, RESULTS } from '../../../lib/tqs-learnings'
@@ -79,6 +80,17 @@ export default function TQSLearningsPage() {
 
         <Collapsible title="How a task becomes model input" meta="Four real tasks, drawn to scale" open>
           <InputBudgetDiagram />
+        </Collapsible>
+
+        <P>
+          The model is trained on two things at once. For each task it predicts the three ratings. And for every pair
+          of tasks in a batch, it gives each one a single quality score and is penalized when the worse task scores
+          higher. The ratings make it explain itself; the single score is what a training pipeline would actually use
+          to filter or rank tasks.
+        </P>
+
+        <Collapsible title="What the model is trained to do" meta="Inputs, encoder, heads and losses, with a real pair of tasks" open wide>
+          <ObjectiveDiagram />
         </Collapsible>
 
         <P>Here are four tasks from the held-out set, with what annotators said and what the trained model predicted.</P>
