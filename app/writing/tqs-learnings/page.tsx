@@ -14,6 +14,7 @@ import { EXAMPLES, RESULTS } from '../../../lib/tqs-learnings'
 import { ArchitectureFigure, PairFigure, ScoreSwarmFigure } from '../../../components/tqs-learnings/figures'
 import { ComparisonFigure, GainFigure } from '../../../components/tqs-learnings/results-figures'
 import { TLDR } from '../../../components/tqs-learnings/tldr'
+import { TableOfContents, type TocSection } from '../../../components/tqs-learnings/toc'
 import { FiltrationFigure, InputLengthFigure } from '../../../components/tqs-learnings/data-figures'
 import { BaselineFigure } from '../../../components/tqs-learnings/baseline-figure'
 import './tqs.css'
@@ -36,11 +37,19 @@ export const metadata: Metadata = {
 const linkClass =
   'font-medium text-primary underline decoration-brand decoration-2 underline-offset-4 hover:text-primary/80'
 
-function H2({ children }: { children: ReactNode }) {
-  return <h2 className="mb-3 mt-10 text-xl font-bold">{children}</h2>
+function H2({ id, children }: { id: string; children: ReactNode }) {
+  return (
+    <h2 id={id} className="mb-3 mt-10 scroll-mt-6 text-xl font-bold">
+      {children}
+    </h2>
+  )
 }
-function H3({ children }: { children: ReactNode }) {
-  return <h3 className="mb-2 mt-8 text-lg font-semibold">{children}</h3>
+function H3({ id, children }: { id: string; children: ReactNode }) {
+  return (
+    <h3 id={id} className="mb-2 mt-8 scroll-mt-6 text-lg font-semibold">
+      {children}
+    </h3>
+  )
 }
 function P({ children }: { children: ReactNode }) {
   return <p className="mb-4">{children}</p>
@@ -48,6 +57,37 @@ function P({ children }: { children: ReactNode }) {
 function Code({ children }: { children: ReactNode }) {
   return <code className="rounded bg-muted px-1 py-0.5 text-[0.9em]">{children}</code>
 }
+
+const OUTLINE: TocSection[] = [
+  {
+    id: 'the-data',
+    title: 'The data',
+    children: [
+      { id: 'data-filtration-and-preparation', title: 'Data filtration and preparation' },
+    ],
+  },
+  { id: 'input-and-model', title: 'Input and model' },
+  {
+    id: 'baselines-and-evaluation',
+    title: 'Baselines and evaluation',
+    children: [
+      { id: 'the-human-ceiling', title: 'The human ceiling' },
+      { id: 'shallow-feature-baselines', title: 'Shallow-feature baselines' },
+      { id: 'the-noise-floor', title: 'The noise floor' },
+    ],
+  },
+  {
+    id: 'results',
+    title: 'Results',
+    children: [
+      { id: 'the-model-against-the-baselines', title: 'The model against the baselines' },
+      { id: 'where-it-fails', title: 'Where it fails' },
+    ],
+  },
+  { id: 'limitations-and-next-steps', title: 'Limitations and next steps' },
+  { id: 'appendix-input-lengths-and-the-prefill-budget', title: 'Appendix: input lengths and the prefill budget' },
+  { id: 'appendix-compute-and-cost', title: 'Appendix: compute and cost' },
+]
 
 const f = (v: number | null) => (v == null ? '–' : v.toFixed(2))
 
@@ -61,6 +101,7 @@ export default function TQSLearningsPage() {
       </p>
 
       <TLDR />
+      <TableOfContents sections={OUTLINE} />
 
       <div className="text-base leading-relaxed">
         <div className="mb-6 rounded-lg border-l-4 border-brand bg-brand-soft/60 px-4 py-3">
@@ -79,13 +120,13 @@ export default function TQSLearningsPage() {
           </p>
         </div>
 
-        <H2>The data</H2>
+        <H2 id="the-data">The data</H2>
         <P>
           The labels are OpenAI&apos;s SWE-bench Verified annotations: three reviewers rated each of 1,699 SWE-bench tasks
           for underspecification (0–3), tests that reject valid fixes (0–3) and difficulty (a time bucket). Reviewers
           agree only moderately (Krippendorff&apos;s α 0.34–0.49), which caps how well any model can match them.
         </P>
-        <H3>Data filtration and preparation</H3>
+        <H3 id="data-filtration-and-preparation">Data filtration and preparation</H3>
         <P>
           Verified keeps a task only if both severity labels (the maximum over the three reviewers) are below 2 and no
           reviewer flagged another major issue. TQS
@@ -97,7 +138,7 @@ export default function TQSLearningsPage() {
           <FiltrationFigure />
         </Collapsible>
 
-        <H2>Input and model</H2>
+        <H2 id="input-and-model">Input and model</H2>
         <P>
           Each task is serialized as the issue, gold patch, tests and the source files the patch touches, within 30,720
           Qwen3 tokens; 13% of tasks overflow and have their code context trimmed (see the appendix).
@@ -124,13 +165,13 @@ export default function TQSLearningsPage() {
         <P>Four tasks from the held-out sympy fold, with the annotator labels and the trained model&apos;s predictions:</P>
         <ExampleCollapsibles />
 
-        <H2>Baselines and evaluation</H2>
+        <H2 id="baselines-and-evaluation">Baselines and evaluation</H2>
         <P>
           Before training, I fixed three reference points that every result is read against: how well the human
           reviewers agree with each other, how far shallow features get, and how much a score can move by chance.
         </P>
 
-        <H3>The human ceiling</H3>
+        <H3 id="the-human-ceiling">The human ceiling</H3>
         <P>
           The labels are noisy: on the underspecified task above, the three reviewers gave 1, 3 and 1. So before
           training anything I measured how well reviewers agree with each other, by holding one out and correlating
@@ -150,7 +191,7 @@ export default function TQSLearningsPage() {
           </li>
         </ul>
 
-        <H3>Shallow-feature baselines</H3>
+        <H3 id="shallow-feature-baselines">Shallow-feature baselines</H3>
         <P>
           I fit two ordinal-logistic baselines on hand-built features (below). Length alone
           predicts difficulty better than reviewers agree with each other (ρ 0.66 vs 0.56), while shallow features barely
@@ -162,7 +203,7 @@ export default function TQSLearningsPage() {
           <BaselineFigure />
         </Collapsible>
 
-        <H3>The noise floor</H3>
+        <H3 id="the-noise-floor">The noise floor</H3>
         <P>
           One held-out repository gives 298 test tasks. Before the 8B run, I estimated the noise floor with a paired
           bootstrap of surface against length on those tasks. The 95% interval half-width was about ±0.10 on
@@ -173,14 +214,14 @@ export default function TQSLearningsPage() {
           underspecified by 0.06. With the threshold already written down, that was clearly inside the noise.
         </P>
 
-        <H2>Results</H2>
+        <H2 id="results">Results</H2>
         <P>
           The main run trains on the leave-repo-out fold that holds out sympy: 1,260 training and 141 validation tasks
           from the other repositories, and sympy&apos;s 298 tasks as test. It trained for 3 epochs (237 AdamW steps, 16
           tasks per step), with the best checkpoint at step 200 by validation mean Spearman.
         </P>
 
-        <H3>The model against the baselines</H3>
+        <H3 id="the-model-against-the-baselines">The model against the baselines</H3>
         <Collapsible title="Scores on the held-out tasks" meta="Both baselines and both models on every metric, with the human ceiling" open wide>
           <ComparisonFigure />
         </Collapsible>
@@ -232,7 +273,7 @@ export default function TQSLearningsPage() {
           <ScoreSwarmFigure />
         </Collapsible>
 
-        <H3>Where it fails</H3>
+        <H3 id="where-it-fails">Where it fails</H3>
         <P>
           The worst misses share a pattern. The task below has a short, clear issue that all three annotators rated 0 on
           underspecified, and the model predicts 2.0. In training, the median issue is 804 characters for label 3 and
@@ -244,7 +285,7 @@ export default function TQSLearningsPage() {
           <TaskDiagram ex={miss} />
         </Collapsible>
 
-        <H2>Limitations and next steps</H2>
+        <H2 id="limitations-and-next-steps">Limitations and next steps</H2>
         <P>
           This is one held-out repository and one seed, so it is directional evidence, not a final number. The model also
           learns to agree with these annotators, which is not the same as predicting whether a task is learnable under
@@ -252,7 +293,7 @@ export default function TQSLearningsPage() {
           issue only), and run a membership probe for pretraining contamination, since Qwen3 may have seen SWE-bench.
           The terse-issue failure also suggests training on reworded issues, so length stops being a shortcut.
         </P>
-        <H2>Appendix: input lengths and the prefill budget</H2>
+        <H2 id="appendix-input-lengths-and-the-prefill-budget">Appendix: input lengths and the prefill budget</H2>
         <P>
           Each task is serialized before truncation as issue + gold patch + tests + code context. Most fit easily: the
           median is about 10.9k tokens. The tail is long, though, and 224 of the 1,699 tasks (13.2%) exceed the
@@ -263,7 +304,7 @@ export default function TQSLearningsPage() {
           <InputLengthFigure />
         </Collapsible>
 
-        <H2>Appendix: compute and cost</H2>
+        <H2 id="appendix-compute-and-cost">Appendix: compute and cost</H2>
         <P>
           The budget was $26 of RunPod credit, and an on-demand H100 80GB cost $3.99 an hour, so everything had to fit
           in about six GPU-hours. A throughput probe showed the 8B run wouldn&apos;t. The pairwise loss needs at least two
