@@ -60,10 +60,19 @@ export default function TQSLearningsPage() {
       <div className="text-base leading-relaxed">
         <P>
           RL for coding agents rewards a policy when a task&apos;s FAIL_TO_PASS tests pass and its PASS_TO_PASS tests
-          still do. Two task defects corrupt that reward: an issue too underspecified to pin down the intended behavior,
-          and FAIL_TO_PASS tests with false negatives, which reject valid fixes. Both penalize correct behavior and waste
-          the rollouts spent on the task. Human review catches them, but it costs hours per task and does not scale to
-          the 10<sup>5</sup>+ mined or synthetic tasks that RL pipelines now generate.
+          still do. Two task defects corrupt that reward:
+        </P>
+        <ul className="mb-4 list-disc space-y-1 pl-6">
+          <li>
+            <b>Underspecified issue:</b> the issue doesn&apos;t pin down the intended behavior.
+          </li>
+          <li>
+            <b>False-negative tests:</b> the FAIL_TO_PASS tests reject valid fixes.
+          </li>
+        </ul>
+        <P>
+          Both penalize correct behavior and waste rollouts. Human review catches them but takes hours per task, which
+          doesn&apos;t scale to the 10<sup>5</sup>+ mined or synthetic tasks RL pipelines now generate.
         </P>
         <P>
           TQS (task quality scorer) is a model that predicts the SWE-bench Verified review labels from the task alone,
