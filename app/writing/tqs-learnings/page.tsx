@@ -12,6 +12,7 @@ import {
 } from '../../../components/tqs-learnings/diagrams'
 import { EXAMPLES, RESULTS } from '../../../lib/tqs-learnings'
 import { ArchitectureFigure, PairFigure, ScoreSwarmFigure } from '../../../components/tqs-learnings/figures'
+import { ComparisonFigure, GainFigure } from '../../../components/tqs-learnings/results-figures'
 import { TLDR } from '../../../components/tqs-learnings/tldr'
 import { FiltrationFigure, InputLengthFigure } from '../../../components/tqs-learnings/data-figures'
 import { BaselineFigure } from '../../../components/tqs-learnings/baseline-figure'
@@ -123,7 +124,13 @@ export default function TQSLearningsPage() {
         <P>Four tasks from the held-out sympy fold, with the annotator labels and the trained model&apos;s predictions:</P>
         <ExampleCollapsibles />
 
-        <H2>1. Humans disagree, so measure the ceiling first</H2>
+        <H2>Baselines and evaluation</H2>
+        <P>
+          Before training, I fixed three reference points that every result is read against: how well the human
+          reviewers agree with each other, how far shallow features get, and how much a score can move by chance.
+        </P>
+
+        <H3>The human ceiling</H3>
         <P>
           The labels are noisy: on the underspecified task above, the three reviewers gave 1, 3 and 1. So before
           training anything I measured how well reviewers agree with each other, by holding one out and correlating
@@ -143,9 +150,9 @@ export default function TQSLearningsPage() {
           </li>
         </ul>
 
-        <H2>2. Run the dumb baselines before the smart model</H2>
+        <H3>Shallow-feature baselines</H3>
         <P>
-          Before training anything I fit two ordinal-logistic baselines on hand-built features (below). Length alone
+          I fit two ordinal-logistic baselines on hand-built features (below). Length alone
           predicts difficulty better than reviewers agree with each other (ρ 0.66 vs 0.56), while shallow features barely
           detect underspecification (0.17). So underspecification is where a model that reads the text has to prove
           itself.
@@ -155,30 +162,54 @@ export default function TQSLearningsPage() {
           <BaselineFigure />
         </Collapsible>
 
-        <H2>3. Decide what counts as a win before you look</H2>
+        <H3>The noise floor</H3>
         <P>
           One held-out repository gives 298 test tasks. Before the 8B run, I estimated the noise floor with a paired
           bootstrap of surface against length on those tasks. The 95% interval half-width was about ±0.10 on
           underspecified Spearman, so smaller gains are noise.
         </P>
         <P>
-          This paid off immediately. The first run, Qwen3-0.6B with context cut to 8k tokens, beat surface on
+          This mattered for the first run. The first run, Qwen3-0.6B with context cut to 8k tokens, beat surface on
           underspecified by 0.06. With the threshold already written down, that was clearly inside the noise.
         </P>
 
-        <H2>4. The 8B model learned something shallow features can&apos;t</H2>
+        <H2>Results</H2>
         <P>
-          The main run uses the setup above with the leave-repo-out fold that holds out sympy: 1,260 training and 141
-          validation tasks from the other repositories, and sympy&apos;s 298 tasks as test. It trained for 3 epochs (237
-          AdamW steps, 16 tasks per step), with the best checkpoint at step 200 by validation mean Spearman.
+          The main run trains on the leave-repo-out fold that holds out sympy: 1,260 training and 141 validation tasks
+          from the other repositories, and sympy&apos;s 298 tasks as test. It trained for 3 epochs (237 AdamW steps, 16
+          tasks per step), with the best checkpoint at step 200 by validation mean Spearman.
         </P>
+
+        <H3>The model against the baselines</H3>
+        <Collapsible title="Scores on the held-out tasks" meta="Both baselines and both models on every metric, with the human ceiling" open wide>
+          <ComparisonFigure />
+        </Collapsible>
+        <Collapsible title="Which gains are real" meta="Gain over the surface baseline with 95% paired-bootstrap intervals" open wide>
+          <GainFigure />
+        </Collapsible>
+        <P>
+          On underspecified the 8B model reaches ρ = 0.36 against 0.17 for surface. The paired-bootstrap difference is
+          +0.185 [+0.071, +0.298]: the interval excludes zero and the estimate is larger than the ±0.10 noise floor.
+          Against single held-out annotators it reaches 70% of the
+          human ceiling on that axis, where surface reaches 29%. It also beats surface on false_negative (+0.139), filter
+          AUROC (+0.073) and price Kendall τ (+0.129), all with intervals that exclude zero. Difficulty is a tie (−0.032
+          [−0.078, +0.010]).
+        </P>
+        <P>
+          To check it wasn&apos;t reading length, I computed partial Spearman correlations controlling for the length
+          baseline&apos;s out-of-fold prediction. On underspecified the 8B model keeps 0.33 and surface 0.11. On
+          false_negative it keeps 0.32 and surface 0.04. On difficulty surface keeps more (0.31 against 0.22), which fits
+          the baseline result above.
+        </P>
+
         <div className="mb-4 overflow-x-auto rounded-lg border">
-          <table className="tqs-table w-full min-w-[560px] text-sm">
+          <table className="tqs-table w-full min-w-[640px] text-sm">
             <thead className="bg-muted text-left">
               <tr>
                 <th className="px-3 py-2 font-semibold">Held-out sympy tasks (n = 298)</th>
                 <th className="px-3 py-2 text-right font-semibold">Qwen3-8B</th>
                 <th className="px-3 py-2 text-right font-semibold">Qwen3-0.6B</th>
+                <th className="px-3 py-2 text-right font-semibold">Length</th>
                 <th className="px-3 py-2 text-right font-semibold">Surface</th>
                 <th className="px-3 py-2 text-right font-semibold">Human ceiling</th>
               </tr>
@@ -189,6 +220,7 @@ export default function TQSLearningsPage() {
                   <td className="px-3 py-2">{r.metric}</td>
                   <td className={`px-3 py-2 text-right ${r.better ? 'font-semibold' : ''}`}>{f(r.t4)}</td>
                   <td className="px-3 py-2 text-right">{f(r.t1)}</td>
+                  <td className="px-3 py-2 text-right">{f(r.length)}</td>
                   <td className="px-3 py-2 text-right">{f(r.surface)}</td>
                   <td className="px-3 py-2 text-right text-muted-foreground">{f(r.ceiling)}</td>
                 </tr>
@@ -199,21 +231,8 @@ export default function TQSLearningsPage() {
         <Collapsible title="Every held-out task, by price score" meta="298 sympy tasks, grouped by annotated severity (underspecified + false_negative)" open wide>
           <ScoreSwarmFigure />
         </Collapsible>
-        <P>
-          On underspecified the 8B model reaches ρ = 0.36 against 0.17 for surface. The paired-bootstrap difference is
-          +0.185 [+0.071, +0.298], clear of the ±0.10 floor. Against single held-out annotators it reaches 70% of the
-          human ceiling on that axis, where surface reaches 29%. It also beats surface on false_negative (+0.139), filter
-          AUROC (+0.073) and price Kendall τ (+0.129), all with intervals that exclude zero. Difficulty is a tie (−0.032
-          [−0.078, +0.010]).
-        </P>
-        <P>
-          To check it wasn&apos;t reading length, I computed partial Spearman correlations controlling for the length
-          baseline&apos;s out-of-fold prediction. On underspecified the 8B model keeps 0.33 and surface 0.11. On
-          false_negative it keeps 0.32 and surface 0.04. On difficulty surface keeps more (0.31 against 0.22), which fits
-          lesson 2.
-        </P>
 
-        <H2>5. It fails in a way you can name</H2>
+        <H3>Where it fails</H3>
         <P>
           The worst misses share a pattern. The task below has a short, clear issue that all three annotators rated 0 on
           underspecified, and the model predicts 2.0. In training, the median issue is 804 characters for label 3 and
@@ -225,23 +244,7 @@ export default function TQSLearningsPage() {
           <TaskDiagram ex={miss} />
         </Collapsible>
 
-        <H2>6. Most of the work was making it cheap enough to run</H2>
-        <P>
-          The budget was $26 of RunPod credit, and an on-demand H100 80GB cost $3.99 an hour, so everything had to fit
-          in about six GPU-hours. A throughput probe showed the 8B run wouldn&apos;t. The pairwise loss needs at least two
-          tasks per micro-batch, and padding the shorter one pushed PyTorch SDPA off its fast path: 1,754 real tokens/s
-          instead of 4,024 at 32k context, 2.3× slower. At that rate the 8B run would have cost $20–28, more than the
-          credit left. Forwarding each task unpadded and combining the two outputs before the backward pass gave the same
-          gradients at full speed. The run
-          took 187 minutes at about 3,970 tokens/s and 48.7 GB peak memory, and the whole session cost about $16.
-        </P>
-        <P>
-          The memory probe also reported out-of-memory errors that weren&apos;t real: it left the model in eval mode,
-          where Hugging Face turns gradient checkpointing off. Every pod also started with a hard deadline that terminates it,
-          so a hung job couldn&apos;t drain the credit overnight.
-        </P>
-
-        <H2>What&apos;s next</H2>
+        <H2>Limitations and next steps</H2>
         <P>
           This is one held-out repository and one seed, so it is directional evidence, not a final number. The model also
           learns to agree with these annotators, which is not the same as predicting whether a task is learnable under
@@ -259,6 +262,23 @@ export default function TQSLearningsPage() {
         <Collapsible title="Distribution of input lengths" meta="All 1,699 tasks, log scale, with the overflow region shaded" open>
           <InputLengthFigure />
         </Collapsible>
+
+        <H2>Appendix: compute and cost</H2>
+        <P>
+          The budget was $26 of RunPod credit, and an on-demand H100 80GB cost $3.99 an hour, so everything had to fit
+          in about six GPU-hours. A throughput probe showed the 8B run wouldn&apos;t. The pairwise loss needs at least two
+          tasks per micro-batch, and padding the shorter one pushed PyTorch SDPA off its fast path: 1,754 real tokens/s
+          instead of 4,024 at 32k context, 2.3× slower. At that rate the 8B run would have cost $20–28, more than the
+          credit left. Forwarding each task unpadded and combining the two outputs before the backward pass gave the same
+          gradients at full speed. The run
+          took 187 minutes at about 3,970 tokens/s and 48.7 GB peak memory, and the whole session cost about $16.
+        </P>
+        <P>
+          The memory probe also reported out-of-memory errors that weren&apos;t real: it left the model in eval mode,
+          where Hugging Face turns gradient checkpointing off. Every pod also started with a hard deadline that terminates it,
+          so a hung job couldn&apos;t drain the credit overnight.
+        </P>
+
 
         <p className="text-sm text-muted-foreground">
           Labels come from OpenAI&apos;s public SWE-bench Verified annotation release; task text from{' '}

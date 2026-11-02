@@ -294,9 +294,9 @@ Must go from failing to passing: test_super_sub`,
 
 /** Held-out sympy fold, n = 298. Paired-bootstrap 95% CI of T4 minus surface. */
 export const RESULTS = [
-  { metric: 'underspecified (Spearman ρ)', t4: 0.358, t1: 0.233, surface: 0.173, ceiling: 0.41, ci: '+0.185 [+0.071, +0.298]', better: true },
-  { metric: 'false_negative (Spearman ρ)', t4: 0.48, t1: 0.422, surface: 0.341, ceiling: 0.5, ci: '+0.139 [+0.057, +0.223]', better: true },
-  { metric: 'difficulty (Spearman ρ)', t4: 0.623, t1: 0.651, surface: 0.655, ceiling: 0.56, ci: '−0.032 [−0.078, +0.010]', better: false },
-  { metric: 'Filter decision (AUROC)', t4: 0.772, t1: 0.724, surface: 0.7, ceiling: null, ci: '+0.073 [+0.014, +0.133]', better: true },
-  { metric: 'Price score vs. severity (Kendall τ)', t4: 0.354, t1: 0.291, surface: 0.225, ceiling: null, ci: '+0.129 [+0.049, +0.207]', better: true },
+  { metric: 'underspecified (Spearman ρ)', t4: 0.358, t1: 0.233, length: 0.156, surface: 0.173, ceiling: 0.41, ci: '+0.185 [+0.071, +0.298]', better: true },
+  { metric: 'false_negative (Spearman ρ)', t4: 0.48, t1: 0.422, length: 0.378, surface: 0.341, ceiling: 0.5, ci: '+0.139 [+0.057, +0.223]', better: true },
+  { metric: 'difficulty (Spearman ρ)', t4: 0.623, t1: 0.651, length: 0.618, surface: 0.655, ceiling: 0.56, ci: '−0.032 [−0.078, +0.010]', better: false },
+  { metric: 'Filter decision (AUROC)', t4: 0.772, t1: 0.724, length: 0.705, surface: 0.7, ceiling: null, ci: '+0.073 [+0.014, +0.133]', better: true },
+  { metric: 'Price score vs. severity (Kendall τ)', t4: 0.354, t1: 0.291, length: 0.264, surface: 0.225, ceiling: null, ci: '+0.129 [+0.049, +0.207]', better: true },
 ]
