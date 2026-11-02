@@ -7,8 +7,17 @@ interface BaseContent {
 }
 
 // Post-specific interfaces
+export interface PostImage {
+  src: string
+  alt: string
+  width: number
+  height: number
+}
+
 export interface Post extends BaseContent {
   content: string
+  /** Optional thumbnail, shown on the writing index card. */
+  image?: PostImage
 }
 
 export interface PostMetadata {

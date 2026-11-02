@@ -29,9 +29,28 @@ import './tqs.css'
 
 const POST = PAGE_POSTS.find((p) => p.id === 'tqs-learnings')!
 
+const OG_IMAGE = { url: '/images/tqs-learnings-og.png', width: 1200, height: 630, alt: POST.image?.alt ?? POST.title }
+
 export const metadata: Metadata = {
   title: POST.title,
   description: POST.description,
+  alternates: { canonical: '/writing/tqs-learnings' },
+  openGraph: {
+    title: POST.title,
+    description: POST.description,
+    url: '/writing/tqs-learnings',
+    siteName: 'Sebastian Russo',
+    type: 'article',
+    publishedTime: POST.date,
+    images: [OG_IMAGE],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: POST.title,
+    description: POST.description,
+    creator: '@sebbrusso',
+    images: [OG_IMAGE.url],
+  },
 }
 
 const linkClass =

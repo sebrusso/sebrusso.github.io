@@ -61,6 +61,12 @@ export const PAGE_POSTS: Post[] = [
       'Fine-tuning Qwen3-8B to predict how human reviewers rate SWE-bench tasks, and what it learned about vague issues and tests that reject correct fixes.',
     date: '2026-11-02',
     content: '',
+    image: {
+      src: '/images/tqs-learnings-card.webp',
+      alt: 'Architecture diagram: a task\'s tokens pass through Qwen3-8B with LoRA adapters into three rating heads and a quality-score head.',
+      width: 1600,
+      height: 840,
+    },
   },
 ]
 
