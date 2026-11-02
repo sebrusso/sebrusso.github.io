@@ -14,6 +14,7 @@ import {
   type TaskStats,
   type TrialsMeta,
 } from '../../lib/tb4/data'
+import type { StoredTrajectory } from '../../lib/tb4/trajectories'
 
 const pct = (x: number) => `${Math.round(x * 100)}%`
 
@@ -22,7 +23,23 @@ const pct = (x: number) => `${Math.round(x * 100)}%`
  * row per config with a square per trial, each linking to the trial on the
  * Harbor Hub where its transcript lives.
  */
-export function TrialsPanel({ name, per, meta, stats }: { name: string; per: PerTask; meta: TrialsMeta | null; stats: TaskStats | null }) {
+export function TrialsPanel({
+  name,
+  per,
+  meta,
+  stats,
+  stored,
+  activeTrial,
+  onTrial,
+}: {
+  name: string
+  per: PerTask
+  meta: TrialsMeta | null
+  stats: TaskStats | null
+  stored: Map<string, StoredTrajectory> | null
+  activeTrial: string | null
+  onTrial: (trial: string) => void
+}) {
   const { data: rows } = useTrials(name)
 
   const byConfig = useMemo(() => {
@@ -93,8 +110,20 @@ export function TrialsPanel({ name, per, meta, stats }: { name: string; per: Per
               <span className="flex gap-1">
                 {trials.map((t, k) => {
                   const o: Outcome = outcomeOf(t[2], t[3])
-                  const label = `${cfg.model} trial ${k + 1}: ${OUTCOMES.find((x) => x.id === o)?.label}${t[3] && o !== 'passed' ? ` (${t[3]})` : ''} · ${formatSeconds(t[8])} · ${formatUsd(t[4])}`
-                  return job ? (
+                  const here = stored?.has(t[1])
+                  const label = `${cfg.model} trial ${k + 1}: ${OUTCOMES.find((x) => x.id === o)?.label}${t[3] && o !== 'passed' ? ` (${t[3]})` : ''} · ${formatSeconds(t[8])} · ${formatUsd(t[4])}${here ? ' · transcript stored here' : ''}`
+                  return here ? (
+                    <button
+                      key={t[1]}
+                      type="button"
+                      onClick={() => onTrial(t[1])}
+                      className="tb4-trial tb4-trial-stored"
+                      data-active={activeTrial === t[1] || undefined}
+                      style={{ background: outcomeVar(o) }}
+                      title={label}
+                      aria-label={label}
+                    />
+                  ) : job ? (
                     <a key={t[1]} href={hubTrialUrl(job, t[1])} target="_blank" rel="noreferrer" className="tb4-trial" style={{ background: outcomeVar(o) }} title={label} aria-label={label} />
                   ) : (
                     <span key={t[1]} className="tb4-trial" style={{ background: outcomeVar(o) }} title={label} />
@@ -107,7 +136,7 @@ export function TrialsPanel({ name, per, meta, stats }: { name: string; per: Per
         </ul>
       )}
       <p className="text-xs leading-relaxed text-muted-foreground">
-        Each square is one attempt (the latest, if it was retried); click it to open the trial and its transcript on the{' '}
+        Each square is one attempt (the latest, if it was retried). Squares with a dot have their transcript stored here; the rest open on the{' '}
         <a href={per.source_url} target="_blank" rel="noreferrer" className="underline underline-offset-2">
           Harbor Hub
         </a>

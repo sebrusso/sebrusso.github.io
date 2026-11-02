@@ -10,8 +10,8 @@ import { TaskView } from './task-view'
 
 export const TB4_BASE = '/tb4-r8v3xm'
 
-type Tab = 'instruction' | 'tests' | 'solution' | 'environment' | 'files'
-const TABS: Tab[] = ['instruction', 'tests', 'solution', 'environment', 'files']
+type Tab = 'instruction' | 'tests' | 'solution' | 'environment' | 'files' | 'transcript'
+const TABS: Tab[] = ['instruction', 'tests', 'solution', 'environment', 'files', 'transcript']
 
 // Static export: every view is this one page with a query string, so a task
 // and file can be linked directly (?task=html-js-filter&tab=tests&file=…).
@@ -76,7 +76,9 @@ export function TB4App() {
           trialsMeta={trialsMeta}
           tab={tab}
           filePath={params.get('file')}
+          trial={params.get('trial')}
           onTab={(t, file) => go({ task, tab: t === 'instruction' ? null : t, file }, false)}
+          onTrial={(trial) => go({ task, tab: trial ? 'transcript' : null, trial }, false)}
           onBack={() => go({ view: view === 'table' ? null : view })}
           onOpen={(name) => go({ task: name })}
           onLoaded={setLoaded}

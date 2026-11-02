@@ -16,6 +16,7 @@ import {
   type Index,
   formatSeconds,
   formatTokens,
+  hubTrialUrl,
   formatUsd,
   type Analysis,
   type PerTask,
@@ -25,11 +26,13 @@ import {
 } from '../../lib/tb4/data'
 import { CodeViewer } from './code-viewer'
 import { TrialsPanel } from './trials-panel'
+import { Transcript } from './transcript'
+import { useStoredTrajectories } from '../../lib/tb4/trajectories'
 import { CommentButton, fieldAttr, useComments } from '../comments/comments'
 import { WhoBadge, relativeTime } from '../notebook/bits'
 import { openThreadCount } from '../../lib/comments/store'
 
-type Tab = 'instruction' | 'tests' | 'solution' | 'environment' | 'files'
+type Tab = 'instruction' | 'tests' | 'solution' | 'environment' | 'files' | 'transcript'
 const TABS: [Tab, string][] = [
   ['instruction', 'Instruction'],
   ['tests', 'Tests'],
@@ -38,7 +41,7 @@ const TABS: [Tab, string][] = [
   ['files', 'All files'],
 ]
 // The file each tab opens on, in order of preference.
-const PREFERRED: Record<Exclude<Tab, 'instruction'>, RegExp[]> = {
+const PREFERRED: Record<Exclude<Tab, 'instruction' | 'transcript'>, RegExp[]> = {
   tests: [/test_outputs\.py$/, /\.py$/, /test\.sh$/],
   solution: [/solve\.sh$/, /\.py$/],
   environment: [/^environment\/Dockerfile$/, /Dockerfile$/],
@@ -53,7 +56,9 @@ export function TaskView({
   trialsMeta,
   tab,
   filePath,
+  trial,
   onTab,
+  onTrial,
   onBack,
   onOpen,
   onLoaded,
@@ -65,7 +70,9 @@ export function TaskView({
   trialsMeta: TrialsMeta | null
   tab: Tab
   filePath: string | null
+  trial: string | null
   onTab: (tab: Tab, file?: string | null) => void
+  onTrial: (trial: string | null) => void
   onBack: () => void
   onOpen: (name: string) => void
   onLoaded: (task: TaskDetail) => void
@@ -75,6 +82,8 @@ export function TaskView({
   useEffect(() => {
     if (task) onLoaded(task)
   }, [task, onLoaded])
+  const { user } = useComments()
+  const stored = useStoredTrajectories(user, name)
   const summary = index.tasks.find((t) => t.name === name)
   const ghBase = `${index.repo}/blob/${index.tag}/tasks/${name}`
 
@@ -91,6 +100,9 @@ export function TaskView({
 
   const related = index.tasks.filter((t) => t.category === summary.category && t.name !== name)
   const stats = analysis?.tasks[name] ?? null
+  const openTrial = trial ? stored?.get(trial) : undefined
+  const trialCfg = openTrial ? per?.configs.find((c) => c.id === openTrial.config_id) : undefined
+  const trialJob = openTrial ? trialsMeta?.configs.find((c) => c.id === openTrial.config_id)?.job : undefined
 
   return (
     <div className="flex flex-col gap-6 py-8">
@@ -146,7 +158,7 @@ export function TaskView({
       <div className="flex flex-wrap items-start gap-7">
         <div className="flex min-w-0 flex-[999_1_480px] flex-col gap-4">
           <div role="tablist" aria-label="Task sections" className="flex gap-1 overflow-x-auto border-b border-border">
-            {TABS.map(([id, label]) => (
+            {[...TABS, ...(tab === 'transcript' ? ([['transcript', 'Transcript']] as [Tab, string][]) : [])].map(([id, label]) => (
               <button
                 key={id}
                 role="tab"
@@ -163,6 +175,20 @@ export function TaskView({
             <div className="rounded-xl border border-border px-4 py-12 text-center text-sm text-muted-foreground">
               {error ? 'Couldn’t load this task’s files. Reload to try again.' : 'Loading task files…'}
             </div>
+          ) : tab === 'transcript' ? (
+            trial && openTrial ? (
+              <Transcript
+                slug={slug}
+                label={trialCfg ? `${trialCfg.model}${trialCfg.effort ? ` ${trialCfg.effort}` : ''} · ${trialCfg.agent ?? ''}` : openTrial.config_id}
+                stored={openTrial}
+                hubUrl={trialJob ? hubTrialUrl(trialJob, openTrial.trial_id) : null}
+                onClose={() => onTrial(null)}
+              />
+            ) : (
+              <div className="rounded-xl border border-border px-4 py-10 text-center text-sm text-muted-foreground">
+                {!user ? 'Sign in (comment button, or any transcript square) to read stored transcripts.' : stored ? 'No stored transcript for this trial.' : 'Loading…'}
+              </div>
+            )
           ) : tab === 'instruction' ? (
             <article className="rounded-xl border border-border bg-card">
               <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-1.5">
@@ -187,7 +213,7 @@ export function TaskView({
         </div>
 
         <aside aria-label="Task details" className="flex w-full flex-col gap-4 lg:w-[320px] lg:flex-none">
-          {per && <TrialsPanel name={name} per={per} meta={trialsMeta} stats={stats} />}
+          {per && <TrialsPanel name={name} per={per} meta={trialsMeta} stats={stats} stored={stored} activeTrial={trial} onTrial={onTrial} />}
 
           <TaskComments slug={slug} files={task?.files ?? []} onGo={(t, p) => onTab(t, p)} />
 
@@ -221,7 +247,7 @@ function Meta({ label, value, mono }: { label: string; value: string; mono?: boo
   )
 }
 
-function inTab(f: TaskFile, tab: Exclude<Tab, 'instruction'>): boolean {
+function inTab(f: TaskFile, tab: Exclude<Tab, 'instruction' | 'transcript'>): boolean {
   return tab === 'files' || f.section === tab
 }
 
@@ -235,7 +261,7 @@ function FilesPanel({
 }: {
   slug: string
   files: TaskFile[]
-  tab: Exclude<Tab, 'instruction'>
+  tab: Exclude<Tab, 'instruction' | 'transcript'>
   filePath: string | null
   ghBase: string
   onPick: (path: string) => void

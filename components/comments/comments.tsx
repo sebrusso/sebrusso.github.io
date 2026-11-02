@@ -315,7 +315,7 @@ export function CommentDrawer() {
             </div>
           </form>
         ) : (
-          <SignIn />
+          <NameSignIn />
         )}
 
         <div className="mt-5 flex flex-col gap-4">
@@ -346,8 +346,8 @@ export function CommentDrawer() {
   )
 }
 
-/** Name-only sign-in inside the drawer, for pages that don't gate on login. */
-function SignIn() {
+/** Name-only sign-in, for pages that don't gate on login (drawer, transcripts). */
+export function NameSignIn({ prompt = "What's your name?" }: { prompt?: string }) {
   const { login } = useComments()
   const [name, setName] = useState('')
   const [error, setError] = useState('')
@@ -362,7 +362,7 @@ function SignIn() {
       }}
     >
       <label htmlFor="nb-comment-name" className="text-sm font-medium">
-        What&apos;s your name?
+        {prompt}
       </label>
       <div className="flex gap-2">
         <input

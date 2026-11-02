@@ -149,7 +149,9 @@ export function Info({ index, per, analysis }: { index: Index; per: PerTask | nu
         <p className="text-sm leading-relaxed text-muted-foreground">
           <span className="font-medium text-foreground">Trials</span> shows every leaderboard attempt at the task: one row per
           configuration, one square per trial, each linking to the trial and its transcript on the Harbor Hub. If a trial was
-          retried, its latest attempt is shown. The solve rate there comes with a 95% Wilson confidence interval. Each attempt
+          retried, its latest attempt is shown. Squares with a dot have a private copy of their transcript stored here: one
+          failed and one passed trial per configuration for the suspect and never-solved tasks. Click one to read it step by
+          step (sign-in required), and highlight any part to comment. The solve rate there comes with a 95% Wilson confidence interval. Each attempt
           ends one of these ways:
         </p>
         <dl className="divide-y divide-border rounded-xl border border-border bg-card">

@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { FIXTURES } from './fixtures'
 import { evalFromFixture, evalFromTemplate, newId } from './build'
 import type { Author, Comment, EvalEntry, FieldRow, Person } from './types'
-import { load, save, useCommentStore, useIdentity, type CommentTarget } from '../comments/store'
+import { COMMENTS_KEY, load, save, useCommentStore, useIdentity, type CommentTarget } from '../comments/store'
 
 export { load, save, openThreadCount, type CommentTarget } from '../comments/store'
 
@@ -54,7 +54,23 @@ export function NotebookProvider({ children }: { children: React.ReactNode }) {
     const seeded = FIXTURES.map(evalFromFixture)
     const retired = (e: EvalEntry) => RETIRED_SLUGS.includes(e.slug) && e.createdBy === 'ai'
     gone.current = new Set((stored ?? []).filter(retired).map((e) => e.slug))
-    const base = (stored ?? []).filter((e) => !retired(e))
+    // Template fields used to get a random id per browser; they now use their
+    // key. Rewrite saved evals and the comments that pointed at old ids.
+    const remap = new Map<string, string>()
+    const base = (stored ?? [])
+      .filter((e) => !retired(e))
+      .map((e) => ({
+        ...e,
+        fields: e.fields.map((f) => {
+          if (f.origin !== 'template' || f.id === f.key) return f
+          remap.set(f.id, f.key)
+          return { ...f, id: f.key }
+        }),
+      }))
+    if (remap.size) {
+      const local = load<Comment[]>(COMMENTS_KEY)
+      if (local) save(COMMENTS_KEY, local.map((c) => (remap.has(c.fieldId) ? { ...c, fieldId: remap.get(c.fieldId) as string } : c)))
+    }
     setEvals([...base, ...seeded.filter((s) => !base.some((e) => e.slug === s.slug))])
     setReady(true)
   }, [])

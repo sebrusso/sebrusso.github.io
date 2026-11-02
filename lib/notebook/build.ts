@@ -37,7 +37,8 @@ export function evalFromTemplate(name: string, createdBy: EvalEntry['createdBy']
   TEMPLATE_SECTIONS.forEach((section) =>
     section.fields.forEach((f, i) =>
       fields.push({
-        id: newId(),
+        // Stable across browsers, so a comment on a field lines up for everyone.
+        id: f.key,
         key: f.key,
         section: section.id,
         label: f.label,
