@@ -163,7 +163,7 @@ function Scale({ axis, ex }: { axis: Axis; ex: TaskExample }) {
       <div className="flex flex-col gap-0.5 text-xs">
         <span className="whitespace-nowrap font-semibold">{AXIS_LABEL[axis]}</span>
         <span className="whitespace-nowrap font-mono text-[11px] text-muted-foreground">
-          label {ex.label[axis]} · model {ex.predicted[axis].toFixed(1)}
+          votes {ann.join(', ')} → label {ex.label[axis]} · model {ex.predicted[axis].toFixed(2)}
         </span>
       </div>
       <div
