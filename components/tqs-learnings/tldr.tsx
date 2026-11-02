@@ -7,10 +7,8 @@ const ITEMS: { label: string; body: ReactNode; chips?: string[] }[] = [
     label: 'Motivation',
     body: (
       <>
-        A proof of concept: train a task scorer that learns to predict a task&apos;s quality from human review labels.
-        RL for coding agents is rewarded by a task&apos;s tests, so an underspecified issue or tests that reject valid
-        fixes make the reward wrong; human review catches this but does not scale to the <N>10⁵+</N> tasks RL
-        pipelines generate.
+        A proof of concept: can a model learn task quality from human review labels, so RL pipelines can screen out
+        tasks whose tests give the wrong reward before training on them?
       </>
     ),
   },
@@ -18,42 +16,23 @@ const ITEMS: { label: string; body: ReactNode; chips?: string[] }[] = [
     label: 'Data',
     body: (
       <>
-        OpenAI&apos;s SWE-bench Verified release rates <N>1,699</N> SWE-bench tasks, each by <N>3</N> of <N>93</N>{' '}
-        professional developers, for underspecification (<N>0–3</N>), false negatives (<N>0–3</N>) and difficulty. A task
-        is filtered if either rating is <N>≥ 2</N> or another major issue is flagged. I train on <N>1,260</N> tasks from
-        the other repos and validate on <N>141</N>.
+        <N>1,699</N> SWE-bench tasks, each rated by three human reviewers for SWE-bench Verified. All tasks from one
+        repository (sympy, <N>298</N>) are held out for testing.
       </>
     ),
   },
   {
-    label: 'Model & objective',
-    body: (
-      <>
-        Qwen3-8B with LoRA <N>r=16</N> and last-token pooling feeds three CORAL ordinal heads trained with BCE, plus a
-        scalar price head trained with an in-batch Bradley–Terry loss on severity. The total loss is their sum. The split
-        is leave-repo-out, with all sympy tasks held out.
-      </>
-    ),
-  },
-  {
-    label: 'Results',
-    body: (
-      <>
-        On <N>298</N> held-out sympy tasks, underspecification Spearman ρ is <N>0.36</N> vs <N>0.17</N> for a
-        shallow-feature baseline (<N>+0.19</N>, 95% CI <N>[+0.07, +0.30]</N>). Filter AUROC is <N>0.77</N> vs{' '}
-        <N>0.70</N>, and price Kendall τ is <N>0.35</N> vs <N>0.23</N>. Scored against single annotators, the model
-        reaches <N>70%</N> of human agreement on underspecification. Difficulty is a tie, because length alone explains it.
-      </>
-    ),
-    chips: ['ρ 0.36 vs 0.17', 'AUROC 0.77 vs 0.70', '70% of human agreement'],
+    label: 'Model',
+    body: <>Qwen3-8B, fine-tuned with LoRA to predict the reviewers&apos; ratings plus a single quality score.</>,
   },
   {
     label: 'Implication',
     body: (
       <>
-        A learned scorer can stand in for much of the human review on the defects that corrupt RL reward: its price
-        score can drop or down-weight tasks before any rollouts are spent. It adds nothing on difficulty, which task
-        length already predicts. One held-out repo and one seed, so the evidence is directional.
+        On the held-out repository the model spots underspecified issues about twice as well as shallow features (ρ{' '}
+        <N>0.36</N> vs <N>0.17</N>), close to how well reviewers agree with each other, so a learned scorer can
+        pre-screen tasks before rollouts are spent. It adds nothing on difficulty, which task length already predicts.
+        One repository, one seed: directional.
       </>
     ),
   },
