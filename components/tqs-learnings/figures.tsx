@@ -203,7 +203,7 @@ function MiniRatings({ x, y, vals }: { x: number; y: number; vals: number[] }) {
 }
 
 export function PairFigure() {
-  const sx = (s: number) => 560 + ((s + 2) / 8) * 340 // axis −2..6
+  const sx = (s: number) => 560 + ((s + 2) / 8) * 320 // axis −2..6, x 560..880
   const sA = 4.7, sB = -0.47
   return (
     <Frame label="Two tasks go through the same model and each gets one score. Task A, the clean one, scores 4.70; task B, whose tests reject valid fixes, scores −0.47. Training pushes the scores apart; this pair's loss is about 0.006 because they are already in the right order.">
@@ -231,15 +231,16 @@ export function PairFigure() {
         <MiniRatings x={438} y={100} vals={[0.55, 0.31, 0.2]} />
         <MiniRatings x={438} y={334} vals={[2.01, 2.78, 1.99]} />
 
-        <line x1={560} y1={200} x2={900} y2={200} stroke="var(--tqs-line)" strokeWidth={2} />
+        <line x1={560} y1={200} x2={880} y2={200} stroke="var(--tqs-line)" strokeWidth={2} />
         {[-2, 0, 2, 4, 6].map((t) => (
           <g key={t}>
             <line x1={sx(t)} y1={194} x2={sx(t)} y2={206} stroke="var(--tqs-line)" strokeWidth={1.5} />
             <text x={sx(t)} y={226} fontSize={11} textAnchor="middle" className="tqs-mono" fill={ink2}>{String(t).replace('-', '−')}</text>
           </g>
         ))}
-        <text x={550} y={204} fontSize={11} textAnchor="end" fill={ink2}>← lower quality</text>
-        <text x={900} y={248} fontSize={11} textAnchor="end" fill={ink2}>higher quality →</text>
+        {/* Symmetric end labels, level with the axis at each end. */}
+        <text x={548} y={204} fontSize={11.5} textAnchor="end" fill={ink2}>← worse</text>
+        <text x={892} y={204} fontSize={11.5} textAnchor="start" fill={ink2}>better →</text>
         <line x1={sx(sB) - 4} y1={172} x2={sx(sB) - 46} y2={172} stroke="var(--tqs-brand)" strokeWidth={2} markerEnd="url(#tqsB-ahb)" />
         <line x1={sx(sA) + 4} y1={172} x2={sx(sA) + 46} y2={172} stroke="var(--tqs-brand)" strokeWidth={2} markerEnd="url(#tqsB-ahb)" />
         {([[sA, 'A'], [sB, 'B']] as const).map(([s, t]) => (

@@ -62,67 +62,34 @@ export default function TQSLearningsPage() {
       <TLDR />
 
       <div className="text-base leading-relaxed">
-        <P>
-          RL for coding agents rewards a policy when a task&apos;s FAIL_TO_PASS tests pass and its PASS_TO_PASS tests
-          still do. Two task defects corrupt that reward:
-        </P>
-        <ul className="mb-4 list-disc space-y-1 pl-6">
-          <li>
-            <b>Underspecified issue:</b> the issue doesn&apos;t pin down the intended behavior.
-          </li>
-          <li>
-            <b>False-negative tests:</b> the FAIL_TO_PASS tests reject valid fixes.
-          </li>
-        </ul>
-        <P>
-          Both penalize correct behavior and waste rollouts. Human review catches them but takes hours per task, which
-          doesn&apos;t scale to the 10<sup>5</sup>+ mined or synthetic tasks RL pipelines now generate.
-        </P>
         <div className="mb-6 rounded-lg border-l-4 border-brand bg-brand-soft/60 px-4 py-3">
           <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-primary">What TQS does</p>
+          <p className="mb-2 text-base">
+            RL for coding agents learns from tasks whose tests define the reward, so an underspecified issue or tests
+            that reject valid fixes make the reward wrong. TQS (task quality scorer) is a proof of concept: post-train
+            Qwen3-8B to predict the quality ratings human reviewers gave each task, plus one quality score a pipeline
+            can use to filter or weight tasks before spending rollouts on them.
+          </p>
           <p className="text-base">
-            TQS (task quality scorer) reads a task (issue, gold patch, tests and touched code) and predicts the ratings
-            SWE-bench Verified&apos;s human reviewers would give it, plus one quality score. A training pipeline can use
-            that score to filter or weight tasks before spending RL compute on them. I post-trained Qwen3-8B to do this;
-            these are the notes.
+            <b>What it shows:</b> on a repository it never trained on, the scorer detects underspecified issues and
+            unfair tests far better than shallow features do (Spearman ρ 0.36 vs 0.17 on underspecification), so a
+            cheap learned pre-screen can catch the defects that corrupt RL reward. It adds nothing on difficulty, which
+            task length already predicts.
           </p>
         </div>
 
-        <H2>Where the labels come from</H2>
+        <H2>The data</H2>
         <P>
-          In August 2024 OpenAI released SWE-bench Verified along with the annotations it was built from. They sampled
-          1,699 tasks from the SWE-bench test set (2,294 tasks from 12 Python repositories), and 93 professional software
-          developers reviewed them, three per task: 5,097 annotations, 2 to 178 tasks per annotator (median 45). Each
-          annotation has four fields, each with free-text notes:
+          The labels are OpenAI&apos;s SWE-bench Verified annotations: three reviewers rated each of 1,699 SWE-bench tasks
+          for underspecification (0–3), tests that reject valid fixes (0–3) and difficulty (a time bucket). Reviewers
+          agree only moderately (Krippendorff&apos;s α 0.34–0.49), which caps how well any model can match them.
         </P>
-        <ul className="mb-4 list-disc space-y-1 pl-6">
-          <li>
-            <Code>underspecified</Code>, 0–3: is the issue specified well enough to know what a correct fix does?
-          </li>
-          <li>
-            <Code>false_negative</Code>, 0–3: would the tests reject valid solutions?
-          </li>
-          <li>
-            <Code>difficulty</Code>, a time bucket: &lt;15 min, 15 min–1 h, 1–4 h, &gt;4 h.
-          </li>
-          <li>
-            <Code>other_major_issues</Code>, binary.
-          </li>
-        </ul>
         <H3>Data filtration and preparation</H3>
         <P>
-          For the two severity axes the released label is the maximum over the three annotators; difficulty uses a
-          majority/median rule. A task is filtered out if <Code>underspecified ≥ 2</Code>, <Code>false_negative ≥ 2</Code>,
-          or <Code>other_major_issues</Code> is set. That removes 1,160 of the 1,699 tasks (68%) and leaves 539, and all
-          500 tasks in SWE-bench Verified come from those 539. The labels are noisy. Krippendorff&apos;s α is 0.34 for
-          underspecified, 0.42 for false_negative and 0.49 for difficulty, and a single random annotator flags 45% of
-          tasks where the max-ensemble flags 68%.
-        </P>
-        <P>
-          I use all 1,699 annotated tasks, kept or filtered, as supervised examples: task text in, three labels out. The
-          task text comes from <Code>princeton-nlp/SWE-bench</Code> at a pinned revision. I exclude{' '}
-          <Code>hints_text</Code> (later issue comments) because it can leak the fix. I don&apos;t train on{' '}
-          <Code>other_major_issues</Code> (α 0.09); it only enters the filter target.
+          Verified keeps a task only if both severity labels (the maximum over the three reviewers) are below 2 and no
+          reviewer flagged another major issue. TQS
+          keeps all 1,699 tasks, because the filtered ones are the examples of bad tasks it learns from. Later issue
+          comments (<Code>hints_text</Code>) are excluded since they can leak the fix.
         </P>
 
         <Collapsible title="From 2,294 SWE-bench tasks to Verified, and to the TQS training set" meta="OpenAI's filter on top; how TQS uses the same 1,699 reviewed tasks below" open>
@@ -131,11 +98,8 @@ export default function TQSLearningsPage() {
 
         <H2>Input and model</H2>
         <P>
-          Each task is serialized from four parts: the issue, the gold patch, the test patch with the FAIL_TO_PASS and
-          PASS_TO_PASS test names, and the files the gold patch touches, read at the base commit. The budget is 30,720
-          tokens under the Qwen3 tokenizer. On overflow, code context is cut first (whole files, then ±200/100/50/20-line
-          windows around the hunks, then a tail cut), followed by the tests, the gold patch and the issue. The instance
-          id and repository name never appear in the input.
+          Each task is serialized as the issue, gold patch, tests and the source files the patch touches, within 30,720
+          Qwen3 tokens; 13% of tasks overflow and have their code context trimmed (see the appendix).
         </P>
 
         <Collapsible title="How a task becomes model input" meta="Four real tasks, drawn to scale against the 30,720-token budget" open>
@@ -143,14 +107,9 @@ export default function TQSLearningsPage() {
         </Collapsible>
 
         <P>
-          The base model is Qwen3-8B, frozen in bf16, with LoRA (r=16, α=32) on every attention and MLP projection. The
-          hidden state of an appended final token (4,096-d) feeds four fp32 heads trained from scratch. Three are CORAL
-          ordinal heads, one per axis: a shared weight vector and three ordered biases give logits for P(y&gt;k), k = 0,
-          1, 2, trained with binary cross-entropy against [y&gt;0, y&gt;1, y&gt;2]. The predicted rating is the sum of
-          the three sigmoids. The fourth is a scalar price head trained with an in-batch Bradley–Terry loss: for each pair
-          where task A has lower severity (underspecified + false_negative) than task B, the loss is −log σ(s<sub>A</sub>{' '}
-          − s<sub>B</sub>), and ties are skipped. The total loss is the sum of the three CORAL losses and the
-          Bradley–Terry loss. 43.7M parameters train, about 0.5% of the model.
+          The model is Qwen3-8B, frozen in bf16, with LoRA (r=16, α=32) on all attention and MLP projections: 43.7M
+          trainable parameters, about 0.5%. Three CORAL ordinal heads predict the ratings and a scalar price head is
+          trained with an in-batch Bradley–Terry loss on severity; the loss is their sum.
         </P>
 
         <Collapsible title="How the model is built" meta="Qwen3-8B + LoRA, final-token pooling, three CORAL heads and a price head" open wide>
@@ -179,16 +138,10 @@ export default function TQSLearningsPage() {
 
         <H2>2. Run the dumb baselines before the smart model</H2>
         <P>
-          Before training anything I fit two ordinal logistic regressions. <em>Length</em> sees four token counts: issue,
-          gold patch, tests and code context. <em>Surface</em> sees 21 shallow features: those lengths plus patch and
-          test hunk and line counts, FAIL_TO_PASS and PASS_TO_PASS counts, and whether the issue contains a traceback, a
-          code block or URLs.
-        </P>
-        <P>
-          Under pooled leave-repo-out evaluation, length alone predicts difficulty at ρ = 0.66, above the 0.56 human
-          ceiling. The difficulty labels are mostly a function of task size. Underspecified is the opposite case, with
-          surface at 0.17 on the sympy fold. That made it the axis where reading the text had to show up, and it kept me
-          from crediting the model for a difficulty score that token counts already explain.
+          Before training anything I fit two ordinal-logistic baselines on hand-built features (below). Length alone
+          predicts difficulty better than reviewers agree with each other (ρ 0.66 vs 0.56), while shallow features barely
+          detect underspecification (0.17). So underspecification is where a model that reads the text has to prove
+          itself.
         </P>
 
         <Collapsible title="What the baselines see, and the room they left" meta="Feature pipeline, then the best baseline per axis against the human ceiling" open>
@@ -279,16 +232,6 @@ export default function TQSLearningsPage() {
           The memory probe also reported out-of-memory errors that weren&apos;t real: it left the model in eval mode,
           where Hugging Face turns gradient checkpointing off. Every pod also started with a hard deadline that terminates it,
           so a hung job couldn&apos;t drain the credit overnight.
-        </P>
-
-        <H2>7. The bugs that matter are the quiet ones</H2>
-        <P>
-          Two bugs would have changed results without raising an error. The first was in the majority baseline, which
-          predicts a constant and cannot rank anything. Its first report showed a pooled Spearman ρ of −0.118, because
-          each leave-repo-out fold had a slightly different constant and pooling the folds manufactured ranks. The second
-          was a CLI override: in <Code>optim.lr_lora=2e-4</Code>, YAML 1.1 reads <Code>2e-4</Code> as a string because
-          it has no decimal point, so every learning-rate sweep would have handed AdamW a string. Both were caught by
-          tests of behavior that seemed too obvious to test.
         </P>
 
         <H2>What&apos;s next</H2>

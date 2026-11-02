@@ -7,9 +7,10 @@ const ITEMS: { label: string; body: ReactNode; chips?: string[] }[] = [
     label: 'Motivation',
     body: (
       <>
-        RL for coding agents rewards a policy for passing a task&apos;s tests, so an underspecified issue or tests that
-        reject valid fixes make the reward wrong. Human review catches this but takes hours per task and does not scale to
-        the <N>10⁵+</N> tasks RL pipelines generate.
+        A proof of concept: train a task scorer that learns to predict a task&apos;s quality from human review labels.
+        RL for coding agents is rewarded by a task&apos;s tests, so an underspecified issue or tests that reject valid
+        fixes make the reward wrong; human review catches this but does not scale to the <N>10⁵+</N> tasks RL
+        pipelines generate.
       </>
     ),
   },
@@ -50,9 +51,9 @@ const ITEMS: { label: string; body: ReactNode; chips?: string[] }[] = [
     label: 'Implication',
     body: (
       <>
-        A LoRA on an 8B model, trained in about three hours on one H100, recovers much of the human review signal on the
-        hardest axis, and the price score gives one number for filtering or weighting RL tasks. This is one fold and one
-        seed, so the evidence is directional.
+        A learned scorer can stand in for much of the human review on the defects that corrupt RL reward: its price
+        score can drop or down-weight tasks before any rollouts are spent. It adds nothing on difficulty, which task
+        length already predicts. One held-out repo and one seed, so the evidence is directional.
       </>
     ),
   },
