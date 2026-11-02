@@ -13,6 +13,7 @@ import {
 import { EXAMPLES, RESULTS } from '../../../lib/tqs-learnings'
 import { ArchitectureFigure, PairFigure, ScoreSwarmFigure } from '../../../components/tqs-learnings/figures'
 import { TLDR } from '../../../components/tqs-learnings/tldr'
+import { FiltrationFigure, InputLengthFigure } from '../../../components/tqs-learnings/data-figures'
 import { BaselineFigure } from '../../../components/tqs-learnings/baseline-figure'
 import './tqs.css'
 
@@ -36,6 +37,9 @@ const linkClass =
 
 function H2({ children }: { children: ReactNode }) {
   return <h2 className="mb-3 mt-10 text-xl font-bold">{children}</h2>
+}
+function H3({ children }: { children: ReactNode }) {
+  return <h3 className="mb-2 mt-8 text-lg font-semibold">{children}</h3>
 }
 function P({ children }: { children: ReactNode }) {
   return <p className="mb-4">{children}</p>
@@ -74,11 +78,15 @@ export default function TQSLearningsPage() {
           Both penalize correct behavior and waste rollouts. Human review catches them but takes hours per task, which
           doesn&apos;t scale to the 10<sup>5</sup>+ mined or synthetic tasks RL pipelines now generate.
         </P>
-        <P>
-          TQS (task quality scorer) is a model that predicts the SWE-bench Verified review labels from the task alone,
-          so a pipeline can filter or weight tasks before training on them. I post-trained Qwen3-8B for it on a $26 GPU
-          budget. These are the notes.
-        </P>
+        <div className="mb-6 rounded-lg border-l-4 border-brand bg-brand-soft/60 px-4 py-3">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-primary">What TQS does</p>
+          <p className="text-base">
+            TQS (task quality scorer) reads a task (issue, gold patch, tests and touched code) and predicts the ratings
+            SWE-bench Verified&apos;s human reviewers would give it, plus one quality score. A training pipeline can use
+            that score to filter or weight tasks before spending RL compute on them. I post-trained Qwen3-8B to do this;
+            these are the notes.
+          </p>
+        </div>
 
         <H2>Where the labels come from</H2>
         <P>
@@ -101,6 +109,7 @@ export default function TQSLearningsPage() {
             <Code>other_major_issues</Code>, binary.
           </li>
         </ul>
+        <H3>Data filtration and preparation</H3>
         <P>
           For the two severity axes the released label is the maximum over the three annotators; difficulty uses a
           majority/median rule. A task is filtered out if <Code>underspecified ≥ 2</Code>, <Code>false_negative ≥ 2</Code>,
@@ -115,6 +124,10 @@ export default function TQSLearningsPage() {
           <Code>hints_text</Code> (later issue comments) because it can leak the fix. I don&apos;t train on{' '}
           <Code>other_major_issues</Code> (α 0.09); it only enters the filter target.
         </P>
+
+        <Collapsible title="From 2,294 SWE-bench tasks to Verified, and to the TQS training set" meta="OpenAI's filter on top; how TQS uses the same 1,699 reviewed tasks below" open>
+          <FiltrationFigure />
+        </Collapsible>
 
         <H2>Input and model</H2>
         <P>
@@ -286,6 +299,17 @@ export default function TQSLearningsPage() {
           issue only), and run a membership probe for pretraining contamination, since Qwen3 may have seen SWE-bench.
           The terse-issue failure also suggests training on reworded issues, so length stops being a shortcut.
         </P>
+        <H2>Appendix: input lengths and the prefill budget</H2>
+        <P>
+          Each task is serialized before truncation as issue + gold patch + tests + code context. Most fit easily: the
+          median is about 10.9k tokens. The tail is long, though, and 224 of the 1,699 tasks (13.2%) exceed the
+          30,720-token budget. All of them are brought under it by trimming code context, almost always only to
+          ±200-line windows around the changed hunks.
+        </P>
+        <Collapsible title="Distribution of input lengths" meta="All 1,699 tasks, log scale, with the overflow region shaded" open>
+          <InputLengthFigure />
+        </Collapsible>
+
         <p className="text-sm text-muted-foreground">
           Labels come from OpenAI&apos;s public SWE-bench Verified annotation release; task text from{' '}
           <Code>princeton-nlp/SWE-bench</Code>. Example tasks are quoted verbatim, shortened where marked. Intervals are
