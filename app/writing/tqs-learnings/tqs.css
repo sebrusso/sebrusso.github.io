@@ -53,11 +53,14 @@
 .tqs-minibar > span { display: block; height: 100%; border-radius: 0 3px 3px 0; }
 
 .tqs-pre {
-  margin: 0; max-height: 11rem; overflow: auto;
-  white-space: pre-wrap; overflow-wrap: anywhere;
-  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11.5px; line-height: 1.5;
+  margin: 0; max-height: 13rem; overflow: auto;
+  white-space: pre-wrap; overflow-wrap: break-word;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11.5px; line-height: 1.55;
   background: hsl(var(--muted)); border-radius: 6px; padding: 8px 10px;
+  scrollbar-width: thin;
 }
+/* Diffs and test files: keep every line intact and scroll sideways inside the block. */
+.tqs-pre-code { white-space: pre; overflow-wrap: normal; tab-size: 4; }
 
 /* 0–3 scale with annotator dots, label ring, and model diamond. */
 .tqs-scale { position: relative; height: 40px; margin: 0 6px; }
@@ -80,16 +83,6 @@
 .tqs-ann-key, .tqs-label-key, .tqs-model-key { position: static; display: inline-block; transform: none; }
 .tqs-model-key { transform: rotate(45deg); width: 9px; height: 9px; margin: 0 2px; }
 .tqs-label-key { width: 11px; height: 11px; }
-
-.tqs-arrow { display: inline-flex; align-items: center; gap: 6px; color: hsl(var(--muted-foreground)); }
-.tqs-arrow::before, .tqs-arrow::after { content: ""; display: block; background: hsl(var(--border)); }
-@media (min-width: 768px) {
-  .tqs-arrow { flex-direction: column; height: 100%; }
-  .tqs-arrow::before, .tqs-arrow::after { width: 1px; flex: 1; min-height: 24px; }
-}
-@media (max-width: 767px) {
-  .tqs-arrow::before, .tqs-arrow::after { height: 1px; width: 32px; }
-}
 
 .tqs-details > summary:focus-visible { border-radius: 0.5rem; }
 .tqs-table td, .tqs-table th { font-variant-numeric: tabular-nums; }

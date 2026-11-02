@@ -47,7 +47,7 @@ export const EXAMPLES: TaskExample[] = [
     kind: 'A clean task',
     headline: 'Clear bug report, one-line fix, a test that checks exactly the reported case',
     takeaway:
-      'All three annotators gave it 0 on both problem axes. The model agrees and ranks it second-best of the 298 held-out tasks.',
+      'All three annotators rated it 0 on underspecified and false_negative. The model agrees and ranks it second-best of the 298 held-out tasks.',
     inputs: [
       {
         key: 'issue',
@@ -113,7 +113,7 @@ Must go from failing to passing: test_symbols`,
     kind: 'An underspecified task',
     headline: 'A two-line issue behind a 1,400-token patch',
     takeaway:
-      'The annotators split 1, 3 and 1. The released label takes the maximum for problem axes, so it is a 3, and the task was dropped from Verified. The model predicts 2.0.',
+      'The annotators split 1, 3 and 1 on underspecified. The max-ensemble makes the label 3, so the task was filtered out of Verified. The model predicts 2.0.',
     inputs: [
       {
         key: 'issue',
@@ -172,10 +172,10 @@ Must go from failing to passing: test_floor, test_ceiling`,
   },
   {
     id: 'sympy__sympy-13806',
-    kind: 'Tests that reject valid fixes',
-    headline: 'The issue asks for one symbol; the tests check several unrelated units',
+    kind: 'A false-negative task',
+    headline: 'The issue asks for the degree symbol; the FAIL_TO_PASS tests also check unrelated units',
     takeaway:
-      'Two of three annotators gave the tests a 3: a correct fix for the degree sign could still fail them. The model predicts 2.8 on that axis, its fourth-highest of the 298.',
+      'Two of three annotators rated false_negative 3, since a correct fix for the degree sign could still fail the tests. The model predicts 2.8 on that axis, its fourth-highest of the 298.',
     inputs: [
       {
         key: 'issue',
@@ -235,9 +235,9 @@ Must go from failing to passing: test_units, test_degree_printing`,
   {
     id: 'sympy__sympy-20916',
     kind: 'Where the model is wrong',
-    headline: 'A terse but clear issue the model flags as underspecified',
+    headline: 'A terse, clear issue the model rates as underspecified',
     takeaway:
-      'Annotators found the issue perfectly clear (0, 0, 0). The model predicts 2.0 and would have dropped the task. In training, the median issue runs 1,413 characters for tasks rated 0 and 804 for tasks rated 3. The model seems to have learned brevity itself as a warning sign.',
+      'All three annotators rated underspecified 0. The model predicts 2.0 and its filter score would have dropped the task. In training, the median issue is 1,413 characters at label 0 and 804 at label 3, and the model appears to use brevity as a proxy for vagueness.',
     inputs: [
       {
         key: 'issue',
@@ -294,9 +294,9 @@ Must go from failing to passing: test_super_sub`,
 
 /** Held-out sympy fold, n = 298. Paired-bootstrap 95% CI of T4 minus surface. */
 export const RESULTS = [
-  { metric: 'Underspecified issue (Spearman ρ)', t4: 0.358, t1: 0.233, surface: 0.173, ceiling: 0.41, ci: '+0.185 [+0.071, +0.298]', better: true },
-  { metric: 'Tests reject valid fixes (Spearman ρ)', t4: 0.48, t1: 0.422, surface: 0.341, ceiling: 0.5, ci: '+0.139 [+0.057, +0.223]', better: true },
-  { metric: 'Difficulty (Spearman ρ)', t4: 0.623, t1: 0.651, surface: 0.655, ceiling: 0.56, ci: '−0.032 [−0.078, +0.010]', better: false },
-  { metric: 'Drop-from-Verified decision (AUROC)', t4: 0.772, t1: 0.724, surface: 0.7, ceiling: null, ci: '+0.073 [+0.014, +0.133]', better: true },
-  { metric: 'Single quality score (Kendall τ)', t4: 0.354, t1: 0.291, surface: 0.225, ceiling: null, ci: '+0.129 [+0.049, +0.207]', better: true },
+  { metric: 'underspecified (Spearman ρ)', t4: 0.358, t1: 0.233, surface: 0.173, ceiling: 0.41, ci: '+0.185 [+0.071, +0.298]', better: true },
+  { metric: 'false_negative (Spearman ρ)', t4: 0.48, t1: 0.422, surface: 0.341, ceiling: 0.5, ci: '+0.139 [+0.057, +0.223]', better: true },
+  { metric: 'difficulty (Spearman ρ)', t4: 0.623, t1: 0.651, surface: 0.655, ceiling: 0.56, ci: '−0.032 [−0.078, +0.010]', better: false },
+  { metric: 'Filter decision (AUROC)', t4: 0.772, t1: 0.724, surface: 0.7, ceiling: null, ci: '+0.073 [+0.014, +0.133]', better: true },
+  { metric: 'Price score vs. severity (Kendall τ)', t4: 0.354, t1: 0.291, surface: 0.225, ceiling: null, ci: '+0.129 [+0.049, +0.207]', better: true },
 ]

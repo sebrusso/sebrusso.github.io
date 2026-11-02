@@ -16,13 +16,15 @@ export function Collapsible({
   title,
   meta,
   open = false,
-  wide = false,
+  wide = true,
   children,
 }: {
   title: ReactNode
   meta?: ReactNode
   open?: boolean
-  wide?: boolean // break out of the 672px essay measure to the 896px shell on large screens
+  /** Break out of the 672px essay measure to the 896px shell on large screens. Every panel on the
+   *  page holds a diagram, so this defaults to true; pass wide={false} for a text-only panel. */
+  wide?: boolean
   children: ReactNode
 }) {
   return (
@@ -120,23 +122,26 @@ export function InputBudgetDiagram() {
 
 /* ── One task, drawn as input → ratings ─────────────────────────────── */
 
+const CODE_PARTS = new Set<InputPart['key']>(['patch', 'tests'])
+
 function InputBlock({ part, max }: { part: InputPart; max: number }) {
   const cut = part.keptTokens < part.tokens
   return (
     <div className="flex min-w-0 flex-col gap-1.5">
-      <div className="flex items-baseline justify-between gap-2 text-xs">
-        <span className="inline-flex items-center gap-1.5 font-semibold">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-xs">
+        <span className="inline-flex items-center gap-1.5 whitespace-nowrap font-semibold">
           <i className={`tqs-swatch tqs-part-${part.key}`} aria-hidden />
           {part.label}
         </span>
-        <span className="font-mono text-muted-foreground">
+        <span className="ml-auto whitespace-nowrap font-mono text-[11px] text-muted-foreground">
           {fmt(part.keptTokens)} tok{cut && ` (of ${fmt(part.tokens)})`}
         </span>
       </div>
       <div className="tqs-minibar" aria-hidden>
         <span className={`tqs-part-${part.key}`} style={{ width: `${Math.max(1.5, (part.keptTokens / max) * 100)}%` }} />
       </div>
-      <pre className="tqs-pre">{part.excerpt}</pre>
+      {/* Diffs and test files keep their lines (scroll sideways); issue and context text may wrap. */}
+      <pre className={`tqs-pre ${CODE_PARTS.has(part.key) ? 'tqs-pre-code' : ''}`}>{part.excerpt}</pre>
       {part.trimmed && <span className="text-[11px] text-muted-foreground">Shortened here; the model sees the full text.</span>}
     </div>
   )
@@ -154,9 +159,9 @@ function Scale({ axis, ex }: { axis: Axis; ex: TaskExample }) {
   const ticks = axis === 'difficulty' ? DIFFICULTY_TICKS : ['0', '1', '2', '3']
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex items-baseline justify-between gap-2 text-xs">
-        <span className="font-semibold">{AXIS_LABEL[axis]}</span>
-        <span className="font-mono text-muted-foreground">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-xs">
+        <span className="whitespace-nowrap font-semibold">{AXIS_LABEL[axis]}</span>
+        <span className="ml-auto whitespace-nowrap font-mono text-[11px] text-muted-foreground">
           label {ex.label[axis]} · model {ex.predicted[axis].toFixed(1)}
         </span>
       </div>
@@ -200,29 +205,42 @@ export function ScaleLegend() {
   )
 }
 
+function ColumnHeading({ children }: { children: ReactNode }) {
+  return (
+    <span className="flex min-h-6 flex-wrap items-center gap-x-1.5 gap-y-1 whitespace-nowrap text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+      {children}
+    </span>
+  )
+}
+
 export function TaskDiagram({ ex }: { ex: TaskExample }) {
   const max = Math.max(...ex.inputs.map((p) => p.keptTokens))
   const total = ex.inputs.reduce((s, p) => s + p.keptTokens, 0)
   return (
     <div className="flex flex-col gap-5">
       <p className="text-sm">{ex.takeaway}</p>
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1.15fr)_auto_minmax(0,1fr)] md:gap-4">
-        <div className="flex min-w-0 flex-col gap-4">
-          <span className="text-xs uppercase tracking-wider text-muted-foreground">What the model reads · {fmt(total)} tokens</span>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)] lg:gap-0">
+        <div className="flex min-w-0 flex-col gap-4 lg:pr-6">
+          <ColumnHeading>
+            What the model reads
+            <span className="font-mono normal-case tracking-normal">· {fmt(total)} tokens</span>
+          </ColumnHeading>
           {PART_ORDER.map((k) => {
             const p = ex.inputs.find((x) => x.key === k)!
             return <InputBlock key={k} part={p} max={max} />
           })}
         </div>
-        <div className="flex items-center justify-center md:flex-col" aria-hidden>
-          <span className="tqs-arrow">
-            <span className="whitespace-nowrap rounded-full border bg-background px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
+        <div className="flex min-w-0 flex-col gap-4 border-t pt-5 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+          <ColumnHeading>
+            <span
+              className="inline-block rounded-full border bg-background px-2 py-0.5 font-mono text-[10.5px] normal-case tracking-normal"
+              title="The model: Qwen3-8B with LoRA adapters"
+            >
               Qwen3-8B + LoRA
             </span>
-          </span>
-        </div>
-        <div className="flex min-w-0 flex-col gap-4">
-          <span className="text-xs uppercase tracking-wider text-muted-foreground">Ratings, 0 to 3</span>
+            <span aria-hidden>→</span>
+            Ratings, 0 to 3
+          </ColumnHeading>
           <ScaleLegend />
           {(['underspecified', 'false_negative', 'difficulty'] as Axis[]).map((a) => (
             <Scale key={a} axis={a} ex={ex} />
