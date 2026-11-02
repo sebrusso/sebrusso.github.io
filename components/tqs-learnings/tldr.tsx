@@ -7,8 +7,9 @@ const ITEMS: { label: string; body: ReactNode; chips?: string[] }[] = [
     label: 'Motivation',
     body: (
       <>
-        A proof of concept: can a model learn task quality from human review labels, so RL pipelines can screen out
-        tasks whose tests give the wrong reward before training on them?
+        RL for coding agents is rewarded by a task&apos;s tests, so a vague issue or tests that reject a correct fix give
+        the wrong reward. TQS (task quality scorer) is a proof of concept: can a model learn task quality from human
+        review labels, so a pipeline can screen tasks before training on them?
       </>
     ),
   },
@@ -16,23 +17,23 @@ const ITEMS: { label: string; body: ReactNode; chips?: string[] }[] = [
     label: 'Data',
     body: (
       <>
-        <N>1,699</N> SWE-bench tasks, each rated by three human reviewers for SWE-bench Verified. All tasks from one
-        repository (sympy, <N>298</N>) are held out for testing.
+        <N>1,699</N> SWE-bench tasks that OpenAI had three reviewers rate when building SWE-bench Verified. All{' '}
+        <N>298</N> tasks from one repository (sympy) are held out for testing.
       </>
     ),
   },
   {
     label: 'Model',
-    body: <>Qwen3-8B, fine-tuned with LoRA to predict the reviewers&apos; ratings plus a single quality score.</>,
+    body: <>Qwen3-8B, fine-tuned with LoRA to predict the reviewers&apos; ratings plus one quality score per task.</>,
   },
   {
     label: 'Implication',
     body: (
       <>
-        On the held-out repository the model spots underspecified issues about twice as well as shallow features (ρ{' '}
-        <N>0.36</N> vs <N>0.17</N>), close to how well reviewers agree with each other, so a learned scorer can
-        pre-screen tasks before rollouts are spent. It adds nothing on difficulty, which task length already predicts.
-        One repository, one seed: directional.
+        On the held-out repository the model spots vague issues and tests that reject correct fixes clearly better than
+        shallow features, reaching <N>70–77%</N> of the agreement between reviewers. A learned scorer could pre-screen
+        tasks before rollouts are spent, though whether that improves RL training is untested. It adds nothing on
+        difficulty, which task length already predicts. One repository, one seed: directional.
       </>
     ),
   },

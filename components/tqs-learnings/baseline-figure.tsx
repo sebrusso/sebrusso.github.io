@@ -1,9 +1,10 @@
 /**
- * Figure for learning 2: what the shallow baselines are (architecture) and how much room they left below the
- * human ceiling (headroom). Static SVG; colors from the --tqs-* tokens in app/writing/tqs-learnings/tqs.css.
+ * Figure for learning 2: what the shallow baselines are (architecture) and how much room they left below
+ * reviewer agreement (headroom). Static SVG; colors from the --tqs-* tokens in app/writing/tqs-learnings/tqs.css.
  *
- * Numbers: baselines and the 8B model are scored on the same 298 held-out sympy tasks (leave-repo-out); the
- * human ceiling is Spearman(held-out annotator, mean of the other two) on all 1,699 tasks (reports/m0_data.md).
+ * Numbers: the fair comparison on the 298 held-out sympy tasks (leave-repo-out). Both baselines and reviewer
+ * agreement are scored against a single held-out reviewer; reviewer agreement is Spearman(held-out reviewer,
+ * mean of the other two), averaged over 50 random draws.
  * Features and model match src/tqs/baselines/surface.py in sebrusso/tqs.
  */
 
@@ -21,9 +22,9 @@ const SHALLOW_FEATS = [
 ]
 
 const AXES = [
-  { name: 'Underspecified issue', surface: 0.173, length: 0.156, ceiling: 0.41, t4: 0.358 },
-  { name: 'Tests reject valid fixes', surface: 0.341, length: 0.378, ceiling: 0.5, t4: 0.48 },
-  { name: 'Difficulty', surface: 0.655, length: 0.618, ceiling: 0.56, t4: 0.623 },
+  { name: 'Underspecification', surface: 0.123, length: 0.132, ceiling: 0.431 },
+  { name: 'False negatives', surface: 0.298, length: 0.326, ceiling: 0.524 },
+  { name: 'Difficulty', surface: 0.601, length: 0.568, ceiling: 0.588 },
 ]
 
 function Arch() {
@@ -67,8 +68,8 @@ function Arch() {
 
       {/* models */}
       {[
-        ['Ordinal logit', 'underspecified', 30],
-        ['Ordinal logit', 'tests reject fixes', 92],
+        ['Ordinal logit', 'underspecification', 30],
+        ['Ordinal logit', 'false negatives', 92],
         ['Ordinal logit', 'difficulty', 154],
         ['L2 logistic reg.', 'keep / drop', 216],
       ].map(([m, axis, y]) => (
@@ -81,9 +82,9 @@ function Arch() {
       ))}
       <text x={876} y={58} fontSize={10.5} fill={ink2}>expected</text>
       <text x={876} y={72} fontSize={10.5} fill={ink2}>rating 0–3</text>
-      <text x={876} y={244} fontSize={10.5} fill={ink2}>drop</text>
+      <text x={876} y={244} fontSize={10.5} fill={ink2}>keep/drop</text>
       <text x={876} y={258} fontSize={10.5} fill={ink2}>score</text>
-      <text x={714} y={292} fontSize={10.5} fill={ink2}>price = −(underspecified + tests)</text>
+      <text x={714} y={292} fontSize={10.5} fill={ink2}>quality score = −(underspec. + false neg.)</text>
     </svg>
   )
 }
@@ -100,7 +101,7 @@ function Headroom() {
           <text x={X(t)} y={H - 28} fontSize={11} textAnchor="middle" className="tqs-mono" fill={ink2}>{t.toFixed(1)}</text>
         </g>
       ))}
-      <text x={X(0.8)} y={H - 6} fontSize={11} textAnchor="end" fill={ink2}>Spearman ρ with the human label →</text>
+      <text x={X(0.8)} y={H - 6} fontSize={11} textAnchor="end" fill={ink2}>Spearman ρ against a single reviewer →</text>
 
       {AXES.map((a, i) => {
         const y = top + i * rowH + 14
@@ -112,29 +113,25 @@ function Headroom() {
             <text x={left - 14} y={y + 5} fontSize={12.5} fontWeight={600} textAnchor="end">{a.name}</text>
             {/* best baseline bar */}
             <rect x={X(0)} y={y - 9} width={X(best) - X(0)} height={18} rx={4} fill="var(--tqs-frozen)">
-              <title>{`best shallow baseline (${bestName}): ρ ${best.toFixed(3)}`}</title>
+              <title>{`best baseline (${bestName}): ρ ${best.toFixed(3)}`}</title>
             </rect>
             {/* headroom up to the ceiling */}
             {room > 0 ? (
               <rect x={X(best)} y={y - 9} width={X(a.ceiling) - X(best)} height={18} fill="var(--tqs-brand-soft)" stroke="var(--tqs-brand)" strokeWidth={1.2} strokeDasharray="4 3">
-                <title>{`headroom to the human ceiling: ${room.toFixed(2)}`}</title>
+                <title>{`headroom to reviewer agreement: ${room.toFixed(2)}`}</title>
               </rect>
             ) : null}
-            {/* human ceiling */}
+            {/* reviewer agreement */}
             <line x1={X(a.ceiling)} x2={X(a.ceiling)} y1={y - 16} y2={y + 16} stroke="var(--tqs-ink)" strokeWidth={2.5} strokeLinecap="round">
-              <title>{`human ceiling: ρ ${a.ceiling.toFixed(2)}`}</title>
+              <title>{`reviewer agreement: ρ ${a.ceiling.toFixed(3)}`}</title>
             </line>
-            {/* 8B model, from section 4 */}
-            <circle cx={X(a.t4)} cy={y} r={6} fill="var(--tqs-card)" stroke="var(--tqs-brand)" strokeWidth={2.5}>
-              <title>{`Qwen3-8B (section 4): ρ ${a.t4.toFixed(3)}`}</title>
-            </circle>
             {room > 0 ? (
               <text x={X(a.ceiling) + 14} y={y + 4} fontSize={11.5} className="tqs-mono" fill="var(--tqs-brand-ink)">
                 {`${room.toFixed(2)} of headroom`}
               </text>
             ) : (
               <text x={X(0) + 10} y={y + 4} fontSize={11} className="tqs-mono" fill="var(--tqs-frozen-ink)">
-                {`no headroom: ${bestName} baseline is ${Math.abs(Math.round(room * 1000) / 1000).toFixed(3)} above the human ceiling`}
+                {`no headroom: ${bestName} baseline is ${Math.abs(Math.round(room * 1000) / 1000).toFixed(3)} above reviewer agreement`}
               </text>
             )}
           </g>
@@ -149,17 +146,17 @@ export function BaselineFigure() {
     <figure className="tqs-fig flex flex-col gap-5">
       <Arch />
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-        <span className="inline-flex items-center gap-1.5"><i className="inline-block h-[11px] w-5 rounded-[3px]" style={{ background: 'var(--tqs-frozen)' }} aria-hidden />Best shallow baseline</span>
-        <span className="inline-flex items-center gap-1.5"><i className="inline-block h-[11px] w-5 rounded-[3px] border border-dashed" style={{ background: 'var(--tqs-brand-soft)', borderColor: 'var(--tqs-brand)' }} aria-hidden />Headroom to the human ceiling</span>
-        <span className="inline-flex items-center gap-1.5"><i className="inline-block h-3.5 w-[3px] rounded" style={{ background: 'var(--tqs-ink)' }} aria-hidden />Human ceiling</span>
-        <span className="inline-flex items-center gap-1.5"><i className="inline-block h-3 w-3 rounded-full border-2" style={{ borderColor: 'var(--tqs-brand)' }} aria-hidden />Qwen3-8B, for later</span>
+        <span className="inline-flex items-center gap-1.5"><i className="inline-block h-[11px] w-5 rounded-[3px]" style={{ background: 'var(--tqs-frozen)' }} aria-hidden />Best baseline</span>
+        <span className="inline-flex items-center gap-1.5"><i className="inline-block h-[11px] w-5 rounded-[3px] border border-dashed" style={{ background: 'var(--tqs-brand-soft)', borderColor: 'var(--tqs-brand)' }} aria-hidden />Headroom to reviewer agreement</span>
+        <span className="inline-flex items-center gap-1.5"><i className="inline-block h-3.5 w-[3px] rounded" style={{ background: 'var(--tqs-ink)' }} aria-hidden />Reviewer agreement</span>
       </div>
       <Headroom />
       <figcaption className="text-sm text-muted-foreground">
         Top: both baselines see only counts and flags extracted from the task, never its text. Bottom: the better of
-        the two baselines on each axis, scored on the 298 held-out sympy tasks, against the human ceiling
-        (one annotator against the mean of the other two). Underspecification left the most room. On difficulty the
-        length features already beat human agreement, so there was nothing left for a text model to win there.
+        the two baselines on each axis against reviewer agreement (one reviewer against the mean of the other two).
+        Both the baselines and reviewer agreement are scored against one held-out reviewer on the 298 test tasks.
+        Underspecification left the most room (0.30), false negatives 0.20. On difficulty the surface baseline is
+        already 0.013 above reviewer agreement, so there was nothing left for a text model to win there.
       </figcaption>
     </figure>
   )

@@ -56,9 +56,9 @@ export function getAllPosts(): Post[] {
 export const PAGE_POSTS: Post[] = [
   {
     id: 'tqs-learnings',
-    title: 'Teaching a model to grade coding tasks',
+    title: 'Teaching a model to score the quality of code RL tasks',
     description:
-      'What I learned training an 8B model to predict how human reviewers rate SWE-bench tasks, on a $26 GPU budget.',
+      'Fine-tuning Qwen3-8B to predict how human reviewers rate SWE-bench tasks, and what it learned about vague issues and tests that reject correct fixes.',
     date: '2026-11-02',
     content: '',
   },

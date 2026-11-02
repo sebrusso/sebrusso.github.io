@@ -2,7 +2,7 @@ import { INPUT_LENGTHS } from '../../lib/tqs-learnings-lengths'
 
 /**
  * Data figures for /writing/tqs-learnings: how SWE-bench Verified's annotations were filtered and how TQS uses them
- * (FiltrationFigure), and the distribution of serialized input lengths against the 30,720-token budget
+ * (FiltrationFigure), and the distribution of serialized input lengths against the 30,720-token input limit
  * (InputLengthFigure). Static SVG; colors from the --tqs-* tokens in app/writing/tqs-learnings/tqs.css.
  * Counts: OpenAI's annotation release (reports/m0_schema.md in sebrusso/tqs) and the leave-repo-out sympy split.
  */
@@ -34,7 +34,7 @@ export function FiltrationFigure() {
   return (
     <figure className="tqs-fig flex flex-col gap-3">
       <div className="overflow-x-auto">
-        <svg viewBox="0 0 960 440" className="tqs-svg" role="img" aria-label="SWE-bench test set of 2,294 tasks; 1,699 sampled and reviewed by 3 of 93 annotators each (5,097 annotations); labels max-ensembled; filter drops 1,160 tasks and keeps 539, from which 500 form SWE-bench Verified. TQS keeps all 1,699 as labeled examples, split leave-repo-out into 1,260 train, 141 validation and 298 sympy test tasks.">
+        <svg viewBox="0 0 960 440" className="tqs-svg" role="img" aria-label="SWE-bench test set of 2,294 tasks; 1,699 sampled and reviewed by 3 of 93 reviewers each (5,097 annotations); labels max-ensembled; filter drops 1,160 tasks and keeps 539, from which 500 form SWE-bench Verified. TQS keeps all 1,699 as labeled examples, split leave-repo-out into 1,260 train, 141 validation and 298 sympy test tasks.">
           <defs>
             <marker id={id} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
               <path d="M0,0 L10,5 L0,10 z" fill="var(--tqs-ink2)" />
@@ -44,7 +44,7 @@ export function FiltrationFigure() {
           {/* shared trunk */}
           <Box x={10} y={20} w={220} h={54} title="SWE-bench test set" sub="2,294 tasks · 12 Python repos" />
           <Arrow d="M120,74 L120,104" id={id} />
-          <Box x={10} y={108} w={220} h={54} title="1,699 sampled for review" sub="3 of 93 developers each" />
+          <Box x={10} y={108} w={220} h={54} title="1,699 sampled for review" sub="3 of 93 reviewers each" />
           <Arrow d="M120,162 L120,192" id={id} />
           <Box x={10} y={196} w={220} h={54} title="5,097 annotations" sub="underspec · false neg · difficulty · other" />
           <Arrow d="M120,250 L120,280" id={id} />
@@ -126,7 +126,7 @@ export function InputLengthFigure() {
   return (
     <figure className="tqs-fig flex flex-col gap-4">
       <div className="overflow-x-auto">
-        <svg viewBox={`0 0 ${W} ${H}`} className="tqs-svg" role="img" aria-label={`Histogram of serialized input lengths for ${fmt(D.n)} tasks on a log scale. Median ${fmt(D.median)} tokens, 90th percentile ${fmt(D.p90)}, maximum ${fmt(D.max)}. ${D.overflow} tasks (${pct}%) exceed the ${fmt(D.budget)}-token budget.`}>
+        <svg viewBox={`0 0 ${W} ${H}`} className="tqs-svg" role="img" aria-label={`Histogram of serialized input lengths for ${fmt(D.n)} tasks on a log scale. Median ${fmt(D.median)} tokens, 90th percentile ${fmt(D.p90)}, maximum ${fmt(D.max)}. ${D.overflow} tasks (${pct}%) exceed the ${fmt(D.budget)}-token input limit.`}>
           {/* overflow region */}
           <rect x={X(D.budget)} y={top - 14} width={X(hi) - X(D.budget)} height={H - top - bottom + 14} fill="var(--tqs-brand-soft)" opacity={0.6} />
           {[0, 50, 100, 150].map((t) => (
@@ -153,7 +153,7 @@ export function InputLengthFigure() {
           </text>
           {/* budget + median */}
           <line x1={X(D.budget)} x2={X(D.budget)} y1={top - 14} y2={Y(0)} stroke="var(--tqs-ink)" strokeWidth={2} />
-          <text x={X(D.budget) + 8} y={top - 2} fontSize={11.5} fontWeight={600}>{`${fmt(D.budget)}-token budget`}</text>
+          <text x={X(D.budget) + 8} y={top - 2} fontSize={11.5} fontWeight={600}>{`${fmt(D.budget)}-token input limit`}</text>
           <text x={X(D.budget) + 8} y={top + 13} fontSize={11.5} fill="var(--tqs-brand-ink)" fontWeight={600}>{`${D.overflow} tasks (${pct}%) overflow`}</text>
           <line x1={X(D.median)} x2={X(D.median)} y1={top + 24} y2={Y(0)} stroke="var(--tqs-ink)" strokeWidth={1.2} strokeDasharray="4 3" />
           <text x={X(D.median) - 6} y={top + 20} fontSize={11} textAnchor="end" fill={ink2}>{`median ${fmt(D.median)}`}</text>
@@ -172,15 +172,17 @@ export function InputLengthFigure() {
         </div>
         <div className="flex flex-col gap-1.5 text-muted-foreground">
           <span className="font-semibold text-foreground">What overflowed</span>
-          <span>Code context absorbs nearly all of it: {D.overflow} tasks had context trimmed, most only to ±200-line windows around the changed hunks.</span>
-          <span>After context, the tests were cut in {D.testsCut} tasks and the gold patch in {D.patchCut}. No issue text was ever cut ({D.issueCut}).</span>
+          <span>
+            All {D.overflow} had code context trimmed, {D.trim[1][1]} ({Math.round((D.trim[1][1] / D.overflow) * 100)}%) only to ±200-line
+            windows around each changed hunk. Tests were also cut in {D.testsCut} tasks and the gold patch in {D.patchCut}; no issue text was cut.
+          </span>
           <span>{`90th percentile ${fmt(D.p90)} tokens; longest task ${fmt(D.max)}.`}</span>
         </div>
       </div>
       <figcaption className="text-sm text-muted-foreground">
-        Every annotated task, by the length of its four serialized parts before truncation. Tasks to the right of the
-        line exceed the prefill budget and are trimmed, code context first. The bar for &quot;whole files fit&quot; is
-        not to scale with the others.
+        Every reviewed task, by its total serialized input length before truncation. Tasks to the right of the line
+        exceed the 30,720-token input limit and are trimmed, code context first. The bar for &quot;whole files
+        fit&quot; is not to scale with the others.
       </figcaption>
     </figure>
   )

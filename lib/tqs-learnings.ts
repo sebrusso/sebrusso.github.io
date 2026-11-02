@@ -12,7 +12,7 @@ export interface InputPart {
   key: 'issue' | 'patch' | 'tests' | 'context'
   label: string
   tokens: number // full size before truncation
-  keptTokens: number // after fitting the 30,720-token budget
+  keptTokens: number // after fitting the 30,720-token input limit
   excerpt: string
   trimmed?: boolean // excerpt shortened for the page (not for the model)
 }
@@ -23,11 +23,11 @@ export interface TaskExample {
   headline: string
   takeaway: string
   inputs: InputPart[]
-  annotators: Record<Axis, number[]>
-  label: Record<Axis, number>
-  predicted: Record<Axis, number>
+  annotators: Record<Axis, number[]> // the three reviewers' ratings
+  label: Record<Axis, number> // combined label
+  predicted: Record<Axis, number> // model's expected rating (sum of the three CORAL probabilities, 0–3)
   keptInVerified: boolean
-  filterScore: number // model's probability-like score that the task gets dropped
+  keepDropScore: number // P(underspecification ≥ 2 or false negatives ≥ 2), from the two rating heads
   note: { axis: Axis; text: string }
 }
 
@@ -36,18 +36,18 @@ export const BUDGET_TOKENS = 30720
 export const DIFFICULTY_TICKS = ['<15m', '15m–1h', '1–4h', '>4h']
 
 export const AXIS_LABEL: Record<Axis, string> = {
-  underspecified: 'Underspecified issue',
-  false_negative: 'Tests reject valid fixes',
+  underspecified: 'Underspecification',
+  false_negative: 'False negatives',
   difficulty: 'Difficulty',
 }
 
 export const EXAMPLES: TaskExample[] = [
   {
     id: 'sympy__sympy-23534',
-    kind: 'A clean task',
-    headline: 'Clear bug report, one-line fix, a test that checks exactly the reported case',
+    kind: 'Clean task',
+    headline: 'one-line fix, test matches the issue',
     takeaway:
-      'All three annotators rated it 0 on underspecified and false_negative. The model agrees and ranks it second-best of the 298 held-out tasks.',
+      'All three reviewers rated underspecification and false negatives 0. The model agrees and ranks it second-best of the 298 held-out tasks.',
     inputs: [
       {
         key: 'issue',
@@ -102,7 +102,7 @@ Must go from failing to passing: test_symbols`,
     label: { underspecified: 0, false_negative: 0, difficulty: 0 },
     predicted: { underspecified: 0.55, false_negative: 0.31, difficulty: 0.2 },
     keptInVerified: true,
-    filterScore: 0.22,
+    keepDropScore: 0.22,
     note: {
       axis: 'false_negative',
       text: 'The test checks exactly the issue being raised with the same example that is provided in the issue description. I cannot think of any other solution that might fail.',
@@ -110,10 +110,10 @@ Must go from failing to passing: test_symbols`,
   },
   {
     id: 'sympy__sympy-17313',
-    kind: 'An underspecified task',
-    headline: 'A two-line issue behind a 1,400-token patch',
+    kind: 'Underspecified',
+    headline: 'a two-line issue behind a 1,400-token patch',
     takeaway:
-      'The annotators split 1, 3 and 1 on underspecified. The max-ensemble makes the label 3, so the task was filtered out of Verified. The model predicts 2.0.',
+      'The reviewers split 1, 3 and 1 on underspecification. The combined label takes the maximum, 3, so Verified dropped the task. The model’s expected rating is 2.0.',
     inputs: [
       {
         key: 'issue',
@@ -164,7 +164,7 @@ Must go from failing to passing: test_floor, test_ceiling`,
     label: { underspecified: 3, false_negative: 3, difficulty: 3 },
     predicted: { underspecified: 2.04, false_negative: 2.64, difficulty: 1.58 },
     keptInVerified: false,
-    filterScore: 0.97,
+    keepDropScore: 0.97,
     note: {
       axis: 'underspecified',
       text: 'The issue description uses vague references to variables like "pos" and "neg", and does not offer any detail about the problem. It is almost impossible to determine the requirement from it, much less a strategy for implementation.',
@@ -172,10 +172,10 @@ Must go from failing to passing: test_floor, test_ceiling`,
   },
   {
     id: 'sympy__sympy-13806',
-    kind: 'A false-negative task',
-    headline: 'The issue asks for the degree symbol; the FAIL_TO_PASS tests also check unrelated units',
+    kind: 'False negatives',
+    headline: 'the tests check units the issue never mentions',
     takeaway:
-      'Two of three annotators rated false_negative 3, since a correct fix for the degree sign could still fail the tests. The model predicts 2.8 on that axis, its fourth-highest of the 298.',
+      'The issue asks for the degree symbol; the FAIL_TO_PASS tests also check other units. Two of three reviewers rated false negatives 3, since a correct fix for the degree sign could still fail the tests. The model’s expected rating on that axis is 2.8, its fourth-highest of the 298.',
     inputs: [
       {
         key: 'issue',
@@ -219,14 +219,14 @@ Must go from failing to passing: test_units, test_degree_printing`,
         tokens: 46001,
         keptTokens: 16753,
         trimmed: true,
-        excerpt: `The touched printing modules at the base commit. Too large for the budget, so they were cut to windows around the changed lines.`,
+        excerpt: `The touched printing modules at the base commit. Too large for the input limit, so they were cut to windows around the changed lines.`,
       },
     ],
     annotators: { underspecified: [1, 0, 1], false_negative: [2, 3, 3], difficulty: [1, 1, 2] },
     label: { underspecified: 1, false_negative: 3, difficulty: 1 },
     predicted: { underspecified: 2.01, false_negative: 2.78, difficulty: 1.99 },
     keptInVerified: false,
-    filterScore: 0.98,
+    keepDropScore: 0.98,
     note: {
       axis: 'false_negative',
       text: 'The tests include checks for other units, such as kilograms and meters, which are not mentioned in the issue description. This indicates that the tests are broader than necessary.',
@@ -234,10 +234,10 @@ Must go from failing to passing: test_units, test_degree_printing`,
   },
   {
     id: 'sympy__sympy-20916',
-    kind: 'Where the model is wrong',
-    headline: 'A terse, clear issue the model rates as underspecified',
+    kind: 'Model error',
+    headline: 'a terse but clear issue read as vague',
     takeaway:
-      'All three annotators rated underspecified 0. The model predicts 2.0 and its filter score would have dropped the task. In training, the median issue is 1,413 characters at label 0 and 804 at label 3, and the model appears to use brevity as a proxy for vagueness.',
+      'All three reviewers rated underspecification 0. The model’s expected rating is 2.0, and its keep/drop score would have dropped the task. In training, the median issue is 1,413 characters at label 0 and 804 at label 3; the model appears to read brevity as vagueness.',
     inputs: [
       {
         key: 'issue',
@@ -284,7 +284,7 @@ Must go from failing to passing: test_super_sub`,
     label: { underspecified: 0, false_negative: 1, difficulty: 0 },
     predicted: { underspecified: 2.02, false_negative: 2.51, difficulty: 0.74 },
     keptInVerified: true,
-    filterScore: 0.96,
+    keepDropScore: 0.96,
     note: {
       axis: 'underspecified',
       text: 'The problem is clear. It seems that `pprint` Unicode does not format subscripts on Greek letters. The ticket description is well-structured and clear.',
@@ -292,11 +292,12 @@ Must go from failing to passing: test_super_sub`,
   },
 ]
 
-/** Held-out sympy fold, n = 298. Paired-bootstrap 95% CI of T4 minus surface. */
+/** Held-out sympy fold, n = 298, scored against the combined labels. `ci`: paired-bootstrap 95% CI of the 8B model
+ *  minus the BEST baseline on that metric (2,000 resamples). `ceiling`: reviewer agreement as previously reported. */
 export const RESULTS = [
-  { metric: 'underspecified (Spearman ρ)', t4: 0.358, t1: 0.233, length: 0.156, surface: 0.173, ceiling: 0.41, ci: '+0.185 [+0.071, +0.298]', better: true },
-  { metric: 'false_negative (Spearman ρ)', t4: 0.48, t1: 0.422, length: 0.378, surface: 0.341, ceiling: 0.5, ci: '+0.139 [+0.057, +0.223]', better: true },
-  { metric: 'difficulty (Spearman ρ)', t4: 0.623, t1: 0.651, length: 0.618, surface: 0.655, ceiling: 0.56, ci: '−0.032 [−0.078, +0.010]', better: false },
-  { metric: 'Filter decision (AUROC)', t4: 0.772, t1: 0.724, length: 0.705, surface: 0.7, ceiling: null, ci: '+0.073 [+0.014, +0.133]', better: true },
-  { metric: 'Price score vs. severity (Kendall τ)', t4: 0.354, t1: 0.291, length: 0.264, surface: 0.225, ceiling: null, ci: '+0.129 [+0.049, +0.207]', better: true },
+  { metric: 'Underspecification (ρ)', t4: 0.358, t1: 0.233, length: 0.156, surface: 0.173, ceiling: 0.41, ci: '+0.185 [+0.071, +0.298]', better: true },
+  { metric: 'False negatives (ρ)', t4: 0.48, t1: 0.422, length: 0.378, surface: 0.341, ceiling: 0.5, ci: '+0.102 [+0.026, +0.182]', better: true },
+  { metric: 'Difficulty (ρ)', t4: 0.623, t1: 0.651, length: 0.618, surface: 0.655, ceiling: 0.56, ci: '−0.032 [−0.078, +0.010]', better: false },
+  { metric: 'Keep/drop (AUROC)', t4: 0.772, t1: 0.724, length: 0.705, surface: 0.7, ceiling: null, ci: '+0.067 [+0.013, +0.122]', better: true },
+  { metric: 'Quality score vs severity (τ)', t4: 0.354, t1: 0.291, length: 0.264, surface: 0.225, ceiling: null, ci: '+0.090 [+0.018, +0.169]', better: true },
 ]

@@ -69,7 +69,7 @@ function PartsLegend() {
   )
 }
 
-/** One stacked bar per example task, drawn to scale against the 30,720-token budget. */
+/** One stacked bar per example task, drawn to scale against the 30,720-token input limit. */
 export function InputBudgetDiagram() {
   return (
     <figure className="flex flex-col gap-4">
@@ -108,13 +108,12 @@ export function InputBudgetDiagram() {
         <div className="flex justify-between font-mono text-[11px] text-muted-foreground">
           <span>0</span>
           <span>15,360</span>
-          <span>30,720 token budget</span>
+          <span>30,720-token input limit</span>
         </div>
       </div>
       <figcaption className="text-sm text-muted-foreground">
-        Bars are to scale. Code context is almost always the largest part, so it is the first thing cut when a task
-        does not fit: whole files, then windows of 200, 100, 50 and 20 lines around each change, then a hard cut.
-        Hints from the issue thread are never included, because later comments can give the fix away.
+        Bars are to scale. Code context is almost always the largest part; when a task doesn&apos;t fit, code
+        context is trimmed first (see the appendix).
       </figcaption>
     </figure>
   )
@@ -162,14 +161,14 @@ function Scale({ axis, ex }: { axis: Axis; ex: TaskExample }) {
       {/* Name and values on separate lines so the three scales line up side by side. */}
       <div className="flex flex-col gap-0.5 text-xs">
         <span className="whitespace-nowrap font-semibold">{AXIS_LABEL[axis]}</span>
-        <span className="whitespace-nowrap font-mono text-[11px] text-muted-foreground">
-          votes {ann.join(', ')} → label {ex.label[axis]} · model {ex.predicted[axis].toFixed(2)}
+        <span className="font-mono text-[11px] text-muted-foreground">
+          reviewers {ann.join(', ')} → label {ex.label[axis]} · model {ex.predicted[axis].toFixed(2)}
         </span>
       </div>
       <div
         className="tqs-scale"
         role="img"
-        aria-label={`${AXIS_LABEL[axis]}: annotators ${ann.join(', ')}, released label ${ex.label[axis]}, model ${ex.predicted[axis].toFixed(2)}`}
+        aria-label={`${AXIS_LABEL[axis]}: reviewers ${ann.join(', ')}, combined label ${ex.label[axis]}, model expected rating ${ex.predicted[axis].toFixed(2)}`}
       >
         <span className="tqs-scale-line" />
         {[0, 1, 2, 3].map((t) => (
@@ -199,9 +198,9 @@ function Scale({ axis, ex }: { axis: Axis; ex: TaskExample }) {
 export function ScaleLegend() {
   return (
     <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-      <span className="inline-flex items-center gap-1.5"><i className="tqs-ann tqs-ann-key" aria-hidden />One annotator</span>
-      <span className="inline-flex items-center gap-1.5"><i className="tqs-label tqs-label-key" aria-hidden />Released label</span>
-      <span className="inline-flex items-center gap-1.5"><i className="tqs-model tqs-model-key" aria-hidden />Model prediction</span>
+      <span className="inline-flex items-center gap-1.5"><i className="tqs-ann tqs-ann-key" aria-hidden />One reviewer</span>
+      <span className="inline-flex items-center gap-1.5"><i className="tqs-label tqs-label-key" aria-hidden />Combined label</span>
+      <span className="inline-flex items-center gap-1.5"><i className="tqs-model tqs-model-key" aria-hidden />Model (expected rating)</span>
     </div>
   )
 }
@@ -262,12 +261,17 @@ export function TaskDiagram({ ex }: { ex: TaskExample }) {
               Qwen3-8B + LoRA
             </span>
             <span aria-hidden>→</span>
-            Ratings, 0 to 3
+            Ratings
           </>
         }
       >
         <div className="flex flex-col gap-5">
-          <ScaleLegend />
+          <div className="flex flex-col gap-1.5">
+            <ScaleLegend />
+            <span className="text-[11px] text-muted-foreground">
+              Each rating runs 0 to 3. The model&apos;s value is an expected rating: the sum of its three head probabilities.
+            </span>
+          </div>
           <div className="grid grid-cols-1 gap-x-8 gap-y-5 md:grid-cols-3">
             {(['underspecified', 'false_negative', 'difficulty'] as Axis[]).map((a) => (
               <Scale key={a} axis={a} ex={ex} />
@@ -277,13 +281,13 @@ export function TaskDiagram({ ex }: { ex: TaskExample }) {
             <div className="flex flex-col gap-1 text-xs">
               <span className="font-semibold">Keep or drop from SWE-bench Verified</span>
               <span className="text-muted-foreground">
-                Humans: <b className="font-medium text-foreground">{ex.keptInVerified ? 'kept' : 'dropped'}</b> · model
-                drop score <b className="font-mono font-medium text-foreground">{ex.filterScore.toFixed(2)}</b>
+                Verified&apos;s reviewers: <b className="font-medium text-foreground">{ex.keptInVerified ? 'kept' : 'dropped'}</b> ·
+                keep/drop score <b className="font-mono font-medium text-foreground">{ex.keepDropScore.toFixed(2)}</b>
               </span>
             </div>
             <blockquote className="border-l-2 border-brand pl-3 text-xs italic text-muted-foreground">
               “{ex.note.text}”
-              <span className="mt-1 block not-italic">Annotator note on {AXIS_LABEL[ex.note.axis].toLowerCase()}</span>
+              <span className="mt-1 block not-italic">Reviewer note on {AXIS_LABEL[ex.note.axis].toLowerCase()}</span>
             </blockquote>
           </div>
         </div>
@@ -292,10 +296,13 @@ export function TaskDiagram({ ex }: { ex: TaskExample }) {
   )
 }
 
+/** The model-error example (sympy__sympy-20916) is shown separately on the page, under "Where it fails". */
+const MISS_ID = 'sympy__sympy-20916'
+
 export function ExampleCollapsibles() {
   return (
     <>
-      {EXAMPLES.map((ex) => (
+      {EXAMPLES.filter((ex) => ex.id !== MISS_ID).map((ex) => (
         <Collapsible
           key={ex.id}
           title={`${ex.kind}: ${ex.headline}`}
